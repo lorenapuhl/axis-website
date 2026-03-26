@@ -431,8 +431,8 @@ export default function SystemVisualSection() {
 
             {/* Node label */}
             <p className="font-instrument tracking-widest text-white-axis text-xs mt-4 mb-6">
-              WEBSYSTEM < br/> 
-              We build your AXIS.
+              AXIS < br/> 
+              We build your system.
             </p>
             
 
