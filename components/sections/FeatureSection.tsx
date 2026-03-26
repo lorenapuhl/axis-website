@@ -451,7 +451,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm md:self-start"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -474,7 +474,7 @@ export default function FeatureSection() {
             {/* ── UI FRAGMENT: Class roster ──────────────────────────────── */}
             {/* border-soft-grey wraps the roster to frame it as a widget,
                 matching the same treatment used on the Bookings card above. */}
-            <div className="mt-auto border border-soft-grey rounded-xl p-2 flex flex-col">
+            <div className="my-auto border border-soft-grey rounded-xl p-2 flex flex-col">
               {[
                 { time: "7:00 AM", name: "Pilates Flow", full: false },
                 { time: "9:00 AM", name: "Yoga Basics",  full: false },
@@ -605,7 +605,7 @@ export default function FeatureSection() {
             </div>
 
             {/* ── UI FRAGMENT: Client list ───────────────────────────────── */}
-            <div className="flex flex-col gap-3 mt-auto">
+            <div className="mt-auto border border-soft-grey rounded-xl p-3 flex flex-col gap-3">
               {[
                 { name: "Ana García",     status: "new"    },
                 { name: "Diego Ruiz",     status: "active" },
