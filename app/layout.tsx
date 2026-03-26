@@ -5,7 +5,7 @@ import "./globals.css"
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
-  weight: ["700", "900"],
+  weight: ["400","500", "700", "900"],
 })
 
 const instrument = Instrument_Sans({

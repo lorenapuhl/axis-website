@@ -162,7 +162,7 @@ export default function HeroSection() {
 
             {/* Main Title: Uses 'leading-[0.9]' for tight line spacing. */}
             <h1 
-              className="animate-fade-in delay-200 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-medium tracking-tighter leading-[0.9]"
+              className="font-playfair animate-fade-in delay-200 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-light tracking-tighter leading-[0.9]"
 
             >Turn your Instagram into a Booking Machine
             </h1>
