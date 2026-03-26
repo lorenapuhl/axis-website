@@ -429,8 +429,9 @@ export default function SystemVisualSection() {
             <div className="w-3 h-3 rounded-full border border-soft-grey" />
 
             {/* Node label */}
-            <p className="font-instrument uppercase tracking-widest text-white-axis text-xs mt-4 mb-6">
-              Websystem
+            <p className="font-instrument tracking-widest text-white-axis text-xs mt-4 mb-6">
+              WEBSYSTEM < br/> 
+              We build your Booking Machine.
             </p>
             
 
@@ -593,8 +594,9 @@ export default function SystemVisualSection() {
             </div>
 
             {/* Node label */}
-            <p className="font-instrument uppercase tracking-widest text-white-axis text-xs mt-4 mb-6">
-              Client Conversion
+            <p className="font-instrument tracking-widest text-white-axis text-xs mt-4 mb-6">
+              CLIENT CONVERSION <br />
+              You grow.
             </p>
 
             {/* Static capability list — no rotating or animation.
