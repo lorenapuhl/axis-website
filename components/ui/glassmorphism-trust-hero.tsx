@@ -201,16 +201,16 @@ export default function HeroSection() {
                     <SiInstagram className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold tracking-tight text-white">150+</div>
-                    <div className="text-sm text-zinc-400">Projects Delivered</div>
+                    <div className="text-3xl font-bold tracking-tight text-white">Auto Sync</div>
+                    <div className="text-sm text-zinc-400">with your Instagram</div>
                   </div>
                 </div>
 
                 {/* Visual Progress Bar Section */}
                 <div className="space-y-3 mb-8">
                   <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Client Satisfaction</span>
-                    <span className="text-white font-medium">98%</span>
+                    <span className="text-zinc-400">Mobile</span>
+                    <span className="text-white font-medium">100%</span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800/50">
                     {/* The bar itself, set to 98% width via CSS class 'w-[98%]' */}
@@ -223,11 +223,11 @@ export default function HeroSection() {
 
                 {/* 3-Column Mini Stats Row */}
                 <div className="grid grid-cols-3 gap-4 text-center">
-                  <StatItem value="5+" label="Years" />
+                  <StatItem value="< 7" label="Setup Days" />
                   <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="24/7" label="Support" />
+                  <StatItem value="24/7" label="Bookings" />
                   <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="100%" label="Quality" />
+                  <StatItem value="0" label="Maintenance" />
                 </div>
 
                 {/* Status Badges (Active with pulse and Premium with crown) */}
