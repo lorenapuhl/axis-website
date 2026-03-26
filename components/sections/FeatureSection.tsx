@@ -354,57 +354,88 @@ export default function FeatureSection() {
               </p>
             </div>
 
-            {/* ── UI FRAGMENT: Pricing plans ────────────────────────────────
-                Three plan options. "Monthly" is highlighted as the suggested choice
-                using a black background (bg-black-axis). The "Select Plan" button
-                pulses gently to imply interactivity (scale animates in a loop).
+            {/* ── UI FRAGMENT: Pricing plan carousel ────────────────────────
+                A horizontally scrolling carousel of three pricing cards.
+                scroll-snap-type (via Tailwind's snap-x snap-mandatory) makes each
+                card "click" into the center of the view when the user scrolls —
+                this is CSS Scroll Snapping, no JavaScript required.
+
+                Scrollbar is hidden visually but the container is still scrollable
+                via touch swipe or mouse-wheel. Three vendor-specific properties
+                cover all modern browsers:
+                  [&::-webkit-scrollbar]:hidden — Chrome/Safari (hides the track element)
+                  [scrollbar-width:none]         — Firefox CSS property
+                  [-ms-overflow-style:none]      — IE/Edge legacy property
+
+                Cards are 78% wide so adjacent cards peek in from either side,
+                signalling that the user can scroll to discover more plans.
             */}
-            <div className="flex flex-col gap-2 mt-auto">
+            <div
+              className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]"
+              // role="region" + aria-label expose the carousel to screen readers
+              role="region"
+              aria-label="Pricing plans"
+            >
               {[
-                { name: "Drop-in",    price: "$20",    active: false },
-                { name: "Monthly",   price: "$80/mo", active: true  },
-                { name: "Pack \u00d710", price: "$150",   active: false },
+                {
+                  name: "Drop-in",
+                  price: "$20",
+                  unit: "per class",
+                  description: "Walk in any time, no commitment.",
+                  cta: "Book a Class",
+                },
+                {
+                  name: "Pack \u00d710",
+                  price: "$150",
+                  unit: "10 classes",
+                  description: "Pre-purchase and save per session.",
+                  cta: "Get the Pack",
+                },
+                {
+                  name: "Monthly",
+                  price: "$80",
+                  unit: "/ month",
+                  description: "Unlimited classes, billed automatically.",
+                  cta: "Subscribe",
+                },
               ].map((plan) => (
+                // snap-center: this card snaps to the horizontal centre when scrolling.
+                // shrink-0 prevents flex from compressing the card below its set width.
+                // w-[78%]: slightly narrower than the parent so adjacent cards peek in.
                 <div
                   key={plan.name}
-                  className={`flex items-center justify-between rounded-lg px-3 py-2.5 ${
-                    plan.active ? "bg-black-axis" : "border border-soft-grey"
-                    // Active: solid black background = visually selected plan.
-                    // Inactive: light border on white card = subtle, unselected.
-                  }`}
+                  className="snap-center shrink-0 w-[78%] flex flex-col gap-4 rounded-2xl border border-soft-grey p-5"
                 >
-                  <span
-                    className={`font-instrument text-xs font-medium ${
-                      plan.active ? "text-white-axis" : "text-grey-axis"
-                    }`}
-                  >
+                  {/* Plan title — Playfair for editorial weight */}
+                  <h4 className="font-playfair uppercase tracking-tight text-black-axis text-base leading-tight">
                     {plan.name}
-                  </span>
-                  <span
-                    className={`font-instrument text-xs ${
-                      plan.active ? "text-white-axis" : "text-soft-grey"
-                    }`}
+                  </h4>
+
+                  {/* Price block — large number draws the eye first */}
+                  <div className="flex items-baseline gap-1">
+                    <span className="font-instrument text-black-axis text-3xl leading-none">
+                      {plan.price}
+                    </span>
+                    <span className="font-instrument text-soft-grey text-xs">
+                      {plan.unit}
+                    </span>
+                  </div>
+
+                  {/* Short description line */}
+                  <p className="font-instrument text-soft-grey text-xs leading-relaxed">
+                    {plan.description}
+                  </p>
+
+                  {/* CTA button — mt-auto pushes it to the bottom of the card */}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="mt-auto bg-black-axis text-white-axis font-instrument text-xs uppercase tracking-widest py-2.5 rounded-lg w-full"
                   >
-                    {plan.price}
-                  </span>
+                    {plan.cta}
+                  </motion.button>
                 </div>
               ))}
-
-              {/* Pulsing CTA button — animate loops between scale 1 and 1.025.
-                  repeat: Infinity means the animation runs forever.
-                  repeatDelay pauses 1.2s between each pulse cycle. */}
-              <motion.button
-                animate={{ scale: [1, 1.025, 1] }}
-                transition={{
-                  duration: 1.6,
-                  ease: "easeInOut",
-                  repeat: Infinity,
-                  repeatDelay: 1.2,
-                }}
-                className="mt-1 bg-black-axis text-white-axis font-instrument text-xs uppercase tracking-widest py-2.5 rounded-lg w-full"
-              >
-                Select Plan
-              </motion.button>
             </div>
           </motion.div>
 
@@ -514,12 +545,12 @@ export default function FeatureSection() {
 
               {/* Result title — blue, like a real Google link */}
               <span className="font-instrument text-xs font-semibold text-blue-axis leading-tight">
-                Estudio Flow Pilates — Book a Class Online
+                Studio Flow Pilates — Book a Class Online
               </span>
 
               {/* Green URL line */}
               <span className="font-instrument text-xs text-soft-grey">
-                estudioflow.com
+                studioflow.com
               </span>
 
               {/* Star rating */}
