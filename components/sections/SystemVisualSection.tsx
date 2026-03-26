@@ -432,7 +432,7 @@ export default function SystemVisualSection() {
             {/* Node label */}
             <p className="font-instrument tracking-widest text-white-axis text-xs mt-4 mb-6">
               WEBSYSTEM < br/> 
-              We build your Booking Machine.
+              We build your AXIS.
             </p>
             
 
@@ -598,6 +598,18 @@ export default function SystemVisualSection() {
             <p className="font-instrument tracking-widest text-white-axis text-xs mt-4 mb-6">
               CLIENT CONVERSION <br />
               You grow.
+            </p>
+            
+                        <p
+              className={[
+                "font-instrument uppercase tracking-widest",
+                "text-blue-axis text-xs",
+                // text-blue-axis: the only accent color in this section.
+                // Used here as an "active state" label per brand conventions.
+                "mb-3",
+              ].join(" ")}
+            >
+              Zero Maintenance
             </p>
 
 	 <div
