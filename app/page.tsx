@@ -1,65 +1,87 @@
-import Image from "next/image";
+// This file is the home page of the site — it maps to the "/" URL.
+// In Next.js App Router, every folder under app/ that contains a page.tsx
+// becomes a route. This one lives at app/page.tsx so it IS the root route.
+//
+// Unlike HeaderSection.tsx, this file has NO "use client" directive.
+// That means Next.js renders it on the server and sends plain HTML to the
+// browser — faster initial load, better SEO. We only add "use client" to
+// components that actually need browser APIs or interactivity.
 
+// Metadata is Next.js's way of controlling what goes in the <head> of the page
+// (title, description, Open Graph tags for social sharing, etc.).
+// This replaces react-helmet or manually writing <head> tags — Next.js reads
+// this object at build time and injects the correct HTML automatically.
+import type { Metadata } from "next"
+
+// Components are imported like Python modules. The "@/" alias maps to the
+// project root, so "@/components/sections/HeaderSection" resolves to
+// components/sections/HeaderSection.tsx — no relative path gymnastics needed.
+import HeaderSection from "@/components/sections/HeaderSection"
+//import ShuffleHeroSection from "@/components/sections/ShuffleHeroSection"
+import TrustHeroSection from "@/components/sections/TrustHeroSection"
+import IntroSection from "@/components/sections/IntroSection"
+import SystemVisualSection from "@/components/sections/SystemVisualSection"
+import ProductVisualSection from "@/components/sections/ProductVisualSection"
+import LiveSyncSection from "@/components/sections/LiveSyncSection"
+//import InstaGallerySection from "@/components/sections/InstaGallerySection"
+import FeatureSection from "@/components/sections/FeatureSection"
+import OutcomeSection from "@/components/sections/OutcomeSection"
+import FinalCTA from "@/components/sections/FinalCTA"
+import FooterSection from "@/components/sections/FooterSection"
+
+// `export const metadata` is a special Next.js convention — this exact variable
+// name is recognised by the framework. It must be exported from a page.tsx or
+// layout.tsx file; it won't work inside a regular component.
+export const metadata: Metadata = {
+  // Title shown in the browser tab and in Google search results.
+  // Format: "Page Name — AXIS" (see skills/seo.md for the full title table).
+  title: "AXIS — Client Conversion Systems for Sports Studios",
+
+  // Description shown under the link in Google results and in social previews.
+  // Keep under 160 characters.
+  description: "AXIS builds professional digital systems for Instagram fitness studios — turning followers into booked clients.",
+
+  // Open Graph tags control how this page looks when shared on social media
+  // (Facebook, LinkedIn, iMessage link previews, etc.).
+  openGraph: {
+    title: "AXIS — Client Conversion Systems for Sports Studios",
+    description: "AXIS builds professional digital systems for Instagram fitness studios — turning followers into booked clients.",
+    // Replace with the real Vercel URL once the project is deployed.
+    url: "https://yourdomain.com",
+    type: "website",
+  },
+}
+
+// The default export from a page.tsx is the React component that renders the page.
+// Next.js calls this function and uses its return value as the page's HTML.
 export default function Home() {
+  // <main> is the semantic HTML landmark for the primary page content.
+  // bg-black-axis: sets the page background to our brand black (#000000).
+  // min-h-screen: ensures the page fills at least the full viewport height,
+  //               preventing a white flash below short content.
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    <main className="bg-black-axis min-h-screen">
+
+      {/* Components are used like custom HTML tags. <HeaderSection /> calls the
+          HeaderSection function and renders whatever JSX it returns.
+          Self-closing syntax (<HeaderSection />) is used when there are no
+          child elements to pass in. */}
+      <HeaderSection />
+
+      {/* Future sections go here — HeroSection, AttentionSection, etc.
+          Each will be imported at the top and dropped in as a tag below. */}
+      {/*<ShuffleHeroSection />*/}
+      <TrustHeroSection />
+      <IntroSection />
+      <FeatureSection /> 
+      <SystemVisualSection />
+      <ProductVisualSection />
+      <LiveSyncSection />
+      {/*<InstaGallerySection /> */}
+      <OutcomeSection />
+      <FinalCTA />
+      <FooterSection />
+
+    </main>
+  )
 }
