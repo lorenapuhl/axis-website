@@ -159,7 +159,7 @@ export default function ProductVisualSection() {
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 rounded-full overflow-hidden shrink-0">
                   <Image
-                    src="https://placehold.co/64x64/121212/FFFFFF"
+                    src="/product_visual/img5.png"
                     alt="Sports Studio Instagram profile avatar"
                     width={32}
                     height={32}

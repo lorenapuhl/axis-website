@@ -250,7 +250,7 @@ export default function HeroSection() {
 
             {/* Marquee (Scrolling Logos) Card */}
             <div className="animate-fade-in delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 py-8 backdrop-blur-xl">
-              <h3 className="mb-6 px-8 text-sm font-medium text-zinc-400">Integrated with the Tools You Use</h3>
+              <h2 className="mb-6 px-8 text-sm font-medium text-zinc-400">Integrated with the Tools You Use</h2>
               
               <div 
                 className="relative flex overflow-hidden"
