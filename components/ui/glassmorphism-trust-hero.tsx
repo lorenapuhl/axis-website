@@ -174,20 +174,16 @@ export default function HeroSection() {
           memberships 24/7.
             </p>
 
-            {/* Action Buttons Container */}
-            <div className="animate-fade-in delay-400 flex flex-col sm:flex-row gap-4">
-              {/* Primary Button (White) */}
-              <button className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-semibold text-zinc-950 transition-all hover:scale-[1.02] hover:bg-zinc-200 active:scale-[0.98]">
-                View Portfolio
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </button>
-              
-              {/* Secondary Button (Border only / Transparent) */}
-              <button className="group inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-white/5 px-8 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/10 hover:border-white/20">
-                <Play className="w-4 h-4 fill-current" />
-                Watch Showreel
-              </button>
-            </div>
+		{/* Action Buttons Container */}
+		<motion.div variants={item}>
+		  <motion.button
+		    whileHover={{ scale: 1.03 }}
+		    transition={{ duration: 0.35, ease: "easeOut" }}
+		    className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
+		  >
+		    Get your AXIS
+		  </motion.button>
+		</motion.div>
           </div>
 
           {/* --- RIGHT COLUMN (Stats and Cards) --- */}
