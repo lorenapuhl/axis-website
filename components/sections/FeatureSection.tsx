@@ -273,6 +273,8 @@ export default function FeatureSection() {
                 selectedSlot state cycles automatically every 2 seconds (see useEffect above).
             */}
             <div className="flex flex-col gap-1.5 mt-auto">
+              {/* border-soft-grey wraps the slot list to frame it as a widget */}
+              <div className="border border-soft-grey rounded-xl p-2 flex flex-col gap-1.5">
               {["6:00 PM", "7:00 PM", "8:00 PM"].map((slot, i) => (
                 <div
                   key={slot}
@@ -317,7 +319,7 @@ export default function FeatureSection() {
                   </div>
                 </div>
               ))}
-
+              </div>
               {/* Primary action button for this UI fragment */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -470,18 +472,19 @@ export default function FeatureSection() {
             </div>
 
             {/* ── UI FRAGMENT: Class roster ──────────────────────────────── */}
-            <div className="flex flex-col mt-auto">
+            {/* border-soft-grey wraps the roster to frame it as a widget,
+                matching the same treatment used on the Bookings card above. */}
+            <div className="mt-auto border border-soft-grey rounded-xl p-2 flex flex-col">
               {[
-                { time: "7:00 AM", name: "Pilates Flow",  spots: "2 spots" },
-                { time: "9:00 AM", name: "Yoga Basics",   spots: "5 spots" },
-                { time: "6:00 PM", name: "HIIT Circuit",  spots: "Full"    },
+                { time: "7:00 AM", name: "Pilates Flow", full: false },
+                { time: "9:00 AM", name: "Yoga Basics",  full: false },
+                { time: "6:00 PM", name: "HIIT Circuit", full: true  },
               ].map((cls, i, arr) => (
                 <div
                   key={cls.name}
-                  className={`flex items-center justify-between py-2 ${
+                  className={`flex items-center justify-between py-2 px-1 ${
                     i < arr.length - 1 ? "border-b border-soft-grey" : ""
-                    // border-soft-grey: subtle divider line between class rows.
-                    // last:border-0 equivalent done via the index check.
+                    // Divider between rows; skipped on the last item.
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -492,15 +495,23 @@ export default function FeatureSection() {
                       {cls.name}
                     </span>
                   </div>
-                  <span
-                    className={`font-instrument text-xs ${
-                      cls.spots === "Full" ? "text-soft-grey" : "text-blue-axis"
-                      // Available spots → blue-axis accent to draw attention.
-                      // "Full" → muted grey since it requires no action.
-                    }`}
-                  >
-                    {cls.spots}
-                  </span>
+
+                  {/* When full: muted "Full" label — no action available.
+                      When available: a small Book button with a Framer Motion
+                      scale hover so it feels interactive and tappable. */}
+                  {cls.full ? (
+                    <span className="font-instrument text-xs text-soft-grey">
+                      Full
+                    </span>
+                  ) : (
+                    <motion.button
+                      whileHover={{ scale: 1.08 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      className="font-instrument text-xs uppercase tracking-widest text-white-axis bg-black-axis rounded-md px-2.5 py-1"
+                    >
+                      Book
+                    </motion.button>
+                  )}
                 </div>
               ))}
             </div>
