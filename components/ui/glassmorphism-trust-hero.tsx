@@ -169,8 +169,7 @@ export default function HeroSection() {
 
             {/* Sub-header text (Paragraph) */}
             <p className="animate-fade-in delay-300 max-w-xl text-lg text-zinc-400 leading-relaxed">
-          We build high-converting websites for boutique fitness studios tha sync
-          automatically with your Instagram. Stop chasing DMs and start selling
+          We build high-converting websites for sports studios with strong Instagram-presence. Stop chasing DMs and start selling
           memberships 24/7.
             </p>
 
@@ -198,19 +197,19 @@ export default function HeroSection() {
                 {/* Header of the card (Icon + 150+ Projects) */}
                 <div className="flex items-center gap-4 mb-8">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
-                    <Target className="h-6 w-6 text-white" />
+                    <SiInstagram className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold tracking-tight text-white">150+</div>
-                    <div className="text-sm text-zinc-400">Projects Delivered</div>
+                    <div className="text-3xl font-bold tracking-tight text-white">Auto-sync</div>
+                    <div className="text-sm text-zinc-400">with your Instagram</div>
                   </div>
                 </div>
 
                 {/* Visual Progress Bar Section */}
                 <div className="space-y-3 mb-8">
                   <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Client Satisfaction</span>
-                    <span className="text-white font-medium">98%</span>
+                    <span className="text-zinc-400">Mobile</span>
+                    <span className="text-white font-medium">100%</span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800/50">
                     {/* The bar itself, set to 98% width via CSS class 'w-[98%]' */}
@@ -223,11 +222,11 @@ export default function HeroSection() {
 
                 {/* 3-Column Mini Stats Row */}
                 <div className="grid grid-cols-3 gap-4 text-center">
-                  <StatItem value="5+" label="Years" />
+                  <StatItem value="<7 days" label="setup" />
                   <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="24/7" label="Support" />
+                  <StatItem value="24/7" label="Bookings" />
                   <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="100%" label="Quality" />
+                  <StatItem value="0" label="Maintenance" />
                 </div>
 
                 {/* Status Badges (Active with pulse and Premium with crown) */}
@@ -238,7 +237,7 @@ export default function HeroSection() {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                     </span>
-                    ACTIVE
+                    SYNC
                   </div>
                   <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-medium tracking-wide text-zinc-300">
                     <Crown className="w-3 h-3 text-yellow-500" />
@@ -250,7 +249,7 @@ export default function HeroSection() {
 
             {/* Marquee (Scrolling Logos) Card */}
             <div className="animate-fade-in delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 py-8 backdrop-blur-xl">
-              <h3 className="mb-6 px-8 text-sm font-medium text-zinc-400">Trusted by Industry Leaders</h3>
+              <h3 className="mb-6 px-8 text-sm font-medium text-zinc-400">Integrated with the Tools You Use:</h3>
               
               <div 
                 className="relative flex overflow-hidden"
