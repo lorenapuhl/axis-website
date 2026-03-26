@@ -72,11 +72,35 @@ const item = {
 // --- SUB-COMPONENTS ---
 // A reusable function (component) that returns HTML for a single stat (e.g., "5+ Years").
 const StatItem = ({ value, label }: { value: string; label: string }) => (
+  /* THE CONTAINER DIV
+     flex: display: flex;
+     flex-col: flex-direction: column; (stacks items vertically)
+     items-center: align-items: center; (centers horizontally in a column)
+     justify-center: justify-content: center; (centers vertically in a column)
+     transition-transform: transition-property: transform; (makes movements smooth)
+     hover:-translate-y-1: transform: translateY(-4px) on hover; (lifts it up slightly)
+     cursor-default: cursor: default; (keeps the arrow pointer instead of a text cursor)
+  */
   <div className="flex flex-col items-center justify-center transition-transform hover:-translate-y-1 cursor-default">
-    {/* The big number/text */}
+    
+    {/* THE VALUE (Big Number)
+       text-xl: font-size: 20px;
+       font-bold: font-weight: 700;
+       text-white: color: #ffffff;
+       sm:text-2xl: @media (min-width: 640px) { font-size: 24px; } (Responsive scaling)
+    */}
     <span className="text-xl font-bold text-white sm:text-2xl">{value}</span>
-    {/* The small description text below it */}
+    
+    {/* THE LABEL (Small Description)
+       text-[10px]: font-size: 10px; (Custom value in brackets)
+       uppercase: text-transform: uppercase;
+       tracking-wider: letter-spacing: 0.05em;
+       text-zinc-500: color: #71717a; (A neutral medium-gray)
+       font-medium: font-weight: 500;
+       sm:text-xs: @media (min-width: 640px) { font-size: 12px; }
+    */}
     <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-medium sm:text-xs">{label}</span>
+    
   </div>
 );
 
@@ -111,42 +135,43 @@ export default function HeroSection() {
         .delay-400 { animation-delay: 0.4s; }
         .delay-500 { animation-delay: 0.5s; }
       `}</style>
+      
+     {/* --- Outer wrappers:
+  1. THE SHELL (Relative/Max-W-7xl): 
+     Acts as the "container" for the whole page section. 
+     - "max-w-7xl" prevents your site from stretching too wide on massive iMac screens.
+     - "mx-auto" is the standard CSS trick (margin: 0 auto) to keep this container centered.
+     - "px-4/6/8" are the "gutters" (padding) so your text doesn't touch the edge of a phone screen.
 
-      {/* Background Image: 'absolute inset-0' makes it fill the whole screen behind the text. */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center opacity-40"
-        style={{
-          backgroundImage: "url(https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/a72ca2f3-9dd1-4fe4-84ba-fe86468a5237_3840w.webp?w=800&q=80)",
-          maskImage: "linear-gradient(180deg, transparent, black 0%, black 70%, transparent)",
-          WebkitMaskImage: "linear-gradient(180deg, transparent, black 0%, black 70%, transparent)",
-        }}
-      />
+  2. THE GRID SYSTEM (Grid/Grid-cols-12): 
+     This is your "Spreadsheet" layout. 
+     - By default (on phones), it uses 1 column ("grid-cols-1") so things stack vertically.
+     - On laptops ("lg:"), it switches to a 12-column layout. 
+     - "gap-12" is the 'gutters' between your columns so items don't touch.
 
+  3. THE LAYOUT LOGIC (Items-start):
+     - This ensures that if one column has more text than the other, the shorter column 
+       doesn't "stretch" to match it. They both stay aligned to the top.
+--- */} 
+      
       <div className="relative z-10 mx-auto max-w-7xl px-4 pt-24 pb-12 sm:px-6 md:pt-32 md:pb-20 lg:px-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-start">
-          
+
           {/* --- LEFT COLUMN (Text and Buttons) --- */}
           <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-8">
 
             {/* Main Title: Uses 'leading-[0.9]' for tight line spacing. */}
             <h1 
               className="animate-fade-in delay-200 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-medium tracking-tighter leading-[0.9]"
-              style={{
-                maskImage: "linear-gradient(180deg, black 0%, black 80%, transparent 100%)",
-                WebkitMaskImage: "linear-gradient(180deg, black 0%, black 80%, transparent 100%)"
-              }}
-            >Turn your Instagram into a 
-              Crafting Digital<br />
-              {/* This span has a gradient color effect on the text. */}
-              <span className="bg-gradient-to-br from-white via-white to-[#ffcd75] bg-clip-text text-transparent">
-                Booking Machine
-                </span>
+
+            >Turn your Instagram into a Booking Machine
             </h1>
 
             {/* Sub-header text (Paragraph) */}
             <p className="animate-fade-in delay-300 max-w-xl text-lg text-zinc-400 leading-relaxed">
-              We design interfaces that combine beauty with functionality,
-              creating seamless experiences that users love and businesses thrive on.
+          We build high-converting websites for boutique fitness studios tha sync
+          automatically with your Instagram. Stop chasing DMs and start selling
+          memberships 24/7.
             </p>
 
             {/* Action Buttons Container */}
