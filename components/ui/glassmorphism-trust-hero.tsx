@@ -169,8 +169,9 @@ export default function HeroSection() {
 
             {/* Sub-header text (Paragraph) */}
             <p className="animate-fade-in delay-300 max-w-xl text-lg text-zinc-400 leading-relaxed">
-          We build high-converting websites for boutique fitness studios tha sync
-          automatically with your Instagram. Stop chasing DMs and start selling
+          We build high-converting websites for Instagram-based sports studios. Bookings. Payments. Client Management. Automatically synced with your content.
+          <br />
+          Stop chasing DMs and start selling
           memberships 24/7.
             </p>
 
@@ -209,7 +210,7 @@ export default function HeroSection() {
                 {/* Visual Progress Bar Section */}
                 <div className="space-y-3 mb-8">
                   <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Mobile</span>
+                    <span className="text-zinc-400">Google Search Optimized</span>
                     <span className="text-white font-medium">100%</span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800/50">

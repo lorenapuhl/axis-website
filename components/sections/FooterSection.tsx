@@ -154,7 +154,7 @@ export default function FooterSection() {
 
             {/* Copyright notice — static text, no link needed. */}
             <span className="font-instrument text-soft-grey text-xs">
-              © 2026 Web Systems
+              © 2026 Axis | Client Conversion Systems
             </span>
 
             {/* Privacy Policy: internal link → use next/link, never <a href>.

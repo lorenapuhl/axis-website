@@ -201,7 +201,7 @@ export default function FeatureSection() {
             // font-playfair: Playfair Display — brand serif for all headlines.
             // uppercase tracking-tight: all-caps with tight letter-spacing = editorial weight.
           >
-            Everything your studio needs to grow
+            The axis your studio needs to grow
           </motion.h2>
 
           <motion.p
