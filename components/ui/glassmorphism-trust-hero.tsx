@@ -169,7 +169,8 @@ export default function HeroSection() {
 
             {/* Sub-header text (Paragraph) */}
             <p className="animate-fade-in delay-300 max-w-xl text-lg text-zinc-400 leading-relaxed">
-          We build high-converting websites for sports studios with strong Instagram-presence. Stop chasing DMs and start selling
+          We build high-converting websites for boutique fitness studios tha sync
+          automatically with your Instagram. Stop chasing DMs and start selling
           memberships 24/7.
             </p>
 
@@ -200,16 +201,16 @@ export default function HeroSection() {
                     <SiInstagram className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <div className="text-3xl font-bold tracking-tight text-white">Auto-sync</div>
-                    <div className="text-sm text-zinc-400">with your Instagram</div>
+                    <div className="text-3xl font-bold tracking-tight text-white">150+</div>
+                    <div className="text-sm text-zinc-400">Projects Delivered</div>
                   </div>
                 </div>
 
                 {/* Visual Progress Bar Section */}
                 <div className="space-y-3 mb-8">
                   <div className="flex justify-between text-sm">
-                    <span className="text-zinc-400">Mobile</span>
-                    <span className="text-white font-medium">100%</span>
+                    <span className="text-zinc-400">Client Satisfaction</span>
+                    <span className="text-white font-medium">98%</span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800/50">
                     {/* The bar itself, set to 98% width via CSS class 'w-[98%]' */}
@@ -222,11 +223,11 @@ export default function HeroSection() {
 
                 {/* 3-Column Mini Stats Row */}
                 <div className="grid grid-cols-3 gap-4 text-center">
-                  <StatItem value="<7 days" label="setup" />
+                  <StatItem value="5+" label="Years" />
                   <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="24/7" label="Bookings" />
+                  <StatItem value="24/7" label="Support" />
                   <div className="w-px h-full bg-white/10 mx-auto" />
-                  <StatItem value="0" label="Maintenance" />
+                  <StatItem value="100%" label="Quality" />
                 </div>
 
                 {/* Status Badges (Active with pulse and Premium with crown) */}
@@ -249,7 +250,7 @@ export default function HeroSection() {
 
             {/* Marquee (Scrolling Logos) Card */}
             <div className="animate-fade-in delay-500 relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 py-8 backdrop-blur-xl">
-              <h3 className="mb-6 px-8 text-sm font-medium text-zinc-400">Integrated with the Tools You Use:</h3>
+              <h3 className="mb-6 px-8 text-sm font-medium text-zinc-400">Integrated with the Tools You Use</h3>
               
               <div 
                 className="relative flex overflow-hidden"
@@ -261,14 +262,15 @@ export default function HeroSection() {
               >
                 {/* The Infinite Loop: We repeat the BRANDS list 3 times to ensure no gaps during animation. */}
                 <div className="animate-marquee flex gap-12 whitespace-nowrap px-4">
-                  {[...BRANDS, ...BRANDS, ...BRANDS].map((client, i) => (
+                  {[...BRANDS, ...BRANDS, ...BRANDS].map((brand, i) => (
                     <div 
                       key={i}
                       className="flex items-center gap-2 opacity-50 transition-all hover:opacity-100 hover:scale-105 cursor-default grayscale hover:grayscale-0"
                     >
                       {/* Name of the brand from the dictionary. */}
+                      <brand.Icon color="currentColor" size={18} />
                       <span className="text-lg font-bold text-white tracking-tight">
-                        {client.name}
+                        {brand.name}
                       </span>
                     </div>
                   ))}
