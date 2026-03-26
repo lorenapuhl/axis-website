@@ -109,7 +109,7 @@ export default function SystemVisualSection() {
   // useState(0) → starts at index 0, i.e. the first attribute in the array.
   // setAttrIndex → a function that updates the value and re-renders the component.
   const [attrIndex, setAttrIndex] = useState(0)
-
+  const [bookIndex, setBookIndex] = useState(0)
   // useEffect with an empty dependency array [] runs once, after the first render.
   // It sets up a repeating interval that advances the attribute index every 2.8s.
   // The function it returns ("cleanup") runs when the component is unmounted,
@@ -120,6 +120,7 @@ export default function SystemVisualSection() {
       // rather than a stale one captured at the time of the setInterval call.
       // The % (modulo) wraps back to 0 after the last attribute.
       setAttrIndex(i => (i + 1) % ATTRIBUTES.length)
+      setBookIndex(i => (i + 1) % BOOKING_ITEMS.length)
     }, 2800)
 
     return () => clearInterval(interval) // Cleanup: stop the timer on unmount.
@@ -599,26 +600,53 @@ export default function SystemVisualSection() {
               You grow.
             </p>
 
-            {/* Static capability list — no rotating or animation.
-                Uses <ul> and <li> for correct semantic HTML (a list of items).
-                Styling is intentionally identical to the rotating attribute text
-                so both nodes feel part of the same visual system. */}
-            <ul className="flex flex-col gap-2">
-              {BOOKING_ITEMS.map(item => (
-                // .map() is JavaScript's equivalent of a Python list comprehension.
-                // It transforms each string in the array into a JSX <li> element.
-                // `key={item}` is a required React prop that helps the framework
-                // efficiently update the list when items change.
-                <li
-                  key={item}
-                  className="font-instrument text-soft-grey text-xs tracking-wide"
-                  // Same classes as the rotating attribute text under Websystem —
-                  // visual consistency reinforces that both are "system outputs."
+	 <div
+              className={[
+                "h-8",
+                // h-8: fixed 32px height prevents layout shift when the text changes.
+                // Without this, the section height would jump with each attribute change.
+
+                "flex items-center justify-center",
+                // Centers the text vertically and horizontally within the fixed box.
+              ].join(" ")}
+            >
+              <AnimatePresence mode="wait">
+                {/* The `key` prop is critical here.
+                    When `key` changes (i.e. attrIndex changes), React unmounts the
+                    old element and mounts a new one. AnimatePresence detects the
+                    unmount and plays the `exit` animation before actually removing it. */}
+                <motion.p
+                  key={bookIndex}
+                  initial={{ opacity: 0, y: 6 }}
+                  // Enters from slightly below and invisible.
+
+                  animate={{ opacity: 1, y: 0 }}
+                  // Settles to normal position and full opacity.
+
+                  exit={{ opacity: 0, y: -6 }}
+                  // Exits by fading out and sliding slightly upward.
+
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  // 0.4s is the minimum allowed duration — appropriate for a
+                  // small, subtle element like this label.
+
+                  className={[
+                    "font-instrument text-soft-grey text-xs tracking-wide",
+                    // font-instrument: body typeface.
+                    // text-soft-grey: muted — this is supportive detail, not a headline.
+                    // tracking-wide: slightly open letter-spacing for readability at 12px.
+
+                    "max-w-[180px]",
+                    // Limits text width to prevent very long attributes from
+                    // pushing the nodes apart on mobile.
+                  ].join(" ")}
                 >
-                  {item}
-                </li>
-              ))}
-            </ul>
+                  {BOOKING_ITEMS[bookIndex]}
+                  {/* Reads the current string from the array.
+                      As attrIndex cycles 0 → 1 → 2 → 0, this text changes. */}
+                </motion.p>
+              </AnimatePresence>
+            </div>
           </motion.div>
 
         </motion.div>
