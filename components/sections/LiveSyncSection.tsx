@@ -31,14 +31,24 @@ interface LoopPost {
   id: string
   text: string
   src: string
-  targetSection: "schedule" | "promo" | "events"  // which kanban column it flies into
+  targetSection: "schedule" | "promo" | "events"  // which row it flies into
+}
+
+// Community feedback items shown in the live feed panel
+interface FeedbackItem {
+  id: string
+  handle: string   // Instagram-style @handle
+  quote: string    // the comment text
+  likes: number    // like count
+  time: string     // e.g. "3 mins ago"
+  avatar: string   // Tailwind background class for the avatar circle
 }
 
 // ─── STATIC DATA ──────────────────────────────────────────────────────────────
 
-// The 8 base Instagram strip posts.
+// The 10 base Instagram strip posts.
 // Cell 0 of the rendered strip is reserved for the loop slot (see below).
-// These 8 fill cells 1–8.
+// These 10 fill cells 1–10.
 // Posts whose target is NOT "filler" will fly to the website panel.
 const BASE_POSTS: BasePost[] = [
   {
@@ -47,7 +57,7 @@ const BASE_POSTS: BasePost[] = [
     timestamp: "2 min ago",
     src: "/livesync_visual/img1.png",
     aspect: "aspect-square",
-    target: "schedule",  // changed from "notice" — now flies into Schedule column
+    target: "schedule",
   },
   {
     id: "ls2",
@@ -105,14 +115,30 @@ const BASE_POSTS: BasePost[] = [
     aspect: "aspect-square",
     target: "filler",
   },
+  {
+    id: "ls9",
+    text: "",
+    timestamp: "3 days ago",
+    src: "/livesync_visual/img13.png",
+    aspect: "aspect-square",
+    target: "filler",
+  },
+  {
+    id: "ls10",
+    text: "",
+    timestamp: "4 days ago",
+    src: "/livesync_visual/img14.png",
+    aspect: "aspect-square",
+    target: "filler",
+  },
 ]
 
 // Only these IDs leave the strip during the main animation.
-// ls5, ls7, ls8 are fillers and stay in place.
+// ls5, ls7–ls10 are fillers and stay in place.
 const ANIMATED_IDS = new Set(["ls1", "ls2", "ls3", "ls4", "ls6"])
 
 // Posts that auto-appear in the Instagram strip after the initial animation.
-// Each one slides in from the left, then flies to the corresponding column.
+// Each one slides in from the left, then flies to the corresponding row.
 const LOOP_POSTS: LoopPost[] = [
   {
     id: "loop0",
@@ -124,7 +150,7 @@ const LOOP_POSTS: LoopPost[] = [
     id: "loop1",
     text: "Sunday Bootcamp",
     src: "/livesync_visual/img11.png",
-    targetSection: "events",  // changed from "schedule"
+    targetSection: "events",
   },
   {
     id: "loop2",
@@ -134,31 +160,47 @@ const LOOP_POSTS: LoopPost[] = [
   },
 ]
 
+// Seed feedback items — shown on first paint before the live simulation starts.
+// avatar uses opacity-variant classes: bg-[color]/20 = very faint tinted circle.
+const FEEDBACK: FeedbackItem[] = [
+  { id: "f1", handle: "@SarahMoves", quote: "That 9 AM class changed my day's energy! (Jiu-Jitsu)", likes: 12, time: "3 mins ago", avatar: "bg-blue-axis/20" },
+  { id: "f2", handle: "@CoachMike", quote: "Best Saturday bootcamp yet. See you next week!", likes: 24, time: "15 mins ago", avatar: "bg-magenta-axis/20" },
+  { id: "f3", handle: "@FitnessFan99", quote: "The spring promo got me — signed up for 3 months!", likes: 8, time: "1 hr ago", avatar: "bg-uv-axis/20" },
+  { id: "f4", handle: "@YogaQueen", quote: "Open mat was incredible — instructor was top tier.", likes: 31, time: "2 hrs ago", avatar: "bg-soft-grey/20" },
+]
+
+// Fixed pool of incoming comments that prepend over time.
+// Using a static pool (not runtime-generated) per the performance rules.
+const INCOMING_COMMENTS: FeedbackItem[] = [
+  { id: "inc1", handle: "@RunnerJay", quote: "Just booked my spot for open mat — cannot wait!", likes: 5, time: "just now", avatar: "bg-blue-axis/20" },
+  { id: "inc2", handle: "@BoxingBella", quote: "The HIIT at 7AM is a different level. Highly recommend.", likes: 9, time: "just now", avatar: "bg-magenta-axis/20" },
+  { id: "inc3", handle: "@StudioReg", quote: "Shoutout to the evening class — always packed with energy.", likes: 17, time: "just now", avatar: "bg-uv-axis/20" },
+]
+
 // ─────────────────────────────────────────────────────────────────────────────
 // HOW THE ANIMATION WORKS (overview for future readers)
 //
 // MAIN ANIMATION (triggered once when section enters viewport):
 //
 //   Step 0  Initial state: Instagram strip fully visible, website panel
-//           faded to 20% opacity. Kanban column slots are empty.
+//           faded to 20% opacity. Row slots are empty.
 //
 //   Step 1  (0.5s) Highlight: posts ls1–ls4 and ls6 scale up and brighten,
 //           drawing the viewer's eye to the posts that are about to move.
 //
 //   Step 2  (1.4s) Flight: the highlighted posts UNMOUNT from the strip.
 //           AnimatePresence records each post's screen position at unmount.
-//           Matching layoutId elements MOUNT in the kanban columns.
+//           Matching layoutId elements MOUNT in the website rows.
 //           Framer Motion automatically animates each element from the strip
 //           position to its destination — the "shared element transition."
 //           Website panel simultaneously fades to full opacity.
 //
-//   Step 3  (2.7s) Column headers fade in via staggered opacity animations.
+//   Step 3  (2.7s) uiVisible = true → live simulation effects start.
 //
 // CONTINUOUS LOOP (starts 1.2s after Step 3):
 //
-//   Every ~8s (1.5s in-strip + 1.2s flight + 5s gap), a new Instagram post
-//   slides into strip cell 0. After 1.5s it "flies" to the website column.
-//   The column gains a new permanent square thumbnail card.
+//   Every ~8s, a new Instagram post slides into strip cell 0. After 1.5s
+//   it "flies" to the website row. The row gains a new permanent thumbnail.
 //   Repeats for LOOP_POSTS.length iterations, then stops.
 //
 // WHY layoutId WORKS:
@@ -179,7 +221,6 @@ const LOOP_POSTS: LoopPost[] = [
 export default function LiveSyncSection() {
 
   // Attach to the <section> so useInView can watch when it enters the viewport.
-  // useRef creates a persistent reference to the DOM node without causing re-renders.
   const sectionRef = useRef<HTMLElement>(null)
 
   // isInView becomes true once 30% of the section is visible.
@@ -188,7 +229,6 @@ export default function LiveSyncSection() {
 
   // ── MAIN ANIMATION STEP ───────────────────────────────────────────────────
   // A number (0–3) that drives which phase of the animation is active.
-  // useState is React's way to store values that, when changed, cause a re-render.
   const [step, setStep] = useState(0)
 
   // ── LOOP STATE ────────────────────────────────────────────────────────────
@@ -201,65 +241,61 @@ export default function LiveSyncSection() {
   //   "flying" → source has unmounted, layoutId transition is in progress
   const [loopPhase, setLoopPhase] = useState<"none" | "ingrid" | "flying">("none")
 
-  // Loop posts that have fully settled into their kanban column.
-  // Each settled post renders as a permanent square thumbnail card.
+  // Loop posts that have fully settled into their row.
+  // Each settled post renders as a permanent square thumbnail.
   // This array grows over time as each loop iteration completes.
   const [settledLoopPosts, setSettledLoopPosts] = useState<LoopPost[]>([])
 
+  // ── DASHBOARD LIVE STATE ──────────────────────────────────────────────────
+  // Studio Capacity: starts at 75%, increments every 10s, caps at 82
+  const [capacity, setCapacity] = useState(75)
+
+  // Countdown: starts at 14 minutes to next class, decrements every 30s
+  const [minutesLeft, setMinutesLeft] = useState(14)
+
+  // Spots taken: starts at 28/30, increments every 20s, caps at 30
+  const [spotsTaken, setSpotsTaken] = useState(28)
+
+  // Community feedback: seed items on load, new ones prepend every 12s
+  const [feedItems, setFeedItems] = useState<FeedbackItem[]>(FEEDBACK)
+
+  // Wave graph drift offset — updated by rAF for smooth visual scroll
+  const [waveOffset, setWaveOffset] = useState(0)
+  // useRef holds the rAF ID between renders so we can cancel it on cleanup
+  const waveRafRef = useRef<number>(0)
+
   // ── MAIN ANIMATION SEQUENCE ───────────────────────────────────────────────
-  // useEffect runs AFTER React renders the component.
-  // The dependency array [isInView] means: re-run whenever isInView changes.
+  // useEffect runs AFTER React renders. [isInView] means: re-run when it changes.
   // We set up a chain of timers that advance `step` over time.
-  // The returned function is the "cleanup" — React calls it when the component
-  // unmounts (leaves the page), cancelling any pending timers to prevent errors.
   useEffect(() => {
     if (!isInView) return
     const t1 = setTimeout(() => setStep(1), 500)   // highlight posts
     const t2 = setTimeout(() => setStep(2), 1400)  // start flight
-    const t3 = setTimeout(() => setStep(3), 2700)  // column headers build in
+    const t3 = setTimeout(() => setStep(3), 2700)  // panel fully visible
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [isInView])
 
   // ── CONTINUOUS LOOP ───────────────────────────────────────────────────────
   // Starts once the main animation is done (step >= 3).
-  // Uses a recursive setTimeout pattern instead of setInterval so that each
-  // cycle can have variable timing and we can limit the total iterations.
   useEffect(() => {
     if (step < 3) return
 
-    // We collect all timer IDs so we can cancel them on cleanup.
     const timers: ReturnType<typeof setTimeout>[] = []
-
-    // `iteration` tracks which loop post we are currently showing.
-    // This is a plain variable (not state) because it only needs to be read
-    // within this effect, not across renders.
     let iteration = 0
 
     function runIteration() {
-      if (iteration >= LOOP_POSTS.length) return  // stop after all loop posts
+      if (iteration >= LOOP_POSTS.length) return
 
-      // Phase 1: slide the new post into the Instagram strip (cell 0)
       setLoopIndex(iteration)
       setLoopPhase("ingrid")
 
-      // Phase 2: after 1.5s, trigger the flight
       const flyTimer = setTimeout(() => {
-        // Setting "flying" causes:
-        //   - The source (in the loop slot) to unmount via AnimatePresence
-        //   - The destination (in the website column) to mount
-        //   - Framer Motion's layoutId to fly the element between the two
         setLoopPhase("flying")
 
-        // Phase 3: after 1.2s, the flight has landed — add settled thumbnail
         const settleTimer = setTimeout(() => {
           const post = LOOP_POSTS[iteration]
-          // Add the landed post to settledLoopPosts so it renders as a
-          // permanent thumbnail card in its target column.
           setSettledLoopPosts(prev => [...prev, post])
-
           iteration++
-
-          // Wait 5s before the next iteration
           const nextTimer = setTimeout(runIteration, 5000)
           timers.push(nextTimer)
         }, 1200)
@@ -268,21 +304,14 @@ export default function LiveSyncSection() {
       timers.push(flyTimer)
     }
 
-    // Delay before the first loop post appears
     const startTimer = setTimeout(runIteration, 1200)
     timers.push(startTimer)
 
-    // Cleanup: cancel every timer if the component unmounts mid-loop
     return () => { timers.forEach(clearTimeout) }
   }, [step])
 
   // ── DERIVED STATE ─────────────────────────────────────────────────────────
-  // These values are computed from state on every render — no extra setState needed.
-
-  // Should website column headers be visible?
   const uiVisible = step >= 3
-
-  // Website panel opacity: faded before images arrive, full once they land
   const websiteOpacity = step >= 2 ? 1 : 0.2
 
   // Returns the Framer Motion `animate` target for an animated strip post.
@@ -297,6 +326,78 @@ export default function LiveSyncSection() {
   const loopInGrid = loopPhase === "ingrid" && activeLoop !== null
   const loopFlying = loopPhase === "flying" && activeLoop !== null
 
+  // ── DASHBOARD DERIVED VALUES ──────────────────────────────────────────────
+  // Full circumference for r=26: 2π×26 ≈ 163.4
+  // strokeDashoffset controls how much of the ring is "drawn".
+  // 163.4 = empty ring, 0 = full ring.
+  const capacityOffset = 163.4 * (1 - capacity / 100)
+  const countdownOffset = 163.4 * (minutesLeft / 60)
+  const spotsLeft = 30 - spotsTaken
+  const urgencyLabel = spotsLeft <= 0
+    ? "CLASS FULL"
+    : spotsLeft === 1
+    ? "ONLY 1 SPOT LEFT"
+    : `ONLY ${spotsLeft} SPOTS LEFT`
+
+  // ── LIVE SIMULATION EFFECTS ───────────────────────────────────────────────
+  // Every effect guards with `if (!uiVisible) return` so nothing runs before
+  // the website panel is visible. [uiVisible] in deps fires the effect exactly
+  // once when uiVisible flips from false to true.
+
+  // Effect A — Studio capacity creep (every 10s, caps at 82)
+  useEffect(() => {
+    if (!uiVisible) return
+    const id = setInterval(() => {
+      setCapacity(prev => prev < 82 ? prev + 1 : prev)
+    }, 10000)
+    return () => clearInterval(id)
+  }, [uiVisible])
+
+  // Effect B — Countdown timer (every 30s, floors at 0)
+  useEffect(() => {
+    if (!uiVisible) return
+    const id = setInterval(() => {
+      setMinutesLeft(prev => prev > 0 ? prev - 1 : 0)
+    }, 30000)
+    return () => clearInterval(id)
+  }, [uiVisible])
+
+  // Effect C — Spots taken (every 20s, caps at 30)
+  useEffect(() => {
+    if (!uiVisible) return
+    const id = setInterval(() => {
+      setSpotsTaken(prev => prev < 30 ? prev + 1 : prev)
+    }, 20000)
+    return () => clearInterval(id)
+  }, [uiVisible])
+
+  // Effect D — Incoming comments (every 12s, cycles through INCOMING_COMMENTS pool)
+  // Capped at 8 items so the array never grows unbounded.
+  useEffect(() => {
+    if (!uiVisible) return
+    let index = 0
+    const id = setInterval(() => {
+      const next = { ...INCOMING_COMMENTS[index % INCOMING_COMMENTS.length], id: `inc-live-${index}` }
+      setFeedItems(prev => [next, ...prev].slice(0, 8))
+      index++
+    }, 12000)
+    return () => clearInterval(id)
+  }, [uiVisible])
+
+  // Effect E — Wave graph rAF drift (0.004px per frame ≈ imperceptibly slow scroll)
+  // rAF is used only here — all other intervals use setInterval per performance rules.
+  useEffect(() => {
+    if (!uiVisible) return
+    let offset = 0
+    function tick() {
+      offset += 0.004
+      setWaveOffset(offset)
+      waveRafRef.current = requestAnimationFrame(tick)
+    }
+    waveRafRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(waveRafRef.current)
+  }, [uiVisible])
+
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER
   // ─────────────────────────────────────────────────────────────────────────
@@ -304,16 +405,14 @@ export default function LiveSyncSection() {
   return (
     <section
       ref={sectionRef}
-      // ref connects the DOM node to sectionRef so useInView can observe it.
-      // Mobile-first padding: py-20 px-6 at all sizes, overridden to py-36 px-12
-      // at md (768px+). Always use this pattern for section padding.
+      // Mobile-first padding: py-20 px-6 at all sizes, overridden at md (768px+).
       className="bg-black-axis py-20 px-6 md:py-36 md:px-12"
     >
       <div className="max-w-6xl mx-auto">
 
         {/* ── SECTION HEADER ───────────────────────────────────────────── */}
-        {/* whileInView is a shorthand for useInView + animate.
-            viewport={{ once: true }} means the animation fires only on first scroll. */}
+        {/* whileInView fires once on scroll entry. viewport={{ once: true }}
+            prevents it from re-animating if the user scrolls back up. */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -332,26 +431,23 @@ export default function LiveSyncSection() {
         </motion.div>
 
         {/* ── VERTICAL STACK LAYOUT ────────────────────────────────────── */}
-        {/* Instagram feed on top, website panel below.
-            flex-col stacks both panels vertically on all screen sizes. */}
+        {/* Instagram feed on top, website panel below. */}
         <div className="flex flex-col gap-12">
 
           {/* ══════════════════════════════════════════════════════════════
-              TOP — INSTAGRAM FEED (horizontal scrolling strip)
+              TOP — INSTAGRAM FEED (horizontal strip, scrollbar removed)
           ══════════════════════════════════════════════════════════════ */}
           <div>
-            {/* Section label — uppercase tracking-widest is the brand subheading style */}
             <p className="font-instrument uppercase tracking-widest text-soft-grey text-xs mb-4">
               Live Instagram
             </p>
 
-            {/* Instagram container — dark surface with a subtle border */}
+            {/* Instagram container — dark surface with subtle border */}
             <div className="bg-grey-axis border border-white-axis/10 rounded-2xl p-4">
 
               {/* Profile header: avatar + studio name + handle */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 rounded-full overflow-hidden shrink-0">
-                  {/* shrink-0 prevents the avatar from squishing in flex layouts */}
                   <Image
                     src="/livesync_visual/img9.png"
                     alt="Sports Studio Instagram profile avatar"
@@ -370,31 +466,22 @@ export default function LiveSyncSection() {
                 </div>
               </div>
 
-              {/* ── HORIZONTAL SCROLLING STRIP ─────────────────────────────
-                  flex + overflow-x-auto creates a horizontally scrollable row.
-                  shrink-0 on each post prevents them from compressing.
-                  pb-2 gives breathing room below the scrollbar.
-                  Cell 0 = LOOP SLOT (reserved for auto-appearing posts).
-                  Cells 1–8 = BASE_POSTS[0..7].
-
-                  gap-[6px] uses an arbitrary Tailwind value because 6px is
-                  the exact gap Instagram uses — no standard spacing token. */}
-              <div className="flex gap-[6px] overflow-x-auto pb-2">
+              {/* ── HORIZONTAL STRIP ─────────────────────────────────────
+                  overflow-x-hidden removes the scrollbar entirely.
+                  Posts beyond the container width are clipped — intentional. */}
+              <div className="flex gap-[6px] overflow-x-hidden">
 
                 {/* ── CELL 0: LOOP SLOT ───────────────────────────────────
                     The outer div always occupies this strip position.
                     AnimatePresence manages the loop post inside it.
                     When loopPhase transitions "ingrid" → "flying", the
-                    motion.div unmounts, Framer Motion records its screen
-                    position, and flies it to the website column destination. */}
+                    motion.div unmounts and flies to the website row. */}
                 <div className="w-24 h-24 relative shrink-0">
                   <AnimatePresence>
                     {loopInGrid && activeLoop && (
                       <motion.div
                         key={activeLoop.id}
                         layoutId={activeLoop.id}
-                        // Slides in from the left — matches the horizontal direction
-                        // of the strip layout (previously was y: -16 for a grid).
                         initial={{ opacity: 0, x: -16 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -407,7 +494,6 @@ export default function LiveSyncSection() {
                           fill
                           className="object-cover"
                         />
-                        {/* No text overlay — images are self-explanatory */}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -418,18 +504,17 @@ export default function LiveSyncSection() {
                   )}
                 </div>
 
-                {/* ── CELLS 1–8: BASE POSTS ───────────────────────────── */}
+                {/* ── CELLS 1–10: BASE POSTS ───────────────────────────── */}
                 {BASE_POSTS.map((post) => {
                   const isFiller = !ANIMATED_IDS.has(post.id)
 
-                  // ── FILLER POSTS (ls5, ls7, ls8) ──────────────────────
-                  // These never leave the strip. Simple motion.div with hover zoom.
+                  // ── FILLER POSTS ────────────────────────────────────────
+                  // These never leave the strip. Safe to use overflow-hidden
+                  // on the wrapper because they never use layoutId.
                   if (isFiller) {
                     return (
                       <motion.div
                         key={post.id}
-                        // overflow-hidden here is safe because this element never
-                        // uses layoutId — it stays put and just scales on hover.
                         className="w-24 h-24 shrink-0 overflow-hidden rounded-sm relative"
                         whileHover={{ scale: 1.03 }}
                         transition={{ duration: 0.35, ease: "easeOut" }}
@@ -440,18 +525,14 @@ export default function LiveSyncSection() {
                           fill
                           className="object-cover"
                         />
-                        {/* No text overlay — images are self-explanatory */}
                       </motion.div>
                     )
                   }
 
-                  // ── ANIMATED POSTS (ls1–ls4, ls6) ─────────────────────
-                  // Structure:
-                  //   outer div  → always in the strip, holds the cell's space
-                  //                even after the image has flown away
-                  //   inner motion.div (layoutId) → present at step < 2,
-                  //                unmounts at step 2 triggering the flight
-                  //   placeholder div → appears after the post has flown away
+                  // ── ANIMATED POSTS (ls1–ls4, ls6) ──────────────────────
+                  // outer div → always in the strip, holds the cell's space
+                  // inner motion.div (layoutId) → unmounts at step 2, triggering flight
+                  // placeholder div → appears after the post has flown away
                   return (
                     <div key={post.id} className="w-24 h-24 relative shrink-0">
                       <AnimatePresence>
@@ -472,13 +553,11 @@ export default function LiveSyncSection() {
                               fill
                               className="object-cover"
                             />
-                            {/* No text overlay — images are self-explanatory */}
                           </motion.div>
                         )}
                       </AnimatePresence>
 
-                      {/* Ghost placeholder once the post has flown away.
-                          Very faint so the strip still reads as "posts extracted." */}
+                      {/* Ghost placeholder once the post has flown away */}
                       {step >= 2 && (
                         <div className="absolute inset-0 rounded-sm bg-white-axis/5" />
                       )}
@@ -491,354 +570,668 @@ export default function LiveSyncSection() {
           </div>
 
           {/* ══════════════════════════════════════════════════════════════
-              BOTTOM — AUTO-UPDATING WEBSITE (4-column kanban)
-              Animates from opacity 0.2 → 1 as the posts arrive.
+              BOTTOM — AUTO-UPDATING WEBSITE (rich dashboard panel)
+              Animates from opacity 0.2 → 1 as posts arrive.
           ══════════════════════════════════════════════════════════════ */}
           <div>
             <p className="font-instrument uppercase tracking-widest text-soft-grey text-xs mb-4">
               Auto-updating website
             </p>
 
-            {/* The website panel.
+            {/* Website panel wrapper.
                 `animate` prop responds to state changes and re-animates smoothly.
-                This is different from `whileInView` — it runs whenever the
-                animated value changes, not just on scroll entry. */}
+                `relative` added so the live indicator can be positioned absolutely. */}
             <motion.div
               initial={{ opacity: 0.2, y: 10 }}
               animate={{ opacity: websiteOpacity, y: step >= 2 ? 0 : 10 }}
               transition={{ duration: 0.7, ease: "easeOut" }}
-              className="bg-white-axis rounded-2xl p-6"
+              className="bg-white-axis rounded-2xl p-6 relative"
             >
 
-              {/* ── LIVE INDICATOR ─────────────────────────────────────
-                  Green pulsing dot + "Live" label in the top-right corner.
-                  bg-green-500 is a standard Tailwind default colour.
-                  No brand token exists for "system online" status —
-                  green is the universal UI convention here. */}
-              <div className="flex justify-end mb-4">
-                <div className="flex items-center gap-1.5">
-                  {/* Repeating opacity animation = heartbeat pulse effect.
-                      `repeat: Infinity` makes it loop forever. */}
-                  <motion.div
-                    animate={{ opacity: [1, 0.25, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                    className="w-2 h-2 rounded-full bg-green-500"
-                  />
-                  <p className="font-instrument text-black-axis text-xs font-semibold">
-                    Live
+              {/* ── LIVE INDICATOR (absolute top-right) ──────────────────
+                  Pulsing blue dot replaces the previous green one —
+                  blue-axis is the brand accent for system status. */}
+              <div className="absolute top-4 right-4 flex items-center gap-1.5">
+                <motion.div
+                  animate={{ opacity: [1, 0.25, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="w-2 h-2 rounded-full bg-blue-axis"
+                />
+                <p className="font-instrument text-black-axis text-xs font-semibold">Live</p>
+              </div>
+
+              {/* ── MAIN 2-COLUMN GRID ───────────────────────────────────
+                  Left (30%): update feed rows A–D.
+                  Right (1fr): NEXT UP spotlight card.
+                  grid-cols-[30%_1fr] is a Tailwind arbitrary value — no inline style needed. */}
+              <div className="grid gap-6 grid-cols-[30%_1fr]">
+
+                {/* ── LEFT COLUMN: UPDATE FEED (rows A–D) ──────────────── */}
+                <div className="flex flex-col gap-6">
+
+                  {/* ── ROW A: SCHEDULE UPDATES ──────────────────────────
+                      Receives: ls1 (main anim) + ls2 (main anim) + loop0 */}
+                  <div>
+                    {/* Row header — title on left, timestamp on right */}
+                    <div className="flex items-baseline justify-between mb-1">
+                      <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">
+                        SCHEDULE UPDATES
+                      </p>
+                      <p className="font-instrument text-[9px] text-soft-grey">Updated Today, 8:00 AM</p>
+                    </div>
+
+                    {/* Thumbnail strip — horizontal flex row.
+                        Each thumbnail is wrapped in a hover motion.div for scale+z-index lift.
+                        The inner div is the fixed-size slot; the motion.div with layoutId flies in.
+                        No overflow-hidden on either wrapper (OVERFLOW CLIPPING RULE). */}
+                    <div className="flex gap-2 mt-2 flex-wrap">
+
+                      {/* ls1 thumbnail */}
+                      <motion.div
+                        className="relative z-[1]"
+                        whileHover={{ scale: 1.25, zIndex: 10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="w-16 h-16 relative shrink-0">
+                          <AnimatePresence>
+                            {step >= 2 && (
+                              <motion.div
+                                layoutId="ls1"
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                transition={{ duration: 1.0, ease: "easeInOut" }}
+                              >
+                                <Image
+                                  src="/livesync_visual/img1.png"
+                                  alt="Instagram post about class update — schedule row thumbnail"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+
+                      {/* ls2 thumbnail — slight delay so it arrives staggered after ls1 */}
+                      <motion.div
+                        className="relative z-[1]"
+                        whileHover={{ scale: 1.25, zIndex: 10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="w-16 h-16 relative shrink-0">
+                          <AnimatePresence>
+                            {step >= 2 && (
+                              <motion.div
+                                layoutId="ls2"
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                transition={{ duration: 1.0, ease: "easeInOut", delay: 0.1 }}
+                              >
+                                <Image
+                                  src="/livesync_visual/img2.png"
+                                  alt="New HIIT class Instagram post — schedule row thumbnail"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+
+                      {/* Permanent settled cards for loop posts that landed here */}
+                      {settledLoopPosts
+                        .filter(p => p.targetSection === "schedule")
+                        .map(p => (
+                          <motion.div
+                            key={p.id}
+                            className="relative z-[1]"
+                            whileHover={{ scale: 1.25, zIndex: 10 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <div className="w-16 h-16 relative shrink-0">
+                              <motion.div
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                              >
+                                <Image
+                                  src={p.src}
+                                  alt={`New schedule post: ${p.text}`}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </motion.div>
+                            </div>
+                          </motion.div>
+                        ))
+                      }
+
+                      {/* Flying destination for loop → schedule.
+                          Mounts mid-flight, fades to near-invisible as settled card appears. */}
+                      {loopFlying && activeLoop?.targetSection === "schedule" && (
+                        <motion.div
+                          className="relative z-[1]"
+                          whileHover={{ scale: 1.25, zIndex: 10 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="w-16 h-16 relative shrink-0">
+                            <motion.div
+                              layoutId={activeLoop.id}
+                              className="absolute inset-0 rounded-lg overflow-hidden"
+                              initial={{ opacity: 1 }}
+                              animate={{ opacity: 0.12 }}
+                              transition={{ duration: 0.7, ease: "easeInOut" }}
+                            >
+                              <Image
+                                src={activeLoop.src}
+                                alt={`New Instagram post landing in schedule: ${activeLoop.text}`}
+                                fill
+                                className="object-cover"
+                              />
+                            </motion.div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                    </div>
+                  </div>
+
+                  {/* ── ROW B: NEWS ──────────────────────────────────────
+                      Receives: ls4 (main anim) */}
+                  <div>
+                    <div className="flex items-baseline justify-between mb-1">
+                      <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">
+                        NEWS
+                      </p>
+                      <p className="font-instrument text-[9px] text-soft-grey">Updated: 2 mins ago</p>
+                    </div>
+
+                    <div className="flex gap-2 mt-2 flex-wrap">
+
+                      {/* ls4 thumbnail */}
+                      <motion.div
+                        className="relative z-[1]"
+                        whileHover={{ scale: 1.25, zIndex: 10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="w-16 h-16 relative shrink-0">
+                          <AnimatePresence>
+                            {step >= 2 && (
+                              <motion.div
+                                layoutId="ls4"
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}
+                              >
+                                <Image
+                                  src="/livesync_visual/img4.png"
+                                  alt="Welcome Coach Alex Instagram post — news row thumbnail"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+
+                    </div>
+                  </div>
+
+                  {/* ── ROW C: PROMOTIONS ────────────────────────────────
+                      Receives: ls3 (main anim) + loop2 */}
+                  <div>
+                    <div className="flex items-baseline justify-between mb-1">
+                      <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">
+                        PROMOTIONS
+                      </p>
+                      <p className="font-instrument text-[9px] text-soft-grey">Updated Today, 11:30 AM</p>
+                    </div>
+
+                    <div className="flex gap-2 mt-2 flex-wrap">
+
+                      {/* ls3 thumbnail */}
+                      <motion.div
+                        className="relative z-[1]"
+                        whileHover={{ scale: 1.25, zIndex: 10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="w-16 h-16 relative shrink-0">
+                          <AnimatePresence>
+                            {step >= 2 && (
+                              <motion.div
+                                layoutId="ls3"
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}
+                              >
+                                <Image
+                                  src="/livesync_visual/img3.png"
+                                  alt="Spring Sale Instagram promotion post — promotions row thumbnail"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+
+                      {/* Permanent settled cards for loop posts that landed here */}
+                      {settledLoopPosts
+                        .filter(p => p.targetSection === "promo")
+                        .map(p => (
+                          <motion.div
+                            key={p.id}
+                            className="relative z-[1]"
+                            whileHover={{ scale: 1.25, zIndex: 10 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <div className="w-16 h-16 relative shrink-0">
+                              <motion.div
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                              >
+                                <Image
+                                  src={p.src}
+                                  alt={`New promotion: ${p.text}`}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </motion.div>
+                            </div>
+                          </motion.div>
+                        ))
+                      }
+
+                      {/* Flying destination for loop → promo */}
+                      {loopFlying && activeLoop?.targetSection === "promo" && (
+                        <motion.div
+                          className="relative z-[1]"
+                          whileHover={{ scale: 1.25, zIndex: 10 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="w-16 h-16 relative shrink-0">
+                            <motion.div
+                              layoutId={activeLoop.id}
+                              className="absolute inset-0 rounded-lg overflow-hidden"
+                              initial={{ opacity: 1 }}
+                              animate={{ opacity: 0.12 }}
+                              transition={{ duration: 0.7, ease: "easeInOut" }}
+                            >
+                              <Image
+                                src={activeLoop.src}
+                                alt={`New Instagram post landing in promotions: ${activeLoop.text}`}
+                                fill
+                                className="object-cover"
+                              />
+                            </motion.div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                    </div>
+                  </div>
+
+                  {/* ── ROW D: EVENTS ────────────────────────────────────
+                      Receives: ls6 (main anim) + loop1 */}
+                  <div>
+                    <div className="flex items-baseline justify-between mb-1">
+                      <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">
+                        EVENTS
+                      </p>
+                      <p className="font-instrument text-[9px] text-soft-grey">New: Summer Slam Info added</p>
+                    </div>
+
+                    <div className="flex gap-2 mt-2 flex-wrap">
+
+                      {/* ls6 thumbnail */}
+                      <motion.div
+                        className="relative z-[1]"
+                        whileHover={{ scale: 1.25, zIndex: 10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <div className="w-16 h-16 relative shrink-0">
+                          <AnimatePresence>
+                            {step >= 2 && (
+                              <motion.div
+                                layoutId="ls6"
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                transition={{ duration: 1.0, ease: "easeInOut", delay: 0.3 }}
+                              >
+                                <Image
+                                  src="/livesync_visual/img6.png"
+                                  alt="Workshop Saturday Instagram post — events row thumbnail"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+
+                      {/* Permanent settled cards for loop posts that landed here */}
+                      {settledLoopPosts
+                        .filter(p => p.targetSection === "events")
+                        .map(p => (
+                          <motion.div
+                            key={p.id}
+                            className="relative z-[1]"
+                            whileHover={{ scale: 1.25, zIndex: 10 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <div className="w-16 h-16 relative shrink-0">
+                              <motion.div
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.5, ease: "easeOut" }}
+                              >
+                                <Image
+                                  src={p.src}
+                                  alt={`New event post: ${p.text}`}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </motion.div>
+                            </div>
+                          </motion.div>
+                        ))
+                      }
+
+                      {/* Flying destination for loop → events */}
+                      {loopFlying && activeLoop?.targetSection === "events" && (
+                        <motion.div
+                          className="relative z-[1]"
+                          whileHover={{ scale: 1.25, zIndex: 10 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="w-16 h-16 relative shrink-0">
+                            <motion.div
+                              layoutId={activeLoop.id}
+                              className="absolute inset-0 rounded-lg overflow-hidden"
+                              initial={{ opacity: 1 }}
+                              animate={{ opacity: 0.12 }}
+                              transition={{ duration: 0.7, ease: "easeInOut" }}
+                            >
+                              <Image
+                                src={activeLoop.src}
+                                alt={`New Instagram post landing in events: ${activeLoop.text}`}
+                                fill
+                                className="object-cover"
+                              />
+                            </motion.div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* ── RIGHT COLUMN: NEXT UP SPOTLIGHT ──────────────────── */}
+                <div className="p-4 bg-black-axis rounded-xl flex flex-col gap-3">
+
+                  <p className="font-instrument text-[10px] font-bold text-soft-grey uppercase tracking-widest">
+                    NEXT UP: JIU-JITSU OPEN MAT (8:00 AM)
                   </p>
+
+                  {/* Class preview image — hover scales slightly */}
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.2 }}
+                    className="relative w-full h-32 rounded-xl overflow-hidden"
+                  >
+                    <Image
+                      src="/livesync_visual/img10.png"
+                      alt="Jiu-Jitsu Open Mat class preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </motion.div>
+
+                  <div className="flex flex-col gap-1.5">
+
+                    {/* Countdown — key={minutesLeft} re-triggers enter animation each decrement */}
+                    <p className="font-instrument text-sm font-bold text-white-axis">
+                      Starts in:{" "}
+                      <motion.span
+                        key={minutesLeft}
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="text-magenta-axis"
+                      >
+                        {minutesLeft} MIN
+                      </motion.span>
+                    </p>
+
+                    {/* Progress bar — 30 segments, filled segments reflect spotsTaken.
+                        transition-colors duration-1000 gives a slow smooth fill. */}
+                    <div className="flex flex-col gap-0.5">
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: 30 }).map((_, i) => (
+                          <div
+                            key={i}
+                            className={`h-1.5 flex-1 rounded-full transition-colors duration-1000 ${
+                              i < spotsTaken ? "bg-white-axis" : "bg-soft-grey/20"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <p className="font-instrument text-[9px] text-soft-grey">{spotsTaken}/30 Spots Taken</p>
+                    </div>
+
+                    {/* Urgency callout — key re-triggers fade when label changes */}
+                    <motion.p
+                      key={urgencyLabel}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="font-instrument text-xs font-bold text-magenta-axis bg-magenta-axis/10 rounded-lg px-2 py-1 text-center uppercase tracking-wider"
+                    >
+                      {urgencyLabel}
+                    </motion.p>
+
+                    {/* Book Now button — hover animates bg to blue-axis, text to white-axis.
+                        backgroundColor and color use CSS var() because Framer Motion animate
+                        values are inline styles and cannot use Tailwind class names. */}
+                    <motion.button
+                      whileHover={{ scale: 1.03, backgroundColor: "var(--color-blue-axis)", color: "var(--color-white-axis)" }}
+                      whileTap={{ scale: 0.97 }}
+                      transition={{ duration: 0.2 }}
+                      className="w-full bg-white-axis text-black-axis font-instrument font-bold text-xs py-2 rounded-lg tracking-wider uppercase mt-1"
+                    >
+                      BOOK NOW
+                    </motion.button>
+
+                  </div>
                 </div>
+
               </div>
 
-              {/* ── KANBAN COLUMNS ─────────────────────────────────────
-                  4 equal-width columns side by side.
-                  grid-cols-2 on mobile (two pairs stacked for readability),
-                  grid-cols-4 on md+ (all four columns side by side as designed).
-                  Each column holds a header label + stacked square thumbnails
-                  that grow as images fly in from the Instagram strip. */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {/* ── BOTTOM ROW: STUDIO VITALS + COMMUNITY FEEDBACK ───────
+                  Two equal columns side by side below the main grid. */}
+              <div className="grid grid-cols-2 gap-4 mt-6">
 
-                {/* ── A. SCHEDULE UPDATES COLUMN ─────────────────────────
-                    Receives: ls1 (main anim) + ls2 (main anim) + loop0 */}
-                <div className="flex flex-col gap-2">
+                {/* ── STUDIO VITALS ──────────────────────────────────────── */}
+                <div className="p-4 bg-grey-axis rounded-xl flex flex-col gap-3">
 
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: uiVisible ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="font-instrument text-black-axis text-[10px] font-semibold uppercase tracking-wider"
-                  >
-                    Schedule Updates
-                  </motion.p>
+                  <h3 className="font-instrument text-[10px] font-bold uppercase tracking-widest text-white-axis">
+                    LIVE STUDIO VITALS
+                  </h3>
 
-                  {/* ls1 thumbnail — flies in from strip at step 2.
-                      No overflow-hidden on the outer div (OVERFLOW CLIPPING RULE).
-                      aspect-square sizes the slot as a square via CSS aspect-ratio.
-                      The inner absolute inset-0 fills this square exactly. */}
-                  <div className="aspect-square relative">
-                    <AnimatePresence>
-                      {step >= 2 && (
-                        <motion.div
-                          layoutId="ls1"
-                          className="absolute inset-0 rounded-lg overflow-hidden"
-                          transition={{ duration: 1.0, ease: "easeInOut" }}
-                        >
-                          <Image
-                            src="/livesync_visual/img1.png"
-                            alt="Instagram post about class update — schedule column thumbnail"
-                            fill
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                  <div className="grid grid-cols-2 gap-3">
 
-                  {/* ls2 thumbnail — slight delay so it arrives staggered after ls1.
-                      No overflow-hidden on the outer div (OVERFLOW CLIPPING RULE). */}
-                  <div className="aspect-square relative">
-                    <AnimatePresence>
-                      {step >= 2 && (
-                        <motion.div
-                          layoutId="ls2"
-                          className="absolute inset-0 rounded-lg overflow-hidden"
-                          transition={{ duration: 1.0, ease: "easeInOut", delay: 0.1 }}
-                        >
-                          <Image
-                            src="/livesync_visual/img2.png"
-                            alt="New HIIT class Instagram post — schedule column thumbnail"
-                            fill
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Permanent settled cards for loop posts that landed here.
-                      These appear after each loop post's flight completes (settleTimer).
-                      They fade in gently — no layoutId needed since the flight
-                      has already completed by the time these mount. */}
-                  {settledLoopPosts
-                    .filter(p => p.targetSection === "schedule")
-                    .map(p => (
-                      <div key={p.id} className="aspect-square relative">
-                        <motion.div
-                          className="absolute inset-0 rounded-lg overflow-hidden"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5, ease: "easeOut" }}
-                        >
-                          <Image
-                            src={p.src}
-                            alt={`New schedule post: ${p.text}`}
-                            fill
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      </div>
-                    ))
-                  }
-
-                  {/* Flying destination for loop → schedule.
-                      Mounts when a loop post is mid-flight to this column.
-                      Receives the layoutId element flying from the strip.
-                      Fades to near-invisible once it arrives — the permanent
-                      settled card (above) appears at the same time. */}
-                  {loopFlying && activeLoop?.targetSection === "schedule" && (
-                    <div className="aspect-square relative">
-                      <motion.div
-                        layoutId={activeLoop.id}
-                        className="absolute inset-0 rounded-lg overflow-hidden"
-                        initial={{ opacity: 1 }}
-                        animate={{ opacity: 0.12 }}
-                        transition={{ duration: 0.7, ease: "easeInOut" }}
-                      >
-                        <Image
-                          src={activeLoop.src}
-                          alt={`New Instagram post landing in schedule: ${activeLoop.text}`}
-                          fill
-                          className="object-cover"
+                    {/* Capacity gauge — SVG donut ring, fills as capacity% increases.
+                        strokeDashoffset controls how much of the ring is drawn.
+                        163.4 = full circumference (empty ring). 0 = full ring. */}
+                    <div className="flex flex-col items-center gap-1">
+                      <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Capacity</p>
+                      <svg viewBox="0 0 64 64" width="56" height="56">
+                        {/* Background ring — always full circle, muted */}
+                        <circle cx="32" cy="32" r="26" fill="none" stroke="var(--color-soft-grey)" strokeWidth="5" opacity="0.2" />
+                        {/* Foreground ring — animated, reflects capacity state */}
+                        <motion.circle
+                          cx="32" cy="32" r="26"
+                          fill="none"
+                          stroke="var(--color-blue-axis)"
+                          strokeWidth="5"
+                          strokeLinecap="round"
+                          strokeDasharray="163.4"
+                          animate={{ strokeDashoffset: uiVisible ? capacityOffset : 163.4 }}
+                          transition={{ duration: 8, ease: "linear" }}
+                          transform="rotate(-90 32 32)"
                         />
-                      </motion.div>
+                        {/* SVG <text> uses attributes not class names.
+                            fontFamily references the CSS variable set by next/font. */}
+                        <text x="32" y="36" textAnchor="middle" fontSize="8" fontWeight="bold"
+                          fill="var(--color-white-axis)" fontFamily="var(--font-instrument)">
+                          {capacity}% FULL
+                        </text>
+                      </svg>
                     </div>
-                  )}
 
+                    {/* Countdown ring — shows minutes until next class */}
+                    <div className="flex flex-col items-center gap-1">
+                      <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Next Class</p>
+                      <svg viewBox="0 0 64 64" width="56" height="56">
+                        <circle cx="32" cy="32" r="26" fill="none" stroke="var(--color-soft-grey)" strokeWidth="5" opacity="0.2" />
+                        <motion.circle
+                          cx="32" cy="32" r="26"
+                          fill="none"
+                          stroke="var(--color-magenta-axis)"
+                          strokeWidth="5"
+                          strokeLinecap="round"
+                          strokeDasharray="163.4"
+                          animate={{ strokeDashoffset: uiVisible ? countdownOffset : 163.4 }}
+                          transition={{ duration: 8, ease: "linear" }}
+                          transform="rotate(-90 32 32)"
+                        />
+                        <text x="32" y="36" textAnchor="middle" fontSize="8" fontWeight="bold"
+                          fill="var(--color-white-axis)" fontFamily="var(--font-instrument)">
+                          {minutesLeft} MIN
+                        </text>
+                      </svg>
+                    </div>
+
+                    {/* Wave graph — col-span-2. Drifts slowly rightward via waveOffset (rAF).
+                        Two copies of the wave path side by side prevent gap when it wraps.
+                        clipPath clips them to the SVG viewport bounds. */}
+                    <div className="col-span-2 flex flex-col gap-1">
+                      <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Studio Energy Flow</p>
+                      {/* overflow: hidden on SVG — no Tailwind equivalent for SVG overflow attribute */}
+                      <svg viewBox="0 0 120 40" width="100%" height="40" style={{ overflow: "hidden" }}>
+                        <defs>
+                          <linearGradient id="energyGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="var(--color-uv-axis)" stopOpacity="0.5" />
+                            <stop offset="100%" stopColor="var(--color-uv-axis)" stopOpacity="0" />
+                          </linearGradient>
+                          <clipPath id="waveClip">
+                            <rect x="0" y="0" width="120" height="40" />
+                          </clipPath>
+                        </defs>
+                        <g clipPath="url(#waveClip)" transform={`translate(${-(waveOffset % 120)}, 0)`}>
+                          {[0, 120].map(xShift => (
+                            <g key={xShift} transform={`translate(${xShift}, 0)`}>
+                              <path
+                                d="M0,35 C10,20 20,8 30,10 C40,12 50,22 60,20 C70,18 80,12 90,8 C100,5 110,8 120,15 L120,40 L0,40 Z"
+                                fill="url(#energyGrad)"
+                              />
+                              <motion.path
+                                d="M0,35 C10,20 20,8 30,10 C40,12 50,22 60,20 C70,18 80,12 90,8 C100,5 110,8 120,15"
+                                fill="none"
+                                stroke="var(--color-blue-axis)"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: uiVisible ? 1 : 0 }}
+                                transition={{ duration: 2, ease: "easeOut", delay: 0.3 }}
+                              />
+                            </g>
+                          ))}
+                        </g>
+                        {/* Time labels along the bottom of the graph */}
+                        {[["2", "7AM"], ["40", "12PM"], ["78", "5PM"], ["108", "10PM"]].map(([x, label]) => (
+                          <text key={label} x={x} y="39" fontSize="5"
+                            fill="var(--color-soft-grey)" fontFamily="var(--font-instrument)">{label}</text>
+                        ))}
+                      </svg>
+                    </div>
+
+                    {/* Members in studio — pulsing dot indicator */}
+                    <div className="col-span-2 flex items-center gap-2">
+                      <motion.div
+                        animate={{ opacity: [1, 0.3, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        className="w-2 h-2 rounded-full bg-blue-axis shrink-0"
+                      />
+                      <p className="font-instrument text-[10px] font-bold text-white-axis">12 MEMBERS IN STUDIO</p>
+                    </div>
+
+                  </div>
                 </div>
 
-                {/* ── B. NEWS COLUMN ─────────────────────────────────────
-                    Receives: ls4 (main anim) */}
-                <div className="flex flex-col gap-2">
+                {/* ── COMMUNITY FEEDBACK ──────────────────────────────────── */}
+                <div className="p-4 bg-grey-axis rounded-xl flex flex-col gap-2">
 
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: uiVisible ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
-                    className="font-instrument text-black-axis text-[10px] font-semibold uppercase tracking-wider"
-                  >
-                    News
-                  </motion.p>
-
-                  {/* ls4 thumbnail — flies in from strip at step 2.
-                      No overflow-hidden on the outer div (OVERFLOW CLIPPING RULE). */}
-                  <div className="aspect-square relative">
-                    <AnimatePresence>
-                      {step >= 2 && (
-                        <motion.div
-                          layoutId="ls4"
-                          className="absolute inset-0 rounded-lg overflow-hidden"
-                          transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}
-                        >
-                          <Image
-                            src="/livesync_visual/img4.png"
-                            alt="Welcome Coach Alex Instagram post — news column thumbnail"
-                            fill
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                </div>
-
-                {/* ── C. PROMOTIONS COLUMN ───────────────────────────────
-                    Receives: ls3 (main anim) + loop2 */}
-                <div className="flex flex-col gap-2">
-
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: uiVisible ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
-                    className="font-instrument text-black-axis text-[10px] font-semibold uppercase tracking-wider"
-                  >
-                    Promotions
-                  </motion.p>
-
-                  {/* ls3 thumbnail — flies in from strip at step 2.
-                      No overflow-hidden on the outer div (OVERFLOW CLIPPING RULE). */}
-                  <div className="aspect-square relative">
-                    <AnimatePresence>
-                      {step >= 2 && (
-                        <motion.div
-                          layoutId="ls3"
-                          className="absolute inset-0 rounded-lg overflow-hidden"
-                          transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}
-                        >
-                          <Image
-                            src="/livesync_visual/img3.png"
-                            alt="Spring Sale Instagram promotion post — promotions column thumbnail"
-                            fill
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Permanent settled cards for loop posts that landed here */}
-                  {settledLoopPosts
-                    .filter(p => p.targetSection === "promo")
-                    .map(p => (
-                      <div key={p.id} className="aspect-square relative">
-                        <motion.div
-                          className="absolute inset-0 rounded-lg overflow-hidden"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5, ease: "easeOut" }}
-                        >
-                          <Image
-                            src={p.src}
-                            alt={`New promotion: ${p.text}`}
-                            fill
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      </div>
-                    ))
-                  }
-
-                  {/* Flying destination for loop → promo */}
-                  {loopFlying && activeLoop?.targetSection === "promo" && (
-                    <div className="aspect-square relative">
+                  {/* Panel header with live indicator */}
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-instrument text-[10px] font-bold uppercase tracking-widest text-white-axis">
+                      Community
+                    </h3>
+                    <div className="flex items-center gap-1 ml-auto">
                       <motion.div
-                        layoutId={activeLoop.id}
-                        className="absolute inset-0 rounded-lg overflow-hidden"
-                        initial={{ opacity: 1 }}
-                        animate={{ opacity: 0.12 }}
-                        transition={{ duration: 0.7, ease: "easeInOut" }}
-                      >
-                        <Image
-                          src={activeLoop.src}
-                          alt={`New Instagram post landing in promotions: ${activeLoop.text}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </motion.div>
+                        animate={{ opacity: [1, 0.25, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        className="w-1.5 h-1.5 rounded-full bg-blue-axis"
+                      />
+                      <p className="font-instrument text-[9px] text-blue-axis font-semibold">LIVE</p>
                     </div>
-                  )}
-
-                </div>
-
-                {/* ── D. EVENTS COLUMN ───────────────────────────────────
-                    Receives: ls6 (main anim) + loop1 */}
-                <div className="flex flex-col gap-2">
-
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: uiVisible ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut", delay: 0.15 }}
-                    className="font-instrument text-black-axis text-[10px] font-semibold uppercase tracking-wider"
-                  >
-                    Events
-                  </motion.p>
-
-                  {/* ls6 thumbnail — flies in from strip at step 2.
-                      No overflow-hidden on the outer div (OVERFLOW CLIPPING RULE). */}
-                  <div className="aspect-square relative">
-                    <AnimatePresence>
-                      {step >= 2 && (
-                        <motion.div
-                          layoutId="ls6"
-                          className="absolute inset-0 rounded-lg overflow-hidden"
-                          transition={{ duration: 1.0, ease: "easeInOut", delay: 0.3 }}
-                        >
-                          <Image
-                            src="/livesync_visual/img6.png"
-                            alt="Workshop Saturday Instagram post — events column thumbnail"
-                            fill
-                            className="object-cover"
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </div>
 
-                  {/* Permanent settled cards for loop posts that landed here */}
-                  {settledLoopPosts
-                    .filter(p => p.targetSection === "events")
-                    .map(p => (
-                      <div key={p.id} className="aspect-square relative">
+                  {/* Fixed-height scroll container — new comments prepend at top.
+                      scrollbarWidth and scrollbarColor are CSS properties with no Tailwind
+                      equivalent, so they use inline styles. h-[160px] is Tailwind arbitrary value. */}
+                  <div
+                    className="flex flex-col gap-2 overflow-y-scroll h-[160px]"
+                    style={{ scrollbarWidth: "thin", scrollbarColor: "var(--color-soft-grey) transparent" }}
+                  >
+                    {/* AnimatePresence initial={false} prevents seed cards from animating on
+                        first render — only newly prepended items get the slide-in animation.
+                        `layout` on each card tells Framer Motion to animate existing cards
+                        downward smoothly when a new card prepends above them. */}
+                    <AnimatePresence initial={false}>
+                      {feedItems.map((item) => (
                         <motion.div
-                          className="absolute inset-0 rounded-lg overflow-hidden"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5, ease: "easeOut" }}
+                          key={item.id}
+                          layout
+                          initial={{ opacity: 0, y: -12, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.35, ease: "easeOut" }}
+                          whileHover={{ scale: 1.02 }}
+                          className="flex items-start gap-2 p-2 bg-white-axis/5 rounded-lg shrink-0"
                         >
-                          <Image
-                            src={p.src}
-                            alt={`New event post: ${p.text}`}
-                            fill
-                            className="object-cover"
-                          />
+                          {/* Avatar — tinted with brand color at low opacity */}
+                          <div className={`w-6 h-6 rounded-full shrink-0 ${item.avatar}`} />
+                          <div className="flex flex-col gap-0.5 min-w-0">
+                            <p className="font-instrument text-[9px] font-bold text-soft-grey">{item.handle}</p>
+                            <p className="font-instrument text-[10px] font-semibold text-white-axis leading-tight">&ldquo;{item.quote}&rdquo;</p>
+                            <p className="font-instrument text-[9px] text-soft-grey">❤️ {item.likes} · {item.time}</p>
+                          </div>
                         </motion.div>
-                      </div>
-                    ))
-                  }
-
-                  {/* Flying destination for loop → events */}
-                  {loopFlying && activeLoop?.targetSection === "events" && (
-                    <div className="aspect-square relative">
-                      <motion.div
-                        layoutId={activeLoop.id}
-                        className="absolute inset-0 rounded-lg overflow-hidden"
-                        initial={{ opacity: 1 }}
-                        animate={{ opacity: 0.12 }}
-                        transition={{ duration: 0.7, ease: "easeInOut" }}
-                      >
-                        <Image
-                          src={activeLoop.src}
-                          alt={`New Instagram post landing in events: ${activeLoop.text}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </motion.div>
-                    </div>
-                  )}
+                      ))}
+                    </AnimatePresence>
+                  </div>
 
                 </div>
 
               </div>
+
             </motion.div>
           </div>
 
