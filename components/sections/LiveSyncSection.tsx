@@ -397,8 +397,8 @@ export default function LiveSyncSection() {
                 <div className="grid grid-cols-[60%_40%] gap-6">
 
                   {/* ── CELL A: SCHEDULE UPDATES (top-left) ────────────── */}
-                  <div>
-                    <div className="flex items-baseline justify-between mb-1">
+                  <div className="mb-1">
+                    <div className="">
                       <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">SCHEDULE UPDATES</p>
                       <p className="font-instrument text-[9px] text-soft-grey">Today, 8:00 AM</p>
                     </div>
@@ -458,7 +458,7 @@ export default function LiveSyncSection() {
 
                   {/* ── CELL B: NEWS (top-right) ────────────────────────── */}
                   <div>
-                    <div className="flex items-baseline justify-between mb-1">
+                    <div className="mb-1">
                       <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">NEWS</p>
                       <p className="font-instrument text-[9px] text-soft-grey">2 mins ago</p>
                     </div>
@@ -482,7 +482,7 @@ export default function LiveSyncSection() {
 
                   {/* ── CELL C: PROMOTIONS (bottom-left) ─────────────────── */}
                   <div>
-                    <div className="flex items-baseline justify-between mb-1">
+                    <div className="mb-1">
                       <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">PROMOTIONS</p>
                       <p className="font-instrument text-[9px] text-soft-grey">Today, 11:30 AM</p>
                     </div>
@@ -526,7 +526,7 @@ export default function LiveSyncSection() {
 
                   {/* ── CELL D: EVENTS (bottom-right) ───────────────────── */}
                   <div>
-                    <div className="flex items-baseline justify-between mb-1">
+                    <div className="mb-1">
                       <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">EVENTS</p>
                       <p className="font-instrument text-[9px] text-soft-grey">Summer Slam added</p>
                     </div>
@@ -667,122 +667,130 @@ export default function LiveSyncSection() {
                     LIVE STUDIO VITALS
                   </h3>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  {/* flex row: wave + members on the left, two circles stacked on the right */}
+                  <div className="flex gap-6 items-stretch">
 
-                    {/* Capacity gauge — pulsing wrapper shows it's live data.
-                        Each gauge pulses at a slightly different rate for an organic feel. */}
-                    <div className="flex flex-col items-center gap-1">
-                      <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Capacity</p>
+                    {/* LEFT — label top, wave graph fills space, members at bottom */}
+                    <div className="flex-1 flex flex-col border-r border-black-axis/10 pr-6">
+
+                      {/* Wave graph — drifts rightward via rAF waveOffset */}
                       <motion.div
+                        className="flex flex-col gap-1 flex-1 min-h-0"
                         animate={{ opacity: [0.65, 1, 0.65] }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
                       >
-                        <svg viewBox="0 0 64 64" width="60" height="60">
-                          <circle cx="32" cy="32" r="26" fill="none" stroke="var(--color-soft-grey)" strokeWidth="5" opacity="0.2" />
-                          <motion.circle
-                            cx="32" cy="32" r="26"
-                            fill="none"
-                            stroke="var(--color-blue-axis)"
-                            strokeWidth="5"
-                            strokeLinecap="round"
-                            strokeDasharray="163.4"
-                            animate={{ strokeDashoffset: uiVisible ? capacityOffset : 163.4 }}
-                            transition={{ duration: 8, ease: "linear" }}
-                            transform="rotate(-90 32 32)"
-                          />
-                          {/* SVG text uses attributes — fontFamily references the CSS var from next/font */}
-                          <text x="32" y="36" textAnchor="middle" fontSize="8" fontWeight="bold"
-                            fill="var(--color-black-axis)" fontFamily="var(--font-instrument)">
-                            {capacity}% FULL
-                          </text>
-                        </svg>
-                      </motion.div>
-                    </div>
-
-                    {/* Countdown ring — offset by 0.8s so it pulses out of sync with capacity */}
-                    <div className="flex flex-col items-center gap-1">
-                      <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Next Class</p>
-                      <motion.div
-                        animate={{ opacity: [0.65, 1, 0.65] }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-                      >
-                        <svg viewBox="0 0 64 64" width="60" height="60">
-                          <circle cx="32" cy="32" r="26" fill="none" stroke="var(--color-soft-grey)" strokeWidth="5" opacity="0.2" />
-                          <motion.circle
-                            cx="32" cy="32" r="26"
-                            fill="none"
-                            stroke="var(--color-magenta-axis)"
-                            strokeWidth="5"
-                            strokeLinecap="round"
-                            strokeDasharray="163.4"
-                            animate={{ strokeDashoffset: uiVisible ? countdownOffset : 163.4 }}
-                            transition={{ duration: 8, ease: "linear" }}
-                            transform="rotate(-90 32 32)"
-                          />
-                          <text x="32" y="36" textAnchor="middle" fontSize="8" fontWeight="bold"
-                            fill="var(--color-black-axis)" fontFamily="var(--font-instrument)">
-                            {minutesLeft} MIN
-                          </text>
-                        </svg>
-                      </motion.div>
-                    </div>
-
-                    {/* Wave graph — col-span-2. Drifts rightward via rAF waveOffset.
-                        Pulsing wrapper reinforces that it's showing live energy data.
-                        Offset by 1.4s for staggered feel vs the two rings above. */}
-                    <motion.div
-                      className="col-span-2 flex flex-col gap-1"
-                      animate={{ opacity: [0.65, 1, 0.65] }}
-                      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
-                    >
-                      <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Studio Energy Flow</p>
-                      {/* overflow: hidden on SVG — no Tailwind equivalent for the SVG overflow attribute */}
-                      <svg viewBox="0 0 120 48" width="100%" height="48" style={{ overflow: "hidden" }}>
-                        <defs>
-                          <linearGradient id="energyGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="var(--color-uv-axis)" stopOpacity="0.5" />
-                            <stop offset="100%" stopColor="var(--color-uv-axis)" stopOpacity="0" />
-                          </linearGradient>
-                          <clipPath id="waveClip">
-                            <rect x="0" y="0" width="120" height="48" />
-                          </clipPath>
-                        </defs>
-                        <g clipPath="url(#waveClip)" transform={`translate(${-(waveOffset % 120)}, 0)`}>
-                          {/* Two copies side-by-side so the clip never reveals a gap as it scrolls */}
-                          {[0, 120].map(xShift => (
-                            <g key={xShift} transform={`translate(${xShift}, 0)`}>
-                              <path
-                                d="M0,40 C10,25 20,10 30,12 C40,14 50,26 60,24 C70,22 80,14 90,10 C100,6 110,10 120,18 L120,48 L0,48 Z"
-                                fill="url(#energyGrad)"
-                              />
-                              <motion.path
-                                d="M0,40 C10,25 20,10 30,12 C40,14 50,26 60,24 C70,22 80,14 90,10 C100,6 110,10 120,18"
-                                fill="none"
-                                stroke="var(--color-blue-axis)"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: uiVisible ? 1 : 0 }}
-                                transition={{ duration: 2, ease: "easeOut", delay: 0.3 }}
-                              />
-                            </g>
+                        <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Studio Energy Flow</p>
+                        {/* Wrapper div lets the SVG size itself against a flex-grown parent */}
+                        <div className="h-45">
+                        <svg viewBox="0 55 120 85" width="100%" height="100%" style={{ overflow: "hidden", display: "block" }}>
+                          <defs>
+                            <linearGradient id="energyGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="var(--color-uv-axis)" stopOpacity="0.5" />
+                              <stop offset="100%" stopColor="var(--color-uv-axis)" stopOpacity="0" />
+                            </linearGradient>
+                            <clipPath id="waveClip">
+                              <rect x="0" y="0" width="120" height="118" />
+                            </clipPath>
+                          </defs>
+                          <g clipPath="url(#waveClip)" transform={`translate(${-(waveOffset % 10)}, 60)`}>
+                            {[0, 120].map(xShift => (
+                              <g key={xShift} transform={`translate(${xShift}, 0)`}>
+                                <path
+                                  d="M0,40 C10,25 20,10 30,12 C40,14 50,26 60,24 C70,22 80,14 90,10 C100,6 110,10 120,18 L120,48 L0,48 Z"
+                                  fill="url(#energyGrad)"
+                                />
+                                <motion.path
+                                  d="M0,40 C10,25 20,10 30,12 C40,14 50,26 60,24 C70,22 80,14 90,10 C100,6 110,10 120,18"
+                                  fill="none"
+                                  stroke="var(--color-blue-axis)"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                  initial={{ pathLength: 0 }}
+                                  animate={{ pathLength: uiVisible ? 1 : 0 }}
+                                  transition={{ duration: 2, ease: "easeOut", delay: 0.3 }}
+                                />
+                              </g>
+                            ))}
+                          </g>
+                          {[ ["2", "10AM"], ["40", "12PM"], ["78", "5PM"], ["110", "9PM"]].map(([x, label]) => (
+                            <text key={label} x={x} y="120" fontSize="5"
+                              fill="var(--color-soft-grey)" fontFamily="var(--font-instrument)">{label}</text>
                           ))}
-                        </g>
-                        {[["2", "7AM"], ["40", "12PM"], ["78", "5PM"], ["108", "10PM"]].map(([x, label]) => (
-                          <text key={label} x={x} y="47" fontSize="5"
-                            fill="var(--color-soft-grey)" fontFamily="var(--font-instrument)">{label}</text>
-                        ))}
-                      </svg>
-                    </motion.div>
+                        </svg>
+                        </div>
+                      </motion.div>
 
-                    {/* Members in studio — pulsing dot */}
-                    <div className="col-span-2 flex items-center gap-2">
-                      <motion.div
-                        animate={{ opacity: [1, 0.3, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                        className="w-2 h-2 rounded-full bg-blue-axis shrink-0"
-                      />
-                      <p className="font-instrument text-[10px] font-bold text-black-axis">12 MEMBERS IN STUDIO</p>
+                      {/* Members in studio — pulsing dot, pinned to bottom of left column */}
+                      <div className="flex items-center gap-2 mt-auto">
+                        <motion.div
+                          animate={{ opacity: [1, 0.3, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          className="w-2 h-2 rounded-full bg-blue-axis shrink-0"
+                        />
+                        <p className="font-instrument text-[10px] font-bold text-black-axis">12 MEMBERS IN STUDIO</p>
+                      </div>
+
+                    </div>
+
+                    {/* RIGHT — two circles stacked, spaced top and bottom */}
+                    <div className="w-1/3 flex flex-col justify-between items-center py-2">
+
+                      {/* Capacity gauge */}
+                      <div className="flex flex-col items-center gap-1">
+                        <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Capacity</p>
+                        <motion.div
+                          animate={{ opacity: [0.65, 1, 0.65] }}
+                          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                          <svg viewBox="0 0 64 64" width="80" height="80">
+                            <circle cx="32" cy="32" r="26" fill="none" stroke="var(--color-soft-grey)" strokeWidth="5" opacity="0.2" />
+                            <motion.circle
+                              cx="32" cy="32" r="26"
+                              fill="none"
+                              stroke="var(--color-blue-axis)"
+                              strokeWidth="5"
+                              strokeLinecap="round"
+                              strokeDasharray="163.4"
+                              animate={{ strokeDashoffset: uiVisible ? capacityOffset : 163.4 }}
+                              transition={{ duration: 8, ease: "linear" }}
+                              transform="rotate(-90 32 32)"
+                            />
+                            <text x="32" y="36" textAnchor="middle" fontSize="8" fontWeight="bold"
+                              fill="var(--color-black-axis)" fontFamily="var(--font-instrument)">
+                              {capacity}% FULL
+                            </text>
+                          </svg>
+                        </motion.div>
+                      </div>
+
+                      {/* Countdown ring — offset by 0.8s so it pulses out of sync with capacity */}
+                      <div className="flex flex-col items-center gap-1">
+                        <p className="font-instrument text-[9px] text-soft-grey uppercase tracking-wider">Next Class</p>
+                        <motion.div
+                          animate={{ opacity: [0.65, 1, 0.65] }}
+                          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+                        >
+                          <svg viewBox="0 0 64 64" width="80" height="80">
+                            <circle cx="32" cy="32" r="26" fill="none" stroke="var(--color-soft-grey)" strokeWidth="5" opacity="0.2" />
+                            <motion.circle
+                              cx="32" cy="32" r="26"
+                              fill="none"
+                              stroke="var(--color-magenta-axis)"
+                              strokeWidth="5"
+                              strokeLinecap="round"
+                              strokeDasharray="163.4"
+                              animate={{ strokeDashoffset: uiVisible ? countdownOffset : 163.4 }}
+                              transition={{ duration: 8, ease: "linear" }}
+                              transform="rotate(-90 32 32)"
+                            />
+                            <text x="32" y="36" textAnchor="middle" fontSize="8" fontWeight="bold"
+                              fill="var(--color-black-axis)" fontFamily="var(--font-instrument)">
+                              {minutesLeft} MIN
+                            </text>
+                          </svg>
+                        </motion.div>
+                      </div>
+
                     </div>
 
                   </div>

@@ -523,3 +523,9 @@ Note: `layout` on each card tells Framer Motion to animate the position shift sm
 - SVG text elements: `fontFamily="var(--font-instrument)"` directly on the `<text>` attribute.
 - No new npm packages. No external libraries. Uses only Framer Motion (already imported) and React hooks already in use.
 - All existing `layoutId`, `AnimatePresence`, `settledLoopPosts`, loop animation code: **zero modifications**.
+
+
+---------------------------------
+
+
+This is almost perfect. just make the following changes: change the black backgrounds to light-grey ones. the four lines schedule updates, news , promotions, events (currently 4x1) should become a 2x2 square. it should take 70 % of the upper half of the website the ui. also, when hovering with the mouse over one of the pictures, its hover size increase effect should at least be doubled. thus, when hovering, the images become double as big as the current hover effect. the left and remaining 30 % should be use by the jiu jitsu open mat class section. this, this section becomes narrower. this leaves more vertical space for the live studio details. make this section bigger. give the two circle measure-bars and the graph below a pulsating effect to show that they are dynamic do scroll bars should be visible: the instagram feed still has a horizontal scrollbar and the community section on the website ui also as horizontal and vertical scrollbars. hide all of them. also, when the jiu-jitsu section says class full, make sure that the book button is greyed out and does not have any hover effects anymore. make sure the timer starts at 25/30 spots taken and slowly increases until 30. also, use green for the live button pulsatin light. make sure that the upper right live button sits on top of theh website ui on the same line as "auto-updating" website on the right side. is anything unclear ? if so, ask me first to specify anything before starting to code.

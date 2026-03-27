@@ -12,15 +12,15 @@ Confirm you have read all four files and summarize:
 
 # 2. Build
 
-Build: Edit LiveSyncSection.tsx in components/sections/. 
+Build: Edit IntroSection.tsx in components/sections/. 
 
-Content: Read @prompts/Edit_LiveSyncSection.md for exact instructions.
+Content: Read @prompts/Edit_IntroSection.md for exact instructions.
 
 Purpose: Edit this section to make it visually more appealing and its message clearer
 
 Rules:
 - Follow exactly the rules stated in CLAUDE.md, component.md, animate-section.md, SEO.md. 
-- Use the setup specified in @prompts/Edit_LiveSyncSection.md. If there are contradictions between both guidelines, ask me first and let me specify what I need.
+- Use the setup specified in @prompts/Edit_IntroSection.md. If there are contradictions between both guidelines, ask me first and let me specify what I need.
 - If anything is unclear to you, ask me first and let me clarify things for you 
 before building anything.
 
