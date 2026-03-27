@@ -389,12 +389,12 @@ export default function LiveSyncSection() {
               {/* ── MAIN 2-COLUMN GRID ───────────────────────────────────
                   Left (70%): 2×2 grid of the four update rows.
                   Right (30%): NEXT UP spotlight card. */}
-              <div className="grid gap-6 grid-cols-[70%_30%]">
+              <div className="grid gap-6 grid-cols-[65%_35%]">
 
                 {/* ── LEFT: 2×2 GRID OF ROWS ───────────────────────────
                     grid-cols-2 turns the four stacked rows into a 2×2 square.
                     Each cell = row header + horizontal thumbnail strip. */}
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-[60%_40%] gap-6">
 
                   {/* ── CELL A: SCHEDULE UPDATES (top-left) ────────────── */}
                   <div>
@@ -406,7 +406,7 @@ export default function LiveSyncSection() {
 
                       {/* ls1 — hover scale: 2.5 zooms the thumbnail 2.5× its natural size */}
                       <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                        <div className="w-16 h-16 relative shrink-0">
+                        <div className="w-30 h-30 relative shrink-0">
                           <AnimatePresence>
                             {step >= 2 && (
                               <motion.div layoutId="ls1" className="absolute inset-0 rounded-lg overflow-hidden" transition={{ duration: 1.0, ease: "easeInOut" }}>
@@ -419,7 +419,7 @@ export default function LiveSyncSection() {
 
                       {/* ls2 */}
                       <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                        <div className="w-16 h-16 relative shrink-0">
+                        <div className="w-30 h-30 relative shrink-0">
                           <AnimatePresence>
                             {step >= 2 && (
                               <motion.div layoutId="ls2" className="absolute inset-0 rounded-lg overflow-hidden" transition={{ duration: 1.0, ease: "easeInOut", delay: 0.1 }}>
@@ -433,7 +433,8 @@ export default function LiveSyncSection() {
                       {/* Settled loop posts for schedule */}
                       {settledLoopPosts.filter(p => p.targetSection === "schedule").map(p => (
                         <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 relative shrink-0">
+                          <div className="w-29 h-30
+                          relative shrink-0">
                             <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" }}>
                               <Image src={p.src} alt={`New schedule post: ${p.text}`} fill className="object-cover" />
                             </motion.div>
@@ -465,7 +466,7 @@ export default function LiveSyncSection() {
 
                       {/* ls4 */}
                       <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                        <div className="w-16 h-16 relative shrink-0">
+                        <div className="w-30 h-30 relative shrink-0">
                           <AnimatePresence>
                             {step >= 2 && (
                               <motion.div layoutId="ls4" className="absolute inset-0 rounded-lg overflow-hidden" transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}>
@@ -489,7 +490,7 @@ export default function LiveSyncSection() {
 
                       {/* ls3 */}
                       <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                        <div className="w-16 h-16 relative shrink-0">
+                        <div className="w-30 h-30 relative shrink-0">
                           <AnimatePresence>
                             {step >= 2 && (
                               <motion.div layoutId="ls3" className="absolute inset-0 rounded-lg overflow-hidden" transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}>
@@ -502,7 +503,7 @@ export default function LiveSyncSection() {
 
                       {settledLoopPosts.filter(p => p.targetSection === "promo").map(p => (
                         <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 relative shrink-0">
+                          <div className="w-30 h-30 relative shrink-0">
                             <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" }}>
                               <Image src={p.src} alt={`New promotion: ${p.text}`} fill className="object-cover" />
                             </motion.div>
@@ -512,7 +513,7 @@ export default function LiveSyncSection() {
 
                       {loopFlying && activeLoop?.targetSection === "promo" && (
                         <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 relative shrink-0">
+                          <div className="w-29 h-30 relative shrink-0">
                             <motion.div layoutId={activeLoop.id} className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 1 }} animate={{ opacity: 0.12 }} transition={{ duration: 0.7, ease: "easeInOut" }}>
                               <Image src={activeLoop.src} alt={`New Instagram post landing in promotions: ${activeLoop.text}`} fill className="object-cover" />
                             </motion.div>
@@ -533,7 +534,7 @@ export default function LiveSyncSection() {
 
                       {/* ls6 */}
                       <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                        <div className="w-16 h-16 relative shrink-0">
+                        <div className="w-30 h-30 relative shrink-0">
                           <AnimatePresence>
                             {step >= 2 && (
                               <motion.div layoutId="ls6" className="absolute inset-0 rounded-lg overflow-hidden" transition={{ duration: 1.0, ease: "easeInOut", delay: 0.3 }}>
@@ -546,7 +547,7 @@ export default function LiveSyncSection() {
 
                       {settledLoopPosts.filter(p => p.targetSection === "events").map(p => (
                         <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 relative shrink-0">
+                          <div className="w-30 h-30 relative shrink-0">
                             <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" }}>
                               <Image src={p.src} alt={`New event post: ${p.text}`} fill className="object-cover" />
                             </motion.div>
@@ -572,7 +573,7 @@ export default function LiveSyncSection() {
                 {/* ── RIGHT (30%): NEXT UP SPOTLIGHT ───────────────────────
                     bg-neutral-100 replaces the previous black background.
                     All text inside uses dark tokens for contrast on the light surface. */}
-                <div className="p-4 bg-neutral-100 rounded-xl flex flex-col gap-3">
+                <div className="mr-7 p-4 bg-neutral-100 rounded-xl flex flex-col gap-3">
 
                   <p className="font-instrument text-[10px] font-bold text-black-axis/60 uppercase tracking-widest">
                     NEXT UP: JIU-JITSU OPEN MAT (8:00 AM)
