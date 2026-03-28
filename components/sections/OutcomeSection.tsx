@@ -125,7 +125,7 @@ export default function OutcomeSection() {
             // The stagger delay (0.18s) means lines 2 and 3 start 180ms and 360ms later.
 
             className={[
-              "font-instrument",
+              "font-playfair",
               // font-playfair: Playfair Display — the required brand serif for headlines.
               // Per component.md: "Headlines: font-playfair uppercase tracking-tight text-white-axis"
 
@@ -146,7 +146,7 @@ export default function OutcomeSection() {
               // leading-tight: line-height ≈ 1.25×. Keeps any line wraps compact.
             ].join(" ")}
           >
-            Your content becomes a system
+            Your content becomes a system.
           </motion.h2>
 
           {/* LINE 2 */}
@@ -155,7 +155,7 @@ export default function OutcomeSection() {
             // Second child — starts 0.18s after line 1 via staggerChildren.
 
             className={[
-              "font-instrument",
+              "font-playfair",
               "text-3xl md:text-2xl",
               "tracking-tight",
               "text-white-axis",
@@ -164,7 +164,7 @@ export default function OutcomeSection() {
               // both meaning and visual weight. No hierarchy between them.
             ].join(" ")}
           >
-            Your profile becomes a platform
+            Your profile becomes a platform.
           </motion.p>
 
           {/* LINE 3 — punchline */}
@@ -174,20 +174,17 @@ export default function OutcomeSection() {
             // Arriving last gives it natural emphasis as the closing statement.
 
             className={[
-              "font-instrument",
+              "font-playfair",
               "text-3xl md:text-2xl",
-              "tracking-tight",
               "text-white-axis",
               // text-blue-axis: Electric Blue (#0033FF) — the single accent colour
               // in this section. Applied only to the final, most consequential line:
               // "Your audience becomes clients" is the entire value proposition.
               // → text-white-axis to remove the accent and keep all three equal.
               // Rule: only ONE accent colour per section. Do not add uv or magenta here.
-
-              "leading-tight",
             ].join(" ")}
           >
-            Your audience becomes clients
+            Your audience becomes clients.
           </motion.p>
 
         </motion.div>
