@@ -5,42 +5,6 @@ import { SiInstagram } from "@icons-pack/react-simple-icons"
 // SiInstagram: Instagram logo from Simple Icons, already in the project.
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ANIMATION VARIANTS — RIGHT BLOCK (snap/glitch) — unchanged
-// ─────────────────────────────────────────────────────────────────────────────
-
-const glitchItem = {
-  hidden: {
-    opacity: 0,
-    // Starts invisible.
-
-    x: 8,
-    // x: horizontal offset in pixels. Positive = pushed RIGHT from final position.
-    // The line starts 8px to the right and snaps left into place.
-    // → Increase (e.g. 16) for a more visible horizontal snap.
-    // → Decrease (e.g. 4) for a barely-there micro-snap.
-    // → Negate (e.g. -8) to snap in from the LEFT instead.
-
-    filter: "blur(5px)",
-    // "blur(5px)" makes the text soft at the start —
-    // as if the signal hasn't locked in yet. Clears to sharp on arrival.
-  },
-  show: {
-    opacity: 1,
-    x: 0,                // Snaps to its natural horizontal position.
-    filter: "blur(0px)", // Fully sharp at rest.
-    transition: {
-      duration: 0.4,
-      // 0.4s is the minimum allowed by brand guidelines — this is what makes
-      // it feel like a snap rather than a float.
-
-      ease: [0.25, 1, 0.5, 1],
-      // Custom cubic-bezier: very steep initial acceleration → clean sudden stop.
-      // That steep entry creates the "snap" quality.
-    },
-  },
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -57,7 +21,7 @@ export default function IntroSection() {
 
           {/* ── OPENING LINE ──────────────────────────────────────────────── */}
           {/*
-            "You have attention through Instagram." — the section headline (h2).
+            "You have attention." — the section headline (h2).
             Opening premise — the thing the reader already knows.
             Fades and rises in as the section enters the viewport.
           */}
@@ -183,117 +147,200 @@ export default function IntroSection() {
 
         </div>
 
-        {/* ── RIGHT BLOCK ───────────────────────────────────────────────────── */}
-        {/* Plain div — no animation on the container itself.
-            Each child carries its own whileInView trigger so every line
-            fires when IT enters the viewport, not when the parent does. */}
+        {/* ── DIAGNOSTIC BLOCK ──────────────────────────────────────────────── */}
+        {/*
+          Plain div — no animation on the container itself.
+          The section is right-aligned and sits on a dark grey surface
+          to signal a tonal shift: from observation to diagnosis.
+        */}
         <div
           className={[
             "flex flex-col",
-            // Stacks the four lines vertically.
+            // Stacks all lines vertically.
 
             "gap-4 md:gap-6",
-            // Same line spacing as the original left block for visual consistency.
+            // Consistent line spacing throughout.
 
             "items-end",
-            // items-end: in a flex-col layout, aligns children to the RIGHT edge
-            // of the container. This is what right-aligns each line of text.
-            // → "items-start" to switch back to left-aligned.
-            // → "items-center" to center every line.
+            // items-end: aligns each child to the RIGHT edge of the container.
 
             "text-right",
-            // text-right: aligns the TEXT inside each element to the right.
-            // items-end handles block alignment; text-right handles the text
-            // inside multi-line elements. Both are needed.
+            // text-right: aligns text content to the right inside each element.
 
             "bg-grey-axis",
             // bg-grey-axis: background = #121212 (near-black grey).
-            // Just barely darker than the page's #000000 — a subtle surface shift
-            // that signals a tonal change without being a bold visual break.
+            // Slightly darker than the page's #000000 — a subtle surface shift.
 
             "py-10 px-6",
-            // py-10: 40px vertical padding inside the grey box on mobile.
-            // px-6: 24px horizontal padding on mobile.
+            // 40px vertical / 24px horizontal padding on mobile.
 
             "md:py-16 md:px-12",
-            // py-16: 64px vertical padding on desktop.
-            // px-12: 48px horizontal padding on desktop.
+            // 64px vertical / 48px horizontal padding on desktop.
           ].join(" ")}
         >
-          {/* LINE 1 — sub-headline, high contrast */}
-          <motion.h3
-            variants={glitchItem}
-            // Each right-block child gets its own whileInView trigger.
-            // The animation fires when THIS element is 80px above the viewport
-            // bottom — guaranteeing it's clearly visible when it snaps in.
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "0px 0px -80px 0px" }}
-            // No transition prop here — delay is 0 (fires immediately on entering view).
-            className={[
-              "font-instrument",
-              "text-4xl md:text-3xl",
-              "tracking-tight",
-              "text-white-axis",
-              // The heading level is h3 (semantic hierarchy: h1→h2→h3), but it's
-              // styled to match the h2 — the tag controls SEO, not appearance.
 
-              "leading-tight",
-            ].join(" ")}
+          {/* ── PHASE 1: "Your studio has visibility." ────────────────────────── */}
+          {/*
+            Soft entrance — ease-out fade, 0.8s duration, fires immediately (delay: 0).
+            Represents the "status quo" the studio owner is proud of.
+            Stays fully visible as the hammering sequence builds below it.
+          */}
+          <motion.h3
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.5 }}
+            // amount: 0.5 → animation fires only when 50% of the section is
+            // in the viewport, ensuring the user is focused on this content.
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0 }}
+            className="font-playfair text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
           >
-            Your studio has visibility. <br />
-            {/* <br />: forces a line break mid-sentence.
-                Splits "visibility." and "But no structure." onto separate lines.
-                → Remove the <br /> to let it wrap naturally based on container width. */}
-            But no structure.
+            Your studio has visibility.
           </motion.h3>
 
-          {/* LINES 2–4 — the three specific gaps, quiet, deliberate */}
-          <motion.p
-            variants={glitchItem}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "0px 0px -80px 0px" }}
-            transition={{ delay: 0.08 }}
-            // delay: 0.08s — fires 80ms after the h3. Creates a manual cascade
-            // since staggerChildren is not used on the container.
-            className={[
-              "font-instrument",
-              "text-xl md:text-3xl",
-              // Smaller than the h3 — creates the "trailing off" effect.
+          {/* ── PHASE 2: The Staggered "No" Sequence ─────────────────────────── */}
+          {/*
+            Four lines. Each is split into two parts to create a "double-beat":
+              Part A ("The Snap")   — the "No" / "But no" prefix.
+              Part B ("The Suffix") — the reason, 100ms after Part A.
 
-              "text-soft-grey",
-              // Muted colour — these are supporting detail, not the main statement.
+            Each motion.div wraps one full line and handles the vertical entrance
+            (y: 10 → 0 spring). The nested motion.spans control opacity, creating
+            the internal 100ms offset between prefix and suffix.
 
-              "tracking-wide",
-            ].join(" ")}
+            Spring: stiffness 400, damping 30.
+            - High stiffness → fast, mechanical snap (not a float).
+            - Damping 30    → minimal oscillation; arrives and stops cleanly.
+
+            Absolute delays (from viewport entry):
+              Line 1 → 0.8s  (immediately after Phase 1 finishes)
+              Line 2 → 1.3s
+              Line 3 → 1.8s
+              Line 4 → 2.3s
+
+            Part B is always 100ms (0.1s) after Part A of the same line.
+          */}
+
+          {/* LINE 1: "But no" + "structure." — starts at 0.8s */}
+          <motion.div
+            initial={{ y: 10 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.8 }}
+            // This div moves the whole line upward into place at 0.8s.
+            className="flex flex-row gap-x-2 items-baseline justify-end flex-wrap"
           >
-            No clear offer.
-          </motion.p>
+            {/* Part A — snaps in at 0.8s */}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.8 }}
+              className="font-instrument text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
+            >
+              But no
+            </motion.span>
+            {/* Part B — snaps in 100ms after Part A */}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.9 }}
+              className="font-playfair text-xl md:text-3xl text-soft-grey tracking-wide"
+            >
+              structure.
+            </motion.span>
+          </motion.div>
 
-          <motion.p
-            variants={glitchItem}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "0px 0px -80px 0px" }}
-            transition={{ delay: 0.16 }}
-            // delay: 0.16s — 80ms after "No clear offer."
-            className="font-instrument text-xl md:text-3xl text-soft-grey tracking-wide"
+          {/* LINE 2: "No" + "clear offer." — starts at 1.3s */}
+          <motion.div
+            initial={{ y: 10 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.3 }}
+            className="flex flex-row gap-x-2 items-baseline justify-end flex-wrap"
           >
-            No way to buy.
-          </motion.p>
+            {/* Part A — snaps in at 1.3s */}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.3 }}
+              className="font-instrument text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
+            >
+              No
+            </motion.span>
+            {/* Part B — snaps in 100ms after Part A */}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.4 }}
+              className="font-playfair text-xl md:text-3xl text-soft-grey tracking-wide"
+            >
+              clear offer.
+            </motion.span>
+          </motion.div>
 
-          <motion.p
-            variants={glitchItem}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "0px 0px -80px 0px" }}
-            transition={{ delay: 0.24 }}
-            // delay: 0.24s — 80ms after "No way to buy." Last in the cascade.
-            className="font-instrument text-xl md:text-3xl text-soft-grey tracking-wide"
+          {/* LINE 3: "No" + "way to buy." — starts at 1.8s */}
+          <motion.div
+            initial={{ y: 10 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.8 }}
+            className="flex flex-row gap-x-2 items-baseline justify-end flex-wrap"
           >
-            No link that converts.
-          </motion.p>
+            {/* Part A — snaps in at 1.8s */}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.8 }}
+              className="font-instrument text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
+            >
+              No
+            </motion.span>
+            {/* Part B — snaps in 100ms after Part A */}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.9 }}
+              className="font-playfair text-xl md:text-3xl text-soft-grey tracking-wide"
+            >
+              way to buy.
+            </motion.span>
+          </motion.div>
+
+          {/* LINE 4: "No" + "link that converts." — starts at 2.3s */}
+          <motion.div
+            initial={{ y: 10 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.3 }}
+            className="flex flex-row gap-x-2 items-baseline justify-end flex-wrap"
+          >
+            {/* Part A — snaps in at 2.3s */}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.3 }}
+              className="font-instrument text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
+            >
+              No
+            </motion.span>
+            {/* Part B — snaps in 100ms after Part A */}
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.4 }}
+              className="font-playfair text-xl md:text-3xl text-soft-grey tracking-wide"
+            >
+              link that converts.
+            </motion.span>
+          </motion.div>
+
         </div>
 
       </div>
