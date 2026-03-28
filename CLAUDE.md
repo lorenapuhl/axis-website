@@ -46,6 +46,7 @@ When building or modifying any file in the app/ directory, first read:
 - [x] Features
 - [x] Solutions
 - [x] Final CTA
+- [ ] FAQ
 - [x] Footer
 
 --------------------------------------------

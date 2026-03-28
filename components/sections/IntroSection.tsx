@@ -14,7 +14,7 @@ export default function IntroSection() {
       id="intro"
       className="bg-black-axis py-20 px-6 md:py-36 md:px-12"
     >
-      <div className="max-w-6xl mx-auto flex flex-col gap-24 md:gap-32">
+      <div className="max-w-6xl mx-auto flex flex-col gap-26 md:gap-70">
 
         {/* ── TOP BLOCK: scroll sequence ────────────────────────────────────── */}
         <div className="flex flex-col items-center text-center gap-10 md:gap-14">
@@ -179,23 +179,45 @@ export default function IntroSection() {
           ].join(" ")}
         >
 
-          {/* ── PHASE 1: "Your studio has visibility." ────────────────────────── */}
+          {/* ── PHASE 1: "Your studio has visibility." + underline draw ───────────── */}
           {/*
             Soft entrance — ease-out fade, 0.8s duration, fires immediately (delay: 0).
             Represents the "status quo" the studio owner is proud of.
             Stays fully visible as the hammering sequence builds below it.
+
+            The wrapper div uses w-fit so it shrinks to the exact text width.
+            This ensures the underline spans from under "Y" in "Your studio" to
+            the end of "visibility." — not the full container width.
           */}
-          <motion.h3
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.5 }}
-            // amount: 0.5 → animation fires only when 50% of the section is
-            // in the viewport, ensuring the user is focused on this content.
-            transition={{ duration: 0.8, ease: "easeOut", delay: 0 }}
-            className="font-playfair text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
-          >
-            Your studio has visibility.
-          </motion.h3>
+          <div className="w-fit">
+            <motion.h3
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              // amount: 0.5 → animation fires only when 50% of the section is
+              // in the viewport, ensuring the user is focused on this content.
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0 }}
+              className="font-playfair text-4xl md:text-3xl tracking-tight text-soft-grey leading-tight"
+            >
+              Your studio has visibility.
+            </motion.h3>
+
+            {/*
+              Underline: draws left-to-right starting from under "Y" in "Your studio".
+              scaleX: 0 → 1 scales the element horizontally.
+              origin-left: anchors the scale transform to the left edge,
+                           so it draws rightward (not from the center outward).
+              delay: 0.85s — starts just after the h3 finishes fading in (0.8s).
+              duration: 0.6s — finishes at ~1.45s, giving the eye time to read the line.
+            */}
+            <motion.div
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.85 }}
+              className="h-px bg-soft-grey w-full mt-2 origin-left"
+            />
+          </div>
 
           {/* ── PHASE 2: The Staggered "No" Sequence ─────────────────────────── */}
           {/*
@@ -212,29 +234,29 @@ export default function IntroSection() {
             - Damping 30    → minimal oscillation; arrives and stops cleanly.
 
             Absolute delays (from viewport entry):
-              Line 1 → 0.8s  (immediately after Phase 1 finishes)
-              Line 2 → 1.3s
-              Line 3 → 1.8s
-              Line 4 → 2.3s
+              Line 1 → 1.5s  (after underline finishes drawing at ~1.45s)
+              Line 2 → 2.0s
+              Line 3 → 2.5s
+              Line 4 → 3.0s
 
             Part B is always 100ms (0.1s) after Part A of the same line.
           */}
 
-          {/* LINE 1: "But no" + "structure." — starts at 0.8s */}
+          {/* LINE 1: "But no" + "structure." — starts at 2.0s */}
           <motion.div
             initial={{ y: 10 }}
             whileInView={{ y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.8 }}
-            // This div moves the whole line upward into place at 0.8s.
+            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.0 }}
+            // This div moves the whole line upward into place at 2.0s.
             className="flex flex-row gap-x-2 items-baseline justify-end flex-wrap"
           >
-            {/* Part A — snaps in at 0.8s */}
+            {/* Part A — snaps in at 2.0s */}
             <motion.span
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.8 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.0 }}
               className="font-instrument text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
             >
               But no
@@ -244,27 +266,27 @@ export default function IntroSection() {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.1 }}
               className="font-playfair text-xl md:text-3xl text-soft-grey tracking-wide"
             >
               structure.
             </motion.span>
           </motion.div>
 
-          {/* LINE 2: "No" + "clear offer." — starts at 1.3s */}
+          {/* LINE 2: "No" + "clear offer." — starts at 2.5s */}
           <motion.div
             initial={{ y: 10 }}
             whileInView={{ y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.3 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.5 }}
             className="flex flex-row gap-x-2 items-baseline justify-end flex-wrap"
           >
-            {/* Part A — snaps in at 1.3s */}
+            {/* Part A — snaps in at 2.5s */}
             <motion.span
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.3 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.5 }}
               className="font-instrument text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
             >
               No
@@ -274,27 +296,27 @@ export default function IntroSection() {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.4 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.6 }}
               className="font-playfair text-xl md:text-3xl text-soft-grey tracking-wide"
             >
               clear offer.
             </motion.span>
           </motion.div>
 
-          {/* LINE 3: "No" + "way to buy." — starts at 1.8s */}
+          {/* LINE 3: "No" + "way to buy." — starts at 3.0s */}
           <motion.div
             initial={{ y: 10 }}
             whileInView={{ y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.8 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 3.0 }}
             className="flex flex-row gap-x-2 items-baseline justify-end flex-wrap"
           >
-            {/* Part A — snaps in at 1.8s */}
+            {/* Part A — snaps in at 3.0s */}
             <motion.span
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.8 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 3.0 }}
               className="font-instrument text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
             >
               No
@@ -304,27 +326,27 @@ export default function IntroSection() {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 1.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 3.1 }}
               className="font-playfair text-xl md:text-3xl text-soft-grey tracking-wide"
             >
               way to buy.
             </motion.span>
           </motion.div>
 
-          {/* LINE 4: "No" + "link that converts." — starts at 2.3s */}
+          {/* LINE 4: "No" + "link that converts." — starts at 3.5s */}
           <motion.div
             initial={{ y: 10 }}
             whileInView={{ y: 0 }}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.3 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30, delay: 3.5 }}
             className="flex flex-row gap-x-2 items-baseline justify-end flex-wrap"
           >
-            {/* Part A — snaps in at 2.3s */}
+            {/* Part A — snaps in at 3.5s */}
             <motion.span
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.3 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 3.5 }}
               className="font-instrument text-4xl md:text-3xl tracking-tight text-white-axis leading-tight"
             >
               No
@@ -334,7 +356,7 @@ export default function IntroSection() {
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 2.4 }}
+              transition={{ type: "spring", stiffness: 400, damping: 30, delay: 3.6 }}
               className="font-playfair text-xl md:text-3xl text-soft-grey tracking-wide"
             >
               link that converts.
