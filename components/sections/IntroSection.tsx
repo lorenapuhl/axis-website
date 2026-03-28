@@ -1,62 +1,17 @@
 "use client"
 import { motion } from "framer-motion"
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ANIMATION VARIANTS — LEFT BLOCK (fade + rise)
-// ─────────────────────────────────────────────────────────────────────────────
-
-const fadeContainer = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.2,
-      // staggerChildren: how many seconds to wait before starting the NEXT child's animation.
-      // 0.12 = each line starts 120ms after the previous one.
-      // → Increase (e.g. 0.2) for a slower, more dramatic cascade.
-      // → Decrease (e.g. 0.06) for a faster, tighter cascade.
-    },
-  },
-}
-
-const fadeItem = {
-  hidden: {
-    opacity: 0,
-    // opacity: visibility. 0 = fully invisible. 1 = fully visible.
-    // The line starts completely invisible and fades in.
-
-    y: 20,
-    // y: vertical offset in pixels. Positive = pushed DOWN from final position.
-    // 20 means each line starts 20px below where it will land.
-    // → Increase (e.g. 40) for a more dramatic upward travel.
-    // → Decrease (e.g. 8) for a very subtle lift.
-    // → Set to 0 to remove the upward motion entirely (pure fade only).
-  },
-  show: {
-    opacity: 1,  // Fully visible at rest.
-    y: 0,        // Back to its natural document position.
-    transition: {
-      duration: 1.0,
-      // duration: how many seconds the animation takes from hidden → show.
-      // 0.7s is "slow and confident" per brand guidelines.
-      // → Increase (e.g. 1.0) for an even more languid feel.
-      // → Decrease toward 0.4 (the allowed minimum) for snappier reveals.
-
-      ease: "easeOut",
-      // ease: the acceleration curve of the animation.
-      // "easeOut" = starts fast, decelerates to a smooth stop.
-      // Other options: "easeIn" (slow start, fast end), "easeInOut", "linear".
-    },
-  },
-}
+import { SiInstagram } from "@icons-pack/react-simple-icons"
+// SiInstagram: Instagram logo from Simple Icons, already in the project.
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ANIMATION VARIANTS — RIGHT BLOCK (snap/glitch)
+// ANIMATION VARIANTS — RIGHT BLOCK (snap/glitch) — unchanged
 // ─────────────────────────────────────────────────────────────────────────────
 
 const glitchItem = {
   hidden: {
     opacity: 0,
-    // Starts invisible, same as fadeItem.
+    // Starts invisible.
 
     x: 8,
     // x: horizontal offset in pixels. Positive = pushed RIGHT from final position.
@@ -66,30 +21,21 @@ const glitchItem = {
     // → Negate (e.g. -8) to snap in from the LEFT instead.
 
     filter: "blur(5px)",
-    // filter: CSS filter applied to the element.
-    // "blur(1px)" makes the text very slightly soft at the start —
+    // "blur(5px)" makes the text soft at the start —
     // as if the signal hasn't locked in yet. Clears to sharp on arrival.
-    // → Increase (e.g. "blur(3px)") for a more obvious focus-pull effect.
-    // → Remove (set to "blur(0px)" in hidden too) to eliminate the blur entirely.
   },
   show: {
     opacity: 1,
-    x: 0,             // Snaps to its natural horizontal position.
+    x: 0,                // Snaps to its natural horizontal position.
     filter: "blur(0px)", // Fully sharp at rest.
     transition: {
       duration: 0.4,
-      // Shorter than the fade block (0.4 vs 0.7) — this is what makes it feel
-      // like a snap rather than a float. 0.4s is the minimum allowed by brand guidelines.
+      // 0.4s is the minimum allowed by brand guidelines — this is what makes
+      // it feel like a snap rather than a float.
 
-      //ease: [0.16, 1, 0.3, 1],
       ease: [0.25, 1, 0.5, 1],
-      // Custom cubic-bezier curve — replaces the "easeOut" string with a sharper version.
-      // A cubic-bezier takes 4 numbers: [x1, y1, x2, y2].
-      // This curve: very steep initial acceleration → clean sudden stop.
-      // That steep entry is what creates the "snap" quality.
-      // → [0.25, 1, 0.5, 1] for a slightly softer snap.
-      // → [0.05, 1, 0.1, 1] for an even more aggressive snap.
-      // → Replace with "easeOut" to remove the snap and use standard easing.
+      // Custom cubic-bezier: very steep initial acceleration → clean sudden stop.
+      // That steep entry creates the "snap" quality.
     },
   },
 }
@@ -102,207 +48,152 @@ export default function IntroSection() {
   return (
     <section
       id="intro"
-      className={[
-        "bg-black-axis",
-        // bg-black-axis: section background = brand black (#000000).
-        // Defined as a token in globals.css. Never use the raw hex here.
-        // → Change to "bg-grey-axis" (#121212) if you want a slightly lighter surface.
-
-        "py-20 px-6",
-        // py-20: vertical padding (top + bottom) = 80px on mobile.
-        //   → Increase (py-24 = 96px, py-28 = 112px) for more breathing room.
-        //   → Decrease (py-16 = 64px) to compress the section height.
-        // px-6: horizontal padding = 24px on mobile — keeps text off the screen edge.
-        //   → px-4 (16px) for tighter mobile margins.
-
-        "md:py-36 md:px-12",
-        // md: prefix = applies only at ≥768px (tablet and up).
-        // py-36 = 144px vertical padding on desktop — much more spacious.
-        // px-12 = 48px horizontal padding on desktop.
-        // → md:py-24 if the section feels too tall on desktop.
-      ].join(" ")}
+      className="bg-black-axis py-20 px-6 md:py-36 md:px-12"
     >
-      <div
-        className={[
-          "max-w-6xl",
-          // max-w-6xl: maximum content width = 1152px.
-          // Prevents text from stretching too wide on large monitors.
-          // → max-w-4xl (896px) for a narrower, more editorial column.
-          // → max-w-7xl (1280px) if you want content to use more of the screen.
+      <div className="max-w-6xl mx-auto flex flex-col gap-24 md:gap-32">
 
-          "mx-auto",
-          // mx-auto: centers the content block horizontally within the section.
-          // Works by setting left and right margins to "auto" (equal on both sides).
+        {/* ── TOP BLOCK: scroll sequence ────────────────────────────────────── */}
+        <div className="flex flex-col items-center text-center gap-10 md:gap-14">
 
-          "flex flex-col",
-          // flex: enables Flexbox layout — children can be positioned relative to each other.
-          // flex-col: stacks children VERTICALLY (top to bottom).
-          // → Remove flex-col (use flex-row) to place blocks side by side instead.
-
-          "gap-24 md:gap-32",
-          // gap-24: 96px of space between the left block and right block on mobile.
-          // md:gap-32: 128px on desktop — the two blocks breathe apart more on large screens.
-          // → Decrease (gap-16) to pull the blocks closer together.
-          // → Increase (gap-40) for even more dramatic separation.
-        ].join(" ")}
-      >
-
-        {/* ── LEFT BLOCK ──────────────────────────────────────────────────── */}
-        <motion.div
-          variants={fadeContainer}
-          // variants: connects this element to the fadeContainer object above.
-          // Framer Motion will look up "hidden" and "show" keys from that object.
-
-          initial="hidden"
-          // initial: which variant state to start in. "hidden" = invisible + offset.
-
-          whileInView="show"
-          // whileInView: switches to the "show" variant when this element
-          // scrolls into the visible area of the browser window.
-          // This is what triggers the animation on scroll.
-
-          viewport={{ once: true }}
-          // viewport.once: if true, the animation fires only the first time the
-          // element enters view. It won't reset and replay if you scroll away and back.
-          // → Set to false if you want it to re-animate every time it enters view.
-
-          className={[
-            "flex flex-col",
-            // Stacks all five lines vertically.
-
-            "gap-4 md:gap-6",
-            // gap-4: 16px between lines on mobile.
-            // md:gap-6: 24px between lines on desktop.
-            // → Increase (gap-8 / md:gap-10) for more dramatic line spacing.
-            // → Decrease (gap-2) to pack lines tightly together.
-          ].join(" ")}
-        >
-          {/* LINE 1 — headline, high contrast */}
+          {/* ── OPENING LINE ──────────────────────────────────────────────── */}
+          {/*
+            "You have attention through Instagram." — the section headline (h2).
+            Opening premise — the thing the reader already knows.
+            Fades and rises in as the section enters the viewport.
+          */}
           <motion.h2
-            variants={fadeItem}
-            // variants={fadeItem}: this element uses the fadeItem animation
-            // (opacity 0→1, y 20→0). The container's staggerChildren means
-            // this is the FIRST element to animate.
-            className={[
-              "font-instrument",
-              // font-instrument: Instrument Sans — the body/UI typeface.
-              // → Change to "font-playfair" for a serif editorial headline feel.
-
-              "text-4xl md:text-3xl",
-              // text-4xl: font size 36px on mobile.
-              // md:text-5xl: font size 48px on desktop.
-              // Scale reference: text-3xl=30px, text-4xl=36px, text-5xl=48px,
-              //                  text-6xl=60px, text-7xl=72px, text-8xl=96px.
-              // → Increase for a more dominant opening statement.
-              // → Decrease if it feels too large on mobile.
-
-              "tracking-tight",
-              // tracking-tight: slightly reduces letter-spacing (tighter than normal).
-              // Creates a dense, confident feel for large display text.
-              // → "tracking-normal" to remove the tightening.
-              // → "tracking-widest" for an open, airy label feel (used on subheadings).
-
-              "text-white-axis",
-              // text-white-axis: text color = brand white (#FFFFFF).
-              // Full brightness — this is the HIGH CONTRAST treatment.
-              // → "text-soft-grey" (#A1A1A1) to reduce emphasis.
-
-              "leading-tight",
-              // leading-tight: line-height ≈ 1.25× the font size.
-              // Keeps multi-line headlines compact — lines sit close together.
-              // → "leading-normal" (1.5×) for more breathing room between lines.
-              // → "leading-none" (1×) for the tightest possible stacking.
-            ].join(" ")}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center gap-3 font-playfair text-3xl md:text-4xl text-soft-grey tracking-tight leading-tight"
           >
-            You have attention through Instagram.
+            {/* Instagram logo sits above the headline text */}
+            <SiInstagram className="text-soft-grey" size={28} />
+            You have attention.
           </motion.h2>
 
-          {/* LINES 2–4 — body text, low contrast, trailing off */}
+          {/* ── WORD BUILD: "People watch. Like. Follow." ─────────────────── */}
+          {/*
+            Three words on the same horizontal line (flex-row flex-wrap).
+            Each word slides in from x:-100 with a physics-based spring.
+
+            Spring transition:
+            - type: "spring" → physics-based, not a eased curve.
+            - stiffness: 80  → how hard the spring pulls toward the target.
+                               Higher = faster arrival. Lower = more floaty.
+            - damping: 20    → how quickly the oscillation dies out.
+                               Lower = more bounce. Higher = no bounce.
+            - delay: staggered 0.3s per word → each word pushes in after the last.
+
+            No overflow-hidden on the wrappers — the clip effect was hiding
+            words that wrapped onto new lines on smaller screens.
+          */}
+          <div className=" flex flex-row flex-wrap gap-x-4 md:gap-x-6 gap-y-2 items-baseline justify-center">
+
+            {/* WORD 1 */}
+            <motion.span
+              className="font-playfair text-3xl md:text-4xl text-soft-grey tracking-wide"
+              initial={{ x: -100, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.3 }}
+              // delay: 0.3s — lets the opening h2 finish fading in first.
+              viewport={{ once: true }}
+            >
+              People watch.
+            </motion.span>
+
+            {/* WORD 2 — 0.3s after word 1 */}
+            <motion.span
+              className="font-playfair text-3xl md:text-4xl text-soft-grey tracking-wide"
+              initial={{ x: -100, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.6 }}
+              viewport={{ once: true }}
+            >
+              Like.
+            </motion.span>
+
+            {/* WORD 3 — 0.3s after word 2 */}
+            <motion.span
+              className="font-playfair text-3xl md:text-4xl text-soft-grey tracking-wide"
+              initial={{ x: -100, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.9 }}
+              viewport={{ once: true }}
+            >
+              Follow.
+            </motion.span>
+          </div>
+
+          {/* ── "BUT THEY DON'T BOOK." — WEIGHTLESS DISSOLVE ─────────────── */}
+          {/*
+            This element plays a three-phase keyframe sequence (all time-based,
+            no scroll dependency):
+
+            Phase 1 — APPEAR  (0% → 20% of 7s = 0–1.4s):
+              opacity 0 → 1, blur stays at 0px, scale stays at 1.
+              The text arrives clearly and sharply.
+
+            Phase 2 — HOLD    (20% → 45% of 7s = 1.4–3.15s):
+              Everything stays at full opacity, 0 blur, scale 1.
+              A beat of silence — the message lands.
+
+            Phase 3 — EVAPORATE (45% → 100% of 7s = 3.15–7s = 3.85s long):
+              opacity 1 → 0, blur 0px → 12px, scale 1 → 1.15.
+              The ink evaporates into the black background.
+              Duration of evaporation ≈ 3.85s (well above the 2.5s minimum).
+
+            delay: 1.5s — fires 1.5s after the section enters view,
+            so the three spring words have time to land first.
+
+            Framer Motion keyframes: pass an array to any animated property.
+            The `times` array controls WHERE in the 0→1 timeline each keyframe sits.
+            times: [0, 0.2, 0.45, 1] maps to the four keyframe values above.
+          */}
           <motion.p
-            variants={fadeItem}
-            className={[
-              "font-instrument",
-              // font-instrument: same typeface, but these are <p> elements —
-              // same font, lower visual weight via smaller size + softer colour.
+            initial={{ opacity: 0, filter: "blur(0px)", scale: 1 }}
+            whileInView={{
+              opacity: [0,          1,          1,          0         ],
+              filter:  ["blur(0px)","blur(0px)","blur(0px)","blur(12px)"],
+              scale:   [1,          1,          1,          1.15      ],
+            }}
+            transition={{
+              duration: 7,
+              // 7s total — the evaporation phase alone is ~3.85s (> 2.5s requirement).
+              // Feels slow and ethereal, not snappy.
 
-              "text-xl md:text-3xl",
-              // text-xl: 20px on mobile. md:text-3xl: 30px on desktop.
-              // Notably smaller than the h2 (36px / 48px) — creates the
-              // "trailing off" effect where the middle lines feel quieter.
-              // → Match h2 size (text-4xl md:text-5xl) to make all lines equal weight.
+              times: [0, 0.2, 0.45, 1],
+              // times: maps each keyframe value to a position in the 0→1 timeline.
+              // 0    → opacity 0  (invisible on entry)
+              // 0.2  → opacity 1  (fully appeared)
+              // 0.45 → opacity 1  (still fully visible — the "beat of silence")
+              // 1    → opacity 0  (fully evaporated)
 
-              "text-soft-grey",
-              // text-soft-grey: muted grey (#A1A1A1) — lower contrast than white.
-              // These lines are intentionally de-emphasised.
-              // → "text-white-axis" to bring them to full brightness.
-
-              "tracking-wide",
-              // tracking-wide: increases letter-spacing slightly.
-              // Gives these smaller lines a more open, readable feel.
-              // → "tracking-normal" to remove the extra spacing.
-              // → "tracking-widest" for a very airy, label-like look.
-            ].join(" ")}
-          >
-            People watch.
-          </motion.p>
-
-          <motion.p
-            variants={fadeItem}
-            className="font-instrument text-xl md:text-3xl text-soft-grey tracking-wide"
-            // Same classes as "People watch." — see comments above.
-          >
-            Like.
-          </motion.p>
-
-          <motion.p
-            variants={fadeItem}
-            className="font-instrument text-xl md:text-3xl text-soft-grey tracking-wide"
-            // Same classes — the three quiet lines are intentionally identical in style.
-          >
-            Follow.
-          </motion.p>
-
-          {/* LINE 5 — punchline, high contrast, extra top margin */}
-          <motion.p
-            variants={fadeItem}
-            // This is the last child, so it animates last in the stagger sequence.
-            className={[
-              "font-instrument",
-              "text-4xl md:text-3xl",
-              // Same size as line 1 — returns to full weight for the punchline.
-
-              "tracking-tight",
-              // Matches line 1's tight tracking — mirrors it visually.
-
-              "text-uv-axis",
-              // Full contrast — this line demands attention, same as line 1.
-
-              "leading-tight",
-
-              "mt-6 md:mt-10",
-              // mt-6: 24px of EXTRA top margin on mobile (on top of the container gap).
-              // md:mt-10: 40px on desktop.
-              // This gap is intentional — it separates the punchline from the quiet
-              // middle lines, giving it more dramatic weight.
-              // → mt-4 / md:mt-6 to reduce the pause before the punchline.
-              // → mt-12 / md:mt-16 to make the pause even more dramatic.
-            ].join(" ")}
+              ease: "easeOut",
+              delay: 1.5,
+              // delay: 1.5s after section enters view — gives the spring words
+              // time to settle before the tragedy drops.
+            }}
+            viewport={{ once: true }}
+            className="font-playfair font-thin text-5xl md:text-4xl tracking-tight text-white-axis leading-tight"
           >
             But they don't book.
           </motion.p>
-        </motion.div>
 
-        {/* ── RIGHT BLOCK ─────────────────────────────────────────────────── */}
+        </div>
+
+        {/* ── RIGHT BLOCK ───────────────────────────────────────────────────── */}
         {/* Plain div — no animation on the container itself.
             Each child carries its own whileInView trigger so every line
             fires when IT enters the viewport, not when the parent does. */}
         <div
           className={[
             "flex flex-col",
-            // Stacks the four lines vertically, same as the left block.
+            // Stacks the four lines vertically.
 
             "gap-4 md:gap-6",
-            // Same line spacing as the left block for visual consistency.
+            // Same line spacing as the original left block for visual consistency.
 
             "items-end",
             // items-end: in a flex-col layout, aligns children to the RIGHT edge
@@ -314,15 +205,11 @@ export default function IntroSection() {
             // text-right: aligns the TEXT inside each element to the right.
             // items-end handles block alignment; text-right handles the text
             // inside multi-line elements. Both are needed.
-            // → "text-left" to revert to left-aligned text.
 
             "bg-grey-axis",
             // bg-grey-axis: background = #121212 (near-black grey).
             // Just barely darker than the page's #000000 — a subtle surface shift
             // that signals a tonal change without being a bold visual break.
-            // → "bg-black-axis" to remove the contrast shift entirely.
-            // → Remove this class and add a "border-t border-white/10" instead
-            //   for a divider line rather than a background shift.
 
             "py-10 px-6",
             // py-10: 40px vertical padding inside the grey box on mobile.
@@ -331,7 +218,6 @@ export default function IntroSection() {
             "md:py-16 md:px-12",
             // py-16: 64px vertical padding on desktop.
             // px-12: 48px horizontal padding on desktop.
-            // → Adjust to control how much space the grey box takes up internally.
           ].join(" ")}
         >
           {/* LINE 1 — sub-headline, high contrast */}
@@ -349,9 +235,8 @@ export default function IntroSection() {
               "text-4xl md:text-3xl",
               "tracking-tight",
               "text-white-axis",
-              // Same high-contrast, large-text treatment as line 1 of the left block.
               // The heading level is h3 (semantic hierarchy: h1→h2→h3), but it's
-              // styled identically to the h2 — the tag controls SEO, not appearance.
+              // styled to match the h2 — the tag controls SEO, not appearance.
 
               "leading-tight",
             ].join(" ")}
@@ -370,13 +255,12 @@ export default function IntroSection() {
             whileInView="show"
             viewport={{ once: true, margin: "0px 0px -80px 0px" }}
             transition={{ delay: 0.08 }}
-            // delay: 0.08s — fires 80ms after the h3 would have fired had they
-            // triggered at the same moment. Creates a manual cascade since
-            // staggerChildren is no longer used on the container.
+            // delay: 0.08s — fires 80ms after the h3. Creates a manual cascade
+            // since staggerChildren is not used on the container.
             className={[
               "font-instrument",
               "text-xl md:text-3xl",
-              // Smaller than the h3, same as the quiet lines in the left block.
+              // Smaller than the h3 — creates the "trailing off" effect.
 
               "text-soft-grey",
               // Muted colour — these are supporting detail, not the main statement.
@@ -405,7 +289,7 @@ export default function IntroSection() {
             whileInView="show"
             viewport={{ once: true, margin: "0px 0px -80px 0px" }}
             transition={{ delay: 0.24 }}
-            // delay: 0.24s — 80ms after "No way to book." Last in the cascade.
+            // delay: 0.24s — 80ms after "No way to buy." Last in the cascade.
             className="font-instrument text-xl md:text-3xl text-soft-grey tracking-wide"
           >
             No link that converts.

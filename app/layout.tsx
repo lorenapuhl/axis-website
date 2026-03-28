@@ -11,7 +11,7 @@ const playfair = Playfair_Display({
 const instrument = Instrument_Sans({
   subsets: ["latin"],
   variable: "--font-instrument",
-  weight: ["400", "500", "600"],
+  weight: ['400', '700'],
 })
 
 export const metadata: Metadata = {
