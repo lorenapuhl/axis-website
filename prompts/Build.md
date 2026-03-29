@@ -12,9 +12,9 @@ Confirm you have read all four files and summarize:
 
 # 2. Build
 
-Build: Edit IntroSection.tsx in components/sections/. 
+Build: Edit @components/sections/ProblemSection.tsx and in @components/ui/card-stack.tsx . 
 
-Content: Read @prompts/Edit2_IntroSection.md for exact instructions.
+Content: Read @prompts/Edit_ProblemSection.md for exact instructions.
 
 Purpose: Edit this section to make it visually more appealing and its message clearer
 

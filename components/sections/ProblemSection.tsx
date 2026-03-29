@@ -1,30 +1,39 @@
 "use client"
 // "use client" must be the absolute first line.
-// This component uses Framer Motion's whileInView and animate (browser-only APIs),
-// and passes a renderCard function that contains animated child elements.
-// Both require a Client Component — not a Server Component.
+// This component uses useState (active card tracking) and Framer Motion's
+// whileInView / AnimatePresence — all browser-only APIs that require a Client Component.
 
-import type { ReactElement } from "react"
-import { motion } from "framer-motion"
+import { useState } from "react"
+// next/image: Next.js optimized image component. Required for all images.
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
+// Variants: Framer Motion TypeScript type for named animation state objects.
+// Without it, TypeScript widens literal strings (e.g. "easeOut") to `string`,
+// which breaks the expected Easing union type.
 import type { Variants } from "framer-motion"
 import { CardStack } from "@/components/ui/card-stack"
 import type { CardStackItem } from "@/components/ui/card-stack"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPE
-// ProblemCard extends the base CardStackItem type with a `tag` label.
-// TypeScript "extends" is like Python class inheritance — ProblemCard
-// inherits all fields from CardStackItem and adds one more.
+// ProblemCard extends the base CardStackItem type.
+// TypeScript "extends" is like Python class inheritance — ProblemCard inherits
+// all fields from CardStackItem and adds two more:
+//   tag      — short label shown top-left of each card (e.g. "DM overload")
+//   imageAlt — descriptive alt text for image cards (SEO + accessibility)
+//              undefined for the JSX card (id=4) which has no image
 // ─────────────────────────────────────────────────────────────────────────────
 type ProblemCard = CardStackItem & {
   tag: string
+  imageAlt?: string
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA
-// Six real pain points that fitness studio owners experience daily.
-// No imageSrc — content is rendered as live JSX "UI fragments" (see renderCard).
-// This gives richer, more specific visuals than placeholder images.
+// Six real pain points fitness studio owners face daily.
+// Cards 1–3 and 5–6 use real screenshots (img_1.png → img_6.png, no img_4).
+// Card 4 (id=4) uses a hand-built JSX fragment with a light bg to simulate
+// a Google search results page.
 // ─────────────────────────────────────────────────────────────────────────────
 const items: ProblemCard[] = [
   {
@@ -32,36 +41,83 @@ const items: ProblemCard[] = [
     title: "+47 DMs today",
     description: "Clients asking for schedule, prices, availability",
     tag: "DM overload",
+    imageAlt: "Instagram DM inbox flooded with unread messages from clients asking about schedules, prices, and availability",
   },
   {
     id: 2,
     title: "Where do I book?",
     description: "Visitors don't find a clear next step",
     tag: "No structure",
+    imageAlt: "Instagram profile page with no booking button or clear call to action for new visitors",
   },
   {
     id: 3,
     title: "Seen \u2022 no reply",
     description: "Conversations drop off before booking",
     tag: "Lost clients",
+    imageAlt: "Instagram chat showing a studio conversation that went cold — message sent, seen, but client never booked",
   },
   {
     id: 4,
     title: "Pilates near me",
     description: "Your studio doesn't show up",
     tag: "No Google presence",
+    // No imageAlt — this card uses the JSX fragment instead of an image
   },
   {
     id: 5,
     title: "\u201cCheck our Story highlights\u201d",
     description: "Making clients hunt through 40 highlights just to find a price list.",
     tag: "Bad UX",
+    imageAlt: "Instagram story highlights screen packed with dozens of vaguely labeled circles, making it impossible to find a price list",
   },
   {
     id: 6,
     title: "Everything is manual",
     description: "DMs, notes, calendar, payments",
     tag: "No system",
+    imageAlt: "Phone home screen showing multiple disconnected apps — WhatsApp, Calendar, Notes, Trello — each with a notification backlog",
+  },
+]
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TEXT BLOCK CONTENT
+// Each entry maps to a card by array index (0-based, matches items above).
+// Shown in the dynamic text block that sits below the CardStack.
+//   title — uppercase label (e.g. "DM OVERLOAD")
+//   line1 — first line of paragraph: muted/grey, normal weight
+//   line2 — second line: white, bold — the punchline
+// ─────────────────────────────────────────────────────────────────────────────
+const TEXT_CONTENT = [
+  {
+    title: "DM OVERLOAD",
+    line1: "Clients constantly ask for schedules, prices, and availability in DMs.",
+    line2: "You spend hours replying manually instead of running your studio.",
+  },
+  {
+    title: "NO STRUCTURE",
+    line1: "Visitors land on your Instagram but don't know how to book a class.",
+    line2: "Without a clear next step, most leave without taking action.",
+  },
+  {
+    title: "LOST CLIENTS",
+    line1: "Conversations start in DMs but rarely turn into confirmed bookings.",
+    line2: "Each back-and-forth increases the chance the client disappears.",
+  },
+  {
+    title: "NO GOOGLE PRESENCE",
+    line1: "People search for studios like yours on Google but can't find you.",
+    line2: "You miss high-intent clients who are ready to book.",
+  },
+  {
+    title: "BAD UX",
+    line1: "Important information is buried in story highlights and scattered posts.",
+    line2: "Clients waste time searching and often give up before booking.",
+  },
+  {
+    title: "NO SYSTEM",
+    line1: "Bookings, payments, schedules, and messages are handled across different tools.",
+    line2: "Without a system, everything depends on you and nothing scales.",
   },
 ]
 
@@ -71,14 +127,10 @@ const items: ProblemCard[] = [
 // "container" coordinates when children animate (staggerChildren).
 // "item" is the actual per-element fade-up animation.
 // ─────────────────────────────────────────────────────────────────────────────
-// Variants is the Framer Motion type for named animation state objects.
-// Without it, TypeScript widens "easeOut" to string instead of the specific
-// Easing type framer-motion expects — causing a type error.
 const container: Variants = {
   hidden: {},
   show: {
     transition: { staggerChildren: 0.12 },
-    // Each child element begins its entrance 120ms after the previous one.
   },
 }
 
@@ -88,282 +140,60 @@ const animItem: Variants = {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DRIFT ANIMATION CONSTANTS
-// Each card drifts with a slow oscillating rotation and Y movement.
-// Using fixed keyframe arrays (not Math.random) ensures stable, deterministic
-// renders on every paint — no visual jumps or inconsistency.
-// Each array row is a different card's keyframe sequence [start → ... → end].
+// DRIFT ANIMATION CONSTANTS — used only for the JSX card (id=4)
+// The card oscillates slowly on rotation and Y, giving a sense of instability.
+// Fixed keyframe arrays (not Math.random) for deterministic, consistent renders.
+// Row index 3 is used (id=4, idx = 4-1 = 3).
 // ─────────────────────────────────────────────────────────────────────────────
-const DRIFT_ROT: number[][] = [
-  [0,  0.8, -0.4,  1.1, 0],
-  [0, -1.0,  0.5, -0.7, 0],
-  [0,  0.6, -1.2,  0.3, 0],
-  [0, -0.8,  0.9, -1.3, 0],
-  [0,  1.0, -0.5,  0.7, 0],
-  [0, -0.7,  1.1, -0.4, 0],
-]
-const DRIFT_Y: number[][] = [
-  [0, -2.5,  1.0, -1.8, 0],
-  [0,  2.0, -2.8,  1.5, 0],
-  [0, -1.5,  2.2, -0.8, 0],
-  [0,  2.8, -1.2,  2.0, 0],
-  [0, -2.0,  1.8, -2.5, 0],
-  [0,  1.5, -2.0,  1.0, 0],
-]
+const JSX_DRIFT_ROT = [0, -0.8,  0.9, -1.3, 0]
+const JSX_DRIFT_Y   = [0,  2.8, -1.2,  2.0, 0]
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CARD FRAGMENT COMPONENTS
-// Each simulates a "screenshot moment" from the daily chaos of running a
-// studio — designed to feel real, messy, and slightly stressful.
-//
-// Visual language (to match FeatureSection.tsx):
-//   - bg-grey-axis (#121212): dark phone-screen background
-//   - text-white-axis + text-soft-grey: light text on dark
-//   - font-instrument throughout (UI text)
-//   - No images — all content is inline JSX
-//
-// Accent rule: only text-magenta-axis (one accent per section).
-//   Badges, tags, and notification dots all use magenta = "alarm / unread".
+// JSX FRAGMENT — GOOGLE MISSING (card id=4)
+// Simulates a Google search results page where competitors appear but your
+// studio doesn't. Background is bg-[#D8D8D8] (light grey) to match a real
+// browser search page aesthetic — all text uses black/dark tokens for contrast.
 // ─────────────────────────────────────────────────────────────────────────────
-
-// Card 1: Instagram DM screen — flooded with unanswered questions from clients.
-function FragmentDmOverload() {
-  return (
-    // relative: allows the content inside to use absolute positioning if needed.
-    // bg-grey-axis: simulates a dark phone screen (#121212).
-    <div className="relative h-full w-full bg-grey-axis flex flex-col overflow-hidden">
-
-      {/* Phone status bar — small clock + screen title + menu indicator */}
-      <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <span className="font-instrument text-[10px] text-soft-grey">9:41</span>
-        <span className="font-instrument text-xs font-semibold text-white-axis">Messages</span>
-        <span className="font-instrument text-[10px] text-soft-grey" aria-hidden="true">···</span>
-      </div>
-
-      {/* DM thread list — 4 unanswered messages */}
-      {/* divide-y: draws a thin horizontal line between each row */}
-      <div className="flex flex-col divide-y divide-white-axis/5 flex-1">
-        {[
-          { name: "Ana G.",     preview: "hey what time is class?",     time: "2:14",  unread: 2 },
-          { name: "Diego R.",   preview: "price?",                       time: "1:58",  unread: 1 },
-          { name: "Mariana L.", preview: "is there space tomorrow?",     time: "1:32",  unread: 3 },
-          { name: "Sofía V.",   preview: "when is the next class??",     time: "12:47", unread: 1 },
-        ].map((dm) => (
-          <div key={dm.name} className="flex items-center gap-3 px-4 py-2.5">
-
-            {/* Avatar placeholder circle */}
-            <div className="w-8 h-8 rounded-full bg-white-axis/10 shrink-0" aria-hidden="true" />
-
-            {/* Sender name + message preview */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between">
-                <span className="font-instrument text-[11px] font-semibold text-white-axis">
-                  {dm.name}
-                </span>
-                <span className="font-instrument text-[9px] text-soft-grey">{dm.time} PM</span>
-              </div>
-              {/* truncate: cuts long text with "..." instead of wrapping */}
-              <span className="font-instrument text-[10px] text-soft-grey/70 truncate block mt-0.5">
-                {dm.preview}
-              </span>
-            </div>
-
-            {/* Unread count badge — magenta-axis = alarm / unread signal */}
-            <div className="w-4 h-4 rounded-full bg-magenta-axis flex items-center justify-center shrink-0">
-              <span className="font-instrument text-[8px] font-bold text-white-axis">{dm.unread}</span>
-            </div>
-
-          </div>
-        ))}
-      </div>
-
-      {/* Typing indicator — another person is about to ask a question */}
-      <div className="px-4 py-2.5 flex items-center gap-2 border-t border-white-axis/5">
-        <div className="w-6 h-6 rounded-full bg-white-axis/10 shrink-0" aria-hidden="true" />
-
-        {/* Three dots that pulse in sequence — the classic "someone is typing" animation.
-            Each dot has a different delay so they pulse one after another (0s, 0.2s, 0.4s). */}
-        <div className="flex gap-1 items-center">
-          {[0, 1, 2].map((dot) => (
-            <motion.div
-              key={dot}
-              className="w-1.5 h-1.5 rounded-full bg-soft-grey"
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{
-                duration: 1.2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: dot * 0.2,   // staggered start: dot 0 at 0s, dot 1 at 0.2s, dot 2 at 0.4s
-              }}
-            />
-          ))}
-        </div>
-        <span className="font-instrument text-[9px] text-soft-grey/70">typing...</span>
-      </div>
-
-    </div>
-  )
-}
-
-// Card 2: Instagram profile — no booking button, no clear path.
-function FragmentIgConfusion() {
-  return (
-    <div className="relative h-full w-full bg-grey-axis flex flex-col overflow-hidden">
-
-      {/* Profile header bar */}
-      <div className="flex items-center justify-between px-4 pt-3 pb-2">
-        <span className="font-instrument text-[11px] text-soft-grey">‹</span>
-        <span className="font-instrument text-[11px] font-semibold text-white-axis">
-          @studioflow_pilates
-        </span>
-        <span className="font-instrument text-[10px] text-soft-grey" aria-hidden="true">···</span>
-      </div>
-
-      {/* Profile info: avatar + name + bio */}
-      <div className="flex flex-col items-center gap-1 py-2">
-        <div className="w-12 h-12 rounded-full bg-white-axis/10" aria-hidden="true" />
-        <span className="font-instrument text-xs font-semibold text-white-axis">
-          Studio Flow Pilates
-        </span>
-        <span className="font-instrument text-[10px] text-soft-grey">
-          Pilates · Movement · Mexico City
-        </span>
-        {/* The classic vague bio CTA — sends users on a treasure hunt */}
-        <span className="font-instrument text-[9px] text-soft-grey/50 italic">
-          &quot;Check the link in bio for more info&quot;
-        </span>
-      </div>
-
-      {/* Story highlights — 5 vaguely labeled circles, none says "Book" */}
-      <div className="flex justify-center gap-3 px-4 pt-1 pb-2">
-        {["prices", "info", "more", "FAQs", "other"].map((label) => (
-          <div key={label} className="flex flex-col items-center gap-0.5 w-10">
-            {/* Circle with faint border — simulates the Instagram highlights ring */}
-            <div
-              className="w-9 h-9 rounded-full border border-soft-grey/30 bg-white-axis/5"
-              aria-hidden="true"
-            />
-            <span className="font-instrument text-[8px] text-soft-grey/60 truncate w-full text-center">
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Profile action buttons — neither says "Book" or "Reserve" */}
-      <div className="flex gap-2 px-4 mt-auto pb-4">
-        <div className="flex-1 border border-soft-grey/20 rounded-lg py-1.5 flex items-center justify-center">
-          <span className="font-instrument text-[10px] text-white-axis/60">Follow</span>
-        </div>
-        <div className="flex-1 border border-soft-grey/20 rounded-lg py-1.5 flex items-center justify-center">
-          <span className="font-instrument text-[10px] text-white-axis/60">Message</span>
-        </div>
-      </div>
-
-      {/* "Where do I book?" overlay — the visitor's frustrated thought.
-          pointer-events-none: decorative only, does not intercept taps. */}
-      <div
-        className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        aria-hidden="true"
-      >
-        <span className="font-instrument text-sm font-semibold text-white-axis bg-black-axis/70 px-3 py-2 rounded-xl">
-          Where do I book?
-        </span>
-      </div>
-
-    </div>
-  )
-}
-
-// Card 3: Chat drop-off — a promising conversation that went cold.
-function FragmentDropoff() {
-  return (
-    <div className="relative h-full w-full bg-grey-axis flex flex-col overflow-hidden">
-
-      {/* Chat header — back arrow + contact name */}
-      <div className="flex items-center gap-2 px-4 pt-3 pb-2 border-b border-white-axis/5">
-        <span className="font-instrument text-[11px] text-soft-grey">‹</span>
-        <div className="w-7 h-7 rounded-full bg-white-axis/10 shrink-0" aria-hidden="true" />
-        <span className="font-instrument text-[11px] font-semibold text-white-axis">Ana García</span>
-      </div>
-
-      {/* Message thread */}
-      <div className="flex flex-col gap-2 px-4 pt-3 flex-1">
-
-        {/* Studio's outgoing message — right-aligned bubble */}
-        <div className="flex justify-end">
-          <div className="bg-white-axis/15 rounded-2xl rounded-tr-sm px-3 py-2 max-w-[78%]">
-            <span className="font-instrument text-[10px] text-white-axis leading-relaxed">
-              Hi! Classes are Mon–Fri at 7pm 💪 Let me know if you want to book!
-            </span>
-          </div>
-        </div>
-
-        {/* Client's reply — short, left-aligned bubble */}
-        <div className="flex justify-start">
-          <div className="bg-white-axis/8 rounded-2xl rounded-tl-sm px-3 py-2 max-w-[55%]">
-            <span className="font-instrument text-[10px] text-white-axis/70">ok thanks</span>
-          </div>
-        </div>
-
-        {/* "Seen" timestamp — visible below the last message sent by studio */}
-        <div className="flex justify-end">
-          <span className="font-instrument text-[9px] text-soft-grey/50">Seen · 2:14 PM</span>
-        </div>
-
-        {/* Empty space — the silence after the drop-off */}
-        <div className="flex-1 flex items-center justify-center">
-          <span
-            className="font-instrument text-[9px] text-soft-grey/20 tracking-[0.3em] uppercase"
-            aria-hidden="true"
-          >
-            · · ·
-          </span>
-        </div>
-
-      </div>
-    </div>
-  )
-}
-
-// Card 4: Google search results — competitors show up, your studio doesn't.
 function FragmentGoogleMissing() {
   return (
-    <div className="relative h-full w-full bg-grey-axis flex flex-col overflow-hidden">
+    // bg-[#D8D8D8]: light grey simulating a Google search results background.
+    // flex flex-col: stacks the search bar, results, and footer vertically.
+    <div className="relative h-full w-full bg-[#D8D8D8] flex flex-col overflow-hidden">
 
-      {/* Search bar */}
-      <div className="flex items-center gap-2 mx-4 mt-4 mb-3 bg-white-axis/8 rounded-full px-3 py-2 border border-white-axis/10">
-        {/* Magnifier icon — inline SVG, no library needed */}
+      {/* Search bar — rounded pill with magnifier icon and query text */}
+      <div className="flex items-center gap-2 mx-4 mt-4 mb-3 bg-black-axis/8 rounded-full px-3 py-2 border border-black-axis/15">
+        {/* Magnifier icon — inline SVG, no icon library needed */}
         <svg
           width="11" height="11" viewBox="0 0 16 16" fill="none"
           stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-          className="text-soft-grey shrink-0"
+          className="text-black-axis/50 shrink-0"
           aria-hidden="true"
         >
           <circle cx="7" cy="7" r="5" />
           <path d="M11 11l3 3" />
         </svg>
-        <span className="font-instrument text-[11px] text-white-axis/80 flex-1">pilates near me</span>
+        <span className="font-instrument text-[11px] text-black-axis flex-1">pilates near me</span>
       </div>
 
-      {/* Competitor search results — two other studios are listed */}
-      <div className="flex flex-col divide-y divide-white-axis/5 px-4">
+      {/* Competitor search results — two other studios show up instead */}
+      {/* divide-y: draws a thin horizontal rule between each result row */}
+      <div className="flex flex-col divide-y divide-black-axis/10 px-4">
         {[
           { name: "FitLife Studio",  url: "fitlife.com",  stars: 5, rating: "4.8", reviews: "120" },
           { name: "MoveMX Pilates",  url: "movemx.com",   stars: 4, rating: "4.5", reviews: "67"  },
         ].map((result) => (
           <div key={result.name} className="py-2.5">
-            {/* Result title — styled like a Google blue link */}
-            <span className="font-instrument text-[11px] font-semibold text-white-axis block leading-tight">
+            {/* Result title — styled like a Google blue-link heading */}
+            <span className="font-instrument text-[11px] font-semibold text-black-axis block leading-tight">
               {result.name} — Book Online
             </span>
-            <span className="font-instrument text-[9px] text-soft-grey/60 block">{result.url}</span>
-            {/* Star rating row — ★ is HTML entity #9733 */}
+            <span className="font-instrument text-[9px] text-black-axis/60 block">{result.url}</span>
+            {/* Star rating row — ★ is the filled star HTML entity */}
             <div className="flex items-center gap-1 mt-0.5">
-              <span className="text-[9px] text-soft-grey/70">
+              <span className="text-[9px] text-black-axis/70">
                 {"★".repeat(result.stars)}{"☆".repeat(5 - result.stars)}
               </span>
-              <span className="font-instrument text-[9px] text-soft-grey/50">
+              <span className="font-instrument text-[9px] text-black-axis/50">
                 {result.rating} &middot; {result.reviews} reviews
               </span>
             </div>
@@ -371,9 +201,9 @@ function FragmentGoogleMissing() {
         ))}
       </div>
 
-      {/* Your studio: absent from results */}
-      <div className="mt-auto px-4 pb-4 pt-2 border-t border-white-axis/5">
-        <span className="font-instrument text-[10px] text-soft-grey/40 italic">
+      {/* Footer — your studio is simply absent from results */}
+      <div className="mt-auto px-4 pb-4 pt-2 border-t border-black-axis/10">
+        <span className="font-instrument text-[10px] text-black-axis/40 italic">
           Your studio: no results found
         </span>
       </div>
@@ -382,193 +212,91 @@ function FragmentGoogleMissing() {
   )
 }
 
-// Card 5: Instagram Story Highlights — 38 circles, none of them helpful.
-// This card simulates the frustration of having to tap through dozens of
-// vaguely labeled highlights to find basic information like a price list.
-function FragmentInfoHunting() {
-  // 15 highlight circles with confusing or unhelpful labels
-  const highlights = [
-    "prices", "info", "more", "FAQs", "schedule??",
-    "2023", "📍", "new", "rules", "wait",
-    "🏋️", "???", "other", "news", "read",
-  ]
-
-  return (
-    <div className="relative h-full w-full bg-grey-axis flex flex-col overflow-hidden">
-
-      {/* Header — "Highlights" title + total count (the overwhelming "38 total") */}
-      <div className="flex items-center justify-between px-4 pt-3 pb-1">
-        <span className="font-instrument text-[10px] text-soft-grey">‹</span>
-        <span className="font-instrument text-[11px] font-semibold text-white-axis">Highlights</span>
-        <span className="font-instrument text-[9px] text-soft-grey/40">38 total</span>
-      </div>
-
-      {/* Grid of highlight circles — flex-wrap causes them to fill the space
-          like the actual Instagram highlights row, but much more of them. */}
-      <div className="flex flex-wrap gap-x-2 gap-y-2 px-3 pt-2 pb-1">
-        {highlights.map((label) => (
-          // w-[44px]: fixed width per circle + label pair to align the grid
-          <div key={label} className="flex flex-col items-center gap-0.5 w-[44px]">
-            {/* Highlight circle — faint border simulates the Instagram highlight ring */}
-            <div
-              className="w-9 h-9 rounded-full border border-soft-grey/25 bg-white-axis/5 flex items-center justify-center"
-              aria-hidden="true"
-            >
-              {/* Show emoji icons inside circles, text labels sit below */}
-              {(label === "📍" || label === "🏋️") && (
-                <span className="text-[12px]">{label}</span>
-              )}
-            </div>
-            {/* Label — truncated since space is very limited */}
-            <span className="font-instrument text-[7px] text-soft-grey/60 truncate w-full text-center leading-tight">
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* The studio's typical non-answer to "where is the info?" */}
-      <div className="mt-auto px-4 pb-3 pt-1">
-        <span className="font-instrument text-[9px] text-soft-grey/40 italic">
-          &quot;Check our Story highlights&quot;
-        </span>
-      </div>
-
-    </div>
-  )
-}
-
-// Card 6: System chaos — six disconnected apps, all with notification backlogs.
-function FragmentSystemChaos() {
-  // Each app the studio owner uses manually, every single day
-  const apps: { name: string; badge: number }[] = [
-    { name: "WhatsApp", badge: 12 },
-    { name: "Notes",    badge: 3  },
-    { name: "Calendar", badge: 7  },
-    { name: "DMs",      badge: 24 },
-    { name: "Sheets",   badge: 0  },
-    { name: "Trello",   badge: 2  },
-  ]
-
-  return (
-    <div className="relative h-full w-full bg-grey-axis flex flex-col justify-between p-4 overflow-hidden">
-
-      {/* App icon grid — 3 columns, simulates a phone home screen */}
-      <div className="grid grid-cols-3 gap-3">
-        {apps.map((app) => (
-          // relative: lets the notification badge position absolutely in the top-right corner
-          <div key={app.name} className="relative flex flex-col items-center gap-1">
-
-            {/* App icon — rounded square with label inside */}
-            <div className="w-12 h-12 rounded-2xl bg-white-axis/10 border border-white-axis/10 flex items-center justify-center">
-              <span className="font-instrument text-[8px] text-soft-grey text-center leading-tight px-1">
-                {app.name}
-              </span>
-            </div>
-
-            {/* Notification badge — red dot with unread count.
-                Only shown when badge > 0. Uses magenta-axis (the section accent). */}
-            {app.badge > 0 && (
-              <div className="absolute -top-1 -right-0.5 min-w-[16px] h-4 rounded-full bg-magenta-axis flex items-center justify-center px-1">
-                <span className="font-instrument text-[8px] text-white-axis font-bold">
-                  {app.badge}
-                </span>
-              </div>
-            )}
-
-          </div>
-        ))}
-      </div>
-
-      {/* Tagline — states the core problem plainly */}
-      <p className="font-instrument text-[9px] text-soft-grey/40 text-center tracking-widest uppercase">
-        All manual. All disconnected.
-      </p>
-
-    </div>
-  )
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // RENDER CARD FUNCTION
-// This is passed as the `renderCard` prop to CardStack.
-// CardStack calls this function once per visible card instead of its own
-// DefaultFanCard — giving us full control over the card's visual.
+// Passed as the `renderCard` prop to CardStack.
+// CardStack calls this once per visible card, giving us full control over
+// each card's visual content.
 //
-// Structure per card:
-//   1. The UI fragment fills the full card area (h-full w-full)
-//   2. A subtle drift animation makes the card feel "alive" and unstable
-//   3. A tag label sits top-left (text-magenta-axis = alarm / problem)
-//   4. A bottom gradient overlay provides title + description readability
-//   5. The active card shows a faint pulse ring to draw focus
+// Cards are split into two types:
+//   Image cards (id ≠ 4) — full-bleed next/image screenshot from public/problems_visual/
+//   JSX card   (id = 4) — the FragmentGoogleMissing component with drift animation
+//
+// Shared overlays on every card:
+//   1. Tag label top-left (text-magenta-axis = alarm/problem signal)
+//   2. Bottom gradient for title/description readability
+//   3. Active pulse ring (when card is in front)
 // ─────────────────────────────────────────────────────────────────────────────
 function renderProblemCard(
   cardItem: ProblemCard,
   state: { active: boolean },
 ) {
-  // idx: maps card id (1–6) to a 0-based index for the drift arrays.
-  // (Number(cardItem.id) - 1) converts id=1 → idx=0, id=2 → idx=1, etc.
-  const idx = (Number(cardItem.id) - 1) % DRIFT_ROT.length
-
-  // Select the correct UI fragment for this card's id.
-  // Switch is used instead of a lookup object so React only creates the
-  // element for the card being rendered (not all 6 at once).
-  let fragment: ReactElement
-  switch (Number(cardItem.id)) {
-    case 1: fragment = <FragmentDmOverload />;    break
-    case 2: fragment = <FragmentIgConfusion />;   break
-    case 3: fragment = <FragmentDropoff />;       break
-    case 4: fragment = <FragmentGoogleMissing />; break
-    case 5: fragment = <FragmentInfoHunting />;   break
-    case 6: fragment = <FragmentSystemChaos />;   break
-    default: fragment = <div className="h-full w-full bg-grey-axis" />
-  }
+  // isJsxCard: true only for id=4 (NO GOOGLE PRESENCE), the one card that
+  // uses a hand-built JSX fragment instead of a real screenshot.
+  const isJsxCard = Number(cardItem.id) === 4
 
   return (
-    // relative + overflow-hidden: the tag overlay and bottom gradient are
+    // relative + overflow-hidden: the tag, gradient, and pulse ring are
     // absolutely positioned inside this boundary.
     <div className="relative h-full w-full overflow-hidden">
 
-      {/* UI fragment — wrapped in a Framer Motion div for the drift animation.
-          Each card oscillates on rotation and Y at a different speed and phase
-          so no two cards ever drift in sync (organic, not robotic feel).
-          Duration varies by card id: 7.3s, 8.6s, 9.9s... */}
-      <motion.div
-        className="h-full w-full"
-        animate={{
-          rotateZ: DRIFT_ROT[idx] as number[],
-          y:       DRIFT_Y[idx]   as number[],
-        }}
-        transition={{
-          duration:   7 + Number(cardItem.id) * 1.3,
-          ease:       "easeInOut",
-          repeat:     Infinity,
-          repeatType: "loop",
-        }}
-      >
-        {fragment}
-      </motion.div>
+      {/* ── CARD VISUAL CONTENT ─────────────────────────────────────────── */}
+      {isJsxCard ? (
+        // JSX card: wrap in Framer Motion for the slow drift animation.
+        // This makes the card feel unstable and alive, reinforcing "chaos".
+        // Duration: 7 + 4*1.3 = 12.2s — long, calm oscillation.
+        <motion.div
+          className="h-full w-full"
+          animate={{
+            rotateZ: JSX_DRIFT_ROT,
+            y:       JSX_DRIFT_Y,
+          }}
+          transition={{
+            duration:   12.2,
+            ease:       "easeInOut",
+            repeat:     Infinity,
+            repeatType: "loop",
+          }}
+        >
+          <FragmentGoogleMissing />
+        </motion.div>
+      ) : (
+        // Image card: full-bleed screenshot using next/image with fill.
+        // `fill` stretches the image to cover the parent's width and height.
+        // The parent (CardStack's card div) has explicit px dimensions set via
+        // the cardWidth/cardHeight props (340×280), so fill works correctly.
+        // No width/height props needed when using fill — parent dimensions apply.
+        <Image
+          src={`/problems_visual/img_${cardItem.id}.png`}
+          alt={cardItem.imageAlt ?? cardItem.title}
+          fill
+          // object-cover: scales the image to fill the card without distortion,
+          // cropping edges if the aspect ratio doesn't match exactly.
+          className="object-cover"
+          draggable={false}
+        />
+      )}
 
-      {/* Tag label — top-left corner, small and muted.
-          text-magenta-axis is the single accent color for this section:
-          it signals "alarm / problem" across all 6 cards. */}
+      {/* ── TAG LABEL ───────────────────────────────────────────────────── */}
+      {/* Top-left corner. text-magenta-axis = single accent for this section,
+          signals "alarm / problem" across all 6 cards. */}
       <div className="absolute top-3 left-3 z-20 pointer-events-none">
         <span className="font-instrument text-[9px] uppercase tracking-[0.15em] text-magenta-axis">
           {cardItem.tag}
         </span>
       </div>
 
-      {/* Bottom gradient overlay — ensures the title and description are
-          readable over any fragment background.
-          from-black-axis/90: near-opaque black at the very bottom.
+      {/* ── BOTTOM GRADIENT OVERLAY ─────────────────────────────────────── */}
+      {/* Ensures the title and description text are readable over any card visual.
+          from-black-axis/90: near-opaque at the bottom.
           via-black-axis/40: semi-transparent mid-zone.
-          to-transparent: fades to nothing at the top of the overlay. */}
+          to-transparent: fades out toward the top of the overlay area. */}
       <div className="absolute bottom-0 inset-x-0 z-10 bg-gradient-to-t from-black-axis/90 via-black-axis/40 to-transparent px-4 pt-10 pb-4 pointer-events-none">
         <p className="font-instrument text-xs font-semibold text-white-axis leading-snug">
           {cardItem.title}
         </p>
-        {/* Subtle opacity flicker on the description — simulates unstable UI.
-            Amplitude is small (1.0 → 0.82) so it reads as "glitch", not "broken". */}
+        {/* Subtle opacity flicker — simulates unstable UI, reads as "glitch".
+            Amplitude is small (1.0 → 0.82) so it's barely perceptible. */}
         <motion.p
           className="font-instrument text-[10px] text-soft-grey mt-0.5 leading-relaxed"
           animate={{ opacity: [1, 0.82, 1, 0.91, 1] }}
@@ -582,8 +310,9 @@ function renderProblemCard(
         </motion.p>
       </div>
 
-      {/* Active card pulse ring — a faint white border that breathes when the
-          card is in front. Draws attention without being decorative. */}
+      {/* ── ACTIVE CARD PULSE RING ──────────────────────────────────────── */}
+      {/* Shown only when this card is the active (front) card.
+          Breathes slowly to draw focus without being distracting. */}
       {state.active && (
         <motion.div
           className="absolute inset-0 z-30 rounded-xl border border-white-axis/15 pointer-events-none"
@@ -601,28 +330,28 @@ function renderProblemCard(
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 export default function ProblemSection() {
+  // activeIndex: 0-based index of the card currently in front of the stack.
+  // Initialized to 0 (first card). Updated by the onChangeIndex callback
+  // that CardStack fires whenever the active card changes (auto-advance or click).
+  // Drives the dynamic text block below the stack.
+  const [activeIndex, setActiveIndex] = useState(0)
+
   return (
     // relative: anchor for the absolutely-positioned background chaos layer.
-    // overflow-hidden: clips chaos elements that float near the edges.
-    // bg-black-axis: matches the rest of the page — this section is part of
-    //   the same dark system, not a bright "product showcase" break.
+    // overflow-hidden: clips floating chaos elements near the edges.
+    // bg-black-axis: this section is part of the same dark system — not a break.
     <section className="relative overflow-hidden bg-black-axis py-20 px-6 md:py-36 md:px-12">
 
       {/* ── BACKGROUND CHAOS LAYER ────────────────────────────────────────── */}
       {/*
-        Floating notification badges and message fragments at ~6% opacity.
-        These create a sense of ambient chaos behind the card stack without
-        distracting from the primary content.
-
+        Floating notification fragments at ~6% opacity.
+        Creates ambient chaos behind the card stack without distracting from content.
         Each element:
-          - Is absolutely positioned relative to the <section>
-          - Oscillates slowly on the Y axis (8–11 second cycles)
-          - Has a different delay so they never move together
-          - Uses pointer-events-none so they never intercept user interactions
-          - Is aria-hidden since they're purely decorative
-
-        Class names are written as full static strings so Tailwind's JIT
-        compiler (which scans source code for class names) can find them.
+          - Absolutely positioned within the <section>
+          - Oscillates slowly on the Y axis (7–11s cycles)
+          - Different delay so they never move in sync
+          - pointer-events-none: never intercepts user interactions
+          - aria-hidden: purely decorative, invisible to screen readers
       */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
 
@@ -670,24 +399,48 @@ export default function ProblemSection() {
       {/* END BACKGROUND CHAOS LAYER */}
 
       {/* ── MAIN CONTENT ──────────────────────────────────────────────────── */}
-      {/* relative z-10: this wrapper sits above the background chaos layer.
+      {/* relative z-10: sits above the background chaos layer.
           max-w-6xl mx-auto: constrains content to 1152px, centered. */}
       <div className="relative z-10 max-w-6xl mx-auto">
 
+        {/* ── HEADLINE ────────────────────────────────────────────────────── */}
+        {/*
+          Moved to the top of the section (was previously at the bottom).
+          Uses the stagger container: h2 fades in first, subline 120ms later.
+          viewport={{ once: true }}: plays once as section enters viewport.
+        */}
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="text-center mb-12 md:mb-16"
+        >
+          {/* h2: SEO requirement — one h2 per section. The page's h1 is in Hero. */}
+          <motion.h2
+            variants={animItem}
+            className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight"
+          >
+            Your studio has visibility — but no structure.
+          </motion.h2>
+
+          <motion.p
+            variants={animItem}
+            className="font-instrument text-soft-grey text-sm md:text-base tracking-wide mt-3"
+          >
+            And visibility doesn&apos;t scale.
+          </motion.p>
+        </motion.div>
+        {/* END HEADLINE */}
+
         {/* ── CARD STACK ────────────────────────────────────────────────── */}
         {/*
-          CardStack from components/ui/card-stack.tsx (21st.dev base, adapted).
+          CardStack from components/ui/card-stack.tsx.
+          Props unchanged from previous version — only onChangeIndex is added.
 
-          Props tuned for the "chaos" feel:
-            overlap=0.65    → cards overlap 65% — tight stack, dense visual
-            spreadDeg=65    → wide fan arc — clearly showing multiple cards
-            activeScale=1.06→ active card lifts noticeably above the others
-            inactiveScale=0.93 → background cards recede
-            autoAdvance=true → cycles automatically — user doesn't need to click
-            intervalMs=2400 → ~2.4 second intervals (within the 2200–2600 range)
-            randomOffsets=true → enables the per-card rotation/Y jitter
-                                  added to card-stack.tsx (see CARD_ROT_JITTER)
-            renderCard      → our custom JSX fragments replace DefaultFanCard
+          onChangeIndex: CardStack fires this callback whenever the active card
+          changes (auto-advance, click, or drag). We use it to keep activeIndex
+          in sync so the text block below updates correctly.
         */}
         <CardStack
           items={items}
@@ -704,41 +457,76 @@ export default function ProblemSection() {
           showDots={true}
           randomOffsets={true}
           renderCard={renderProblemCard}
+          onChangeIndex={(index) => setActiveIndex(index)}
         />
+        {/* END CARD STACK */}
 
-        {/* ── SECTION TEXT ──────────────────────────────────────────────── */}
+        {/* ── DYNAMIC TEXT BLOCK ──────────────────────────────────────────── */}
         {/*
-          The section headline and subline appear below the card stack.
-          They use the stagger container variant: headline fades in first,
-          then the subline 120ms later.
-          viewport={{ once: true }}: animation plays once as the section
-          enters the viewport, then stays visible — does not replay on scroll-back.
+          Updates every time the active card changes.
+          AnimatePresence with mode="wait": waits for the exit animation to
+          finish before mounting the new content — creating a clean fade-out →
+          fade-in sequence (not a cross-fade overlap).
+          key={activeIndex}: React re-mounts the motion.div on every index change,
+          triggering the entrance animation from scratch.
+        */}
+        <div className="mt-12 md:mt-16 flex flex-col items-center text-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              // Entrance: fade in from slightly below (y: 5 → 0)
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              // Exit: fade out moving slightly upward (y: 0 → -5)
+              exit={{ opacity: 0, y: -5 }}
+              // 250ms: fast enough to feel responsive, slow enough to feel intentional
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              className="max-w-[560px]"
+            >
+              {/* Title: uppercase, small, wide tracking, muted */}
+              <p className="font-instrument text-xs uppercase tracking-widest text-soft-grey">
+                {TEXT_CONTENT[activeIndex]?.title}
+              </p>
+
+              {/* Two-line paragraph.
+                  Line 1: muted/grey — describes the symptom
+                  Line 2: white + bold — the consequence / punchline
+                  <br />: explicit line break between the two lines */}
+              <p className="font-instrument text-sm mt-3 leading-relaxed">
+                <span className="text-soft-grey">
+                  {TEXT_CONTENT[activeIndex]?.line1}
+                </span>
+                <br />
+                <span className="text-white-axis font-bold">
+                  {TEXT_CONTENT[activeIndex]?.line2}
+                </span>
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+        {/* END DYNAMIC TEXT BLOCK */}
+
+        {/* ── CLOSING STATEMENT ───────────────────────────────────────────── */}
+        {/*
+          Final statement that reframes the entire section.
+          Fade-up on scroll, plays once.
+          Uses font-playfair for visual weight — matches the headline style.
         */}
         <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="text-center mt-12 md:mt-16"
+          className="text-center mt-16 md:mt-24"
         >
-          {/* h2: SEO rule — one h2 per section, this is the section headline.
-              The page's single h1 lives in the Hero (TrustHeroSection). */}
-          <motion.h2
-            variants={animItem}
-            className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight"
-          >
-            Your studio has visibility — but no structure.
-          </motion.h2>
-
-          {/* Subline: short, factual, no decoration */}
-          <motion.p
-            variants={animItem}
-            className="font-instrument text-soft-grey text-sm md:text-base tracking-wide mt-3"
-          >
-            And visibility doesn&apos;t scale.
-          </motion.p>
+          <p className="font-playfair uppercase tracking-tight text-white-axis text-xl md:text-2xl leading-tight">
+            Your studio runs on attention — not a system.
+          </p>
+          <p className="font-instrument text-soft-grey text-sm tracking-wide mt-2">
+            And attention doesn&apos;t scale.
+          </p>
         </motion.div>
-        {/* END SECTION TEXT */}
+        {/* END CLOSING STATEMENT */}
 
       </div>
       {/* END MAIN CONTENT */}
