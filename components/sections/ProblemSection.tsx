@@ -277,39 +277,6 @@ function renderProblemCard(
         />
       )}
 
-      {/* ── TAG LABEL ───────────────────────────────────────────────────── */}
-      {/* Top-left corner. text-magenta-axis = single accent for this section,
-          signals "alarm / problem" across all 6 cards. */}
-      <div className="absolute top-3 left-3 z-20 pointer-events-none">
-        <span className="font-instrument text-[9px] uppercase tracking-[0.15em] text-magenta-axis">
-          {cardItem.tag}
-        </span>
-      </div>
-
-      {/* ── BOTTOM GRADIENT OVERLAY ─────────────────────────────────────── */}
-      {/* Ensures the title and description text are readable over any card visual.
-          from-black-axis/90: near-opaque at the bottom.
-          via-black-axis/40: semi-transparent mid-zone.
-          to-transparent: fades out toward the top of the overlay area. */}
-      <div className="absolute bottom-0 inset-x-0 z-10 bg-gradient-to-t from-black-axis/90 via-black-axis/40 to-transparent px-4 pt-10 pb-4 pointer-events-none">
-        <p className="font-instrument text-xs font-semibold text-white-axis leading-snug">
-          {cardItem.title}
-        </p>
-        {/* Subtle opacity flicker — simulates unstable UI, reads as "glitch".
-            Amplitude is small (1.0 → 0.82) so it's barely perceptible. */}
-        <motion.p
-          className="font-instrument text-[10px] text-soft-grey mt-0.5 leading-relaxed"
-          animate={{ opacity: [1, 0.82, 1, 0.91, 1] }}
-          transition={{
-            duration:   3.5 + Number(cardItem.id) * 0.6,
-            repeat:     Infinity,
-            ease:       "easeInOut",
-          }}
-        >
-          {cardItem.description}
-        </motion.p>
-      </div>
-
       {/* ── ACTIVE CARD PULSE RING ──────────────────────────────────────── */}
       {/* Shown only when this card is the active (front) card.
           Breathes slowly to draw focus without being distracting. */}
