@@ -20,12 +20,14 @@ import HeaderSection from "@/components/sections/HeaderSection"
 //import ShuffleHeroSection from "@/components/sections/ShuffleHeroSection"
 import TrustHeroSection from "@/components/sections/TrustHeroSection"
 import IntroSection from "@/components/sections/IntroSection"
+import ProblemSection from "@/components/sections/ProblemSection"
 import SystemVisualSection from "@/components/sections/SystemVisualSection"
 import ProductVisualSection from "@/components/sections/ProductVisualSection"
 import LiveSyncSection from "@/components/sections/LiveSyncSection"
 //import InstaGallerySection from "@/components/sections/InstaGallerySection"
 import FeatureSection from "@/components/sections/FeatureSection"
 import OutcomeSection from "@/components/sections/OutcomeSection"
+import FAQSection from "@/components/sections/FAQSection"
 import FinalCTA from "@/components/sections/FinalCTA"
 import FooterSection from "@/components/sections/FooterSection"
 
@@ -73,12 +75,14 @@ export default function Home() {
       {/*<ShuffleHeroSection />*/}
       <TrustHeroSection />
       <IntroSection />
+      <ProblemSection />
       <FeatureSection /> 
       <SystemVisualSection />
       <ProductVisualSection />
       <LiveSyncSection />
       {/*<InstaGallerySection /> */}
       <OutcomeSection />
+      <FAQSection />
       <FinalCTA />
       <FooterSection />
 

@@ -39,6 +39,7 @@ When building or modifying any file in the app/ directory, first read:
 - [x] Header
 - [x] Hero
 - [x] Intro
+- [x] Problem
 - [x] System Visual
 - [x] Product Visual
 - [x] Live Sync Visual
@@ -46,7 +47,7 @@ When building or modifying any file in the app/ directory, first read:
 - [x] Features
 - [x] Solutions
 - [x] Final CTA
-- [ ] FAQ
+- [x] FAQ
 - [x] Footer
 
 --------------------------------------------
