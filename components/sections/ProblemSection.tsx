@@ -62,7 +62,7 @@ const items: ProblemCard[] = [
     title: "Pilates near me",
     description: "Your studio doesn't show up",
     tag: "No Google presence",
-    // No imageAlt — this card uses the JSX fragment instead of an image
+    imageAlt: "Google search results for 'pilates near me' showing competitor studios but not your studio",
   },
   {
     id: 5,
@@ -139,143 +139,38 @@ const animItem: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// DRIFT ANIMATION CONSTANTS — used only for the JSX card (id=4)
-// The card oscillates slowly on rotation and Y, giving a sense of instability.
-// Fixed keyframe arrays (not Math.random) for deterministic, consistent renders.
-// Row index 3 is used (id=4, idx = 4-1 = 3).
-// ─────────────────────────────────────────────────────────────────────────────
-const JSX_DRIFT_ROT = [0, -0.8,  0.9, -1.3, 0]
-const JSX_DRIFT_Y   = [0,  2.8, -1.2,  2.0, 0]
-
-// ─────────────────────────────────────────────────────────────────────────────
-// JSX FRAGMENT — GOOGLE MISSING (card id=4)
-// Simulates a Google search results page where competitors appear but your
-// studio doesn't. Background is bg-[#D8D8D8] (light grey) to match a real
-// browser search page aesthetic — all text uses black/dark tokens for contrast.
-// ─────────────────────────────────────────────────────────────────────────────
-function FragmentGoogleMissing() {
-  return (
-    // bg-[#D8D8D8]: light grey simulating a Google search results background.
-    // flex flex-col: stacks the search bar, results, and footer vertically.
-    <div className="relative h-full w-full bg-[#D8D8D8] flex flex-col overflow-hidden">
-
-      {/* Search bar — rounded pill with magnifier icon and query text */}
-      <div className="flex items-center gap-2 mx-4 mt-4 mb-3 bg-black-axis/8 rounded-full px-3 py-2 border border-black-axis/15">
-        {/* Magnifier icon — inline SVG, no icon library needed */}
-        <svg
-          width="11" height="11" viewBox="0 0 16 16" fill="none"
-          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
-          className="text-black-axis/50 shrink-0"
-          aria-hidden="true"
-        >
-          <circle cx="7" cy="7" r="5" />
-          <path d="M11 11l3 3" />
-        </svg>
-        <span className="font-instrument text-[11px] text-black-axis flex-1">pilates near me</span>
-      </div>
-
-      {/* Competitor search results — two other studios show up instead */}
-      {/* divide-y: draws a thin horizontal rule between each result row */}
-      <div className="flex flex-col divide-y divide-black-axis/10 px-4">
-        {[
-          { name: "FitLife Studio",  url: "fitlife.com",  stars: 5, rating: "4.8", reviews: "120" },
-          { name: "MoveMX Pilates",  url: "movemx.com",   stars: 4, rating: "4.5", reviews: "67"  },
-        ].map((result) => (
-          <div key={result.name} className="py-2.5">
-            {/* Result title — styled like a Google blue-link heading */}
-            <span className="font-instrument text-[11px] font-semibold text-black-axis block leading-tight">
-              {result.name} — Book Online
-            </span>
-            <span className="font-instrument text-[9px] text-black-axis/60 block">{result.url}</span>
-            {/* Star rating row — ★ is the filled star HTML entity */}
-            <div className="flex items-center gap-1 mt-0.5">
-              <span className="text-[9px] text-black-axis/70">
-                {"★".repeat(result.stars)}{"☆".repeat(5 - result.stars)}
-              </span>
-              <span className="font-instrument text-[9px] text-black-axis/50">
-                {result.rating} &middot; {result.reviews} reviews
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Footer — your studio is simply absent from results */}
-      <div className="mt-auto px-4 pb-4 pt-2 border-t border-black-axis/10">
-        <span className="font-instrument text-[10px] text-black-axis/40 italic">
-          Your studio: no results found
-        </span>
-      </div>
-
-    </div>
-  )
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RENDER CARD FUNCTION
 // Passed as the `renderCard` prop to CardStack.
 // CardStack calls this once per visible card, giving us full control over
 // each card's visual content.
-//
-// Cards are split into two types:
-//   Image cards (id ≠ 4) — full-bleed next/image screenshot from public/problems_visual/
-//   JSX card   (id = 4) — the FragmentGoogleMissing component with drift animation
-//
-// Shared overlays on every card:
-//   1. Tag label top-left (text-magenta-axis = alarm/problem signal)
-//   2. Bottom gradient for title/description readability
-//   3. Active pulse ring (when card is in front)
+// All 6 cards show a full-bleed screenshot from public/problems_visual/.
+// The only overlay is the active pulse ring.
 // ─────────────────────────────────────────────────────────────────────────────
 function renderProblemCard(
   cardItem: ProblemCard,
   state: { active: boolean },
 ) {
-  // isJsxCard: true only for id=4 (NO GOOGLE PRESENCE), the one card that
-  // uses a hand-built JSX fragment instead of a real screenshot.
-  const isJsxCard = Number(cardItem.id) === 4
-
   return (
-    // relative + overflow-hidden: the tag, gradient, and pulse ring are
-    // absolutely positioned inside this boundary.
+    // relative + overflow-hidden: the pulse ring is absolutely positioned
+    // inside this boundary.
     <div className="relative h-full w-full overflow-hidden">
 
-      {/* ── CARD VISUAL CONTENT ─────────────────────────────────────────── */}
-      {isJsxCard ? (
-        // JSX card: wrap in Framer Motion for the slow drift animation.
-        // This makes the card feel unstable and alive, reinforcing "chaos".
-        // Duration: 7 + 4*1.3 = 12.2s — long, calm oscillation.
-        <motion.div
-          className="h-full w-full"
-          animate={{
-            rotateZ: JSX_DRIFT_ROT,
-            y:       JSX_DRIFT_Y,
-          }}
-          transition={{
-            duration:   12.2,
-            ease:       "easeInOut",
-            repeat:     Infinity,
-            repeatType: "loop",
-          }}
-        >
-          <FragmentGoogleMissing />
-        </motion.div>
-      ) : (
-        // Image card: full-bleed screenshot using next/image with fill.
-        // `fill` stretches the image to cover the parent's width and height.
-        // The parent (CardStack's card div) has explicit px dimensions set via
-        // the cardWidth/cardHeight props (340×280), so fill works correctly.
-        // No width/height props needed when using fill — parent dimensions apply.
-        <Image
-          src={`/problems_visual/img_${cardItem.id}.png`}
-          alt={cardItem.imageAlt ?? cardItem.title}
-          fill
-          // object-cover: scales the image to fill the card without distortion,
-          // cropping edges if the aspect ratio doesn't match exactly.
-          className="object-cover"
-          draggable={false}
-        />
-      )}
+      {/* Full-bleed screenshot.
+          `fill` stretches the image to cover the parent's width and height.
+          The parent (CardStack's card div) has explicit px dimensions set via
+          the cardWidth/cardHeight props (340×280), so fill works correctly.
+          No width/height props needed when using fill — parent dimensions apply. */}
+      <Image
+        src={`/problems_visual/img_${cardItem.id}.png`}
+        alt={cardItem.imageAlt ?? cardItem.title}
+        fill
+        // object-cover: scales the image to fill the card without distortion,
+        // cropping edges if the aspect ratio doesn't match exactly.
+        className="object-cover"
+        draggable={false}
+      />
 
       {/* ── ACTIVE CARD PULSE RING ──────────────────────────────────────── */}
       {/* Shown only when this card is the active (front) card.
