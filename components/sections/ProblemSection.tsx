@@ -203,28 +203,6 @@ export default function ProblemSection() {
     // overflow-hidden: clips floating chaos elements near the edges.
     // bg-black-axis: this section is part of the same dark system — not a break.
     <section className="relative overflow-hidden bg-black-axis py-20 px-6 md:py-36 md:px-12">
-    
-            {/* ── CLOSING STATEMENT ───────────────────────────────────────────── */}
-        {/*
-          Final statement that reframes the entire section.
-          Fade-up on scroll, plays once.
-          Uses font-playfair for visual weight — matches the headline style.
-        */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          viewport={{ once: true }}
-          className="text-center mt-16 md:mt-24"
-        >
-          <p className="font-playfair uppercase tracking-tight text-white-axis text-xl md:text-3xl leading-tight">
-            Your studio has visibility — but no structure.
-          </p>
-          <p className="font-instrument text-soft-grey text-xl tracking-wide mt-2">
-            And visibility doesn&apos;t scale.
-          </p>
-        </motion.div>
-        {/* END CLOSING STATEMENT */}
 
       {/* ── BACKGROUND CHAOS LAYER ────────────────────────────────────────── */}
       {/*
@@ -286,6 +264,32 @@ export default function ProblemSection() {
       {/* relative z-10: sits above the background chaos layer.
           max-w-6xl mx-auto: constrains content to 1152px, centered. */}
       <div className="relative z-10 max-w-6xl mx-auto">
+
+        {/* ── HEADLINE ────────────────────────────────────────────────────── */}
+        {/* h2: SEO requirement — one h2 per section. The page's h1 is in Hero.
+            Uses the stagger container: h2 fades in first, subline 120ms later.
+            viewport={{ once: true }}: plays once as section enters viewport. */}
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="text-center mb-12 md:mb-16"
+        >
+          <motion.h2
+            variants={animItem}
+            className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight"
+          >
+            Your studio has visibility — but no structure.
+          </motion.h2>
+          <motion.p
+            variants={animItem}
+            className="font-instrument text-soft-grey text-sm md:text-base tracking-wide mt-3"
+          >
+            And visibility doesn&apos;t scale.
+          </motion.p>
+        </motion.div>
+        {/* END HEADLINE */}
 
         {/* ── CARD STACK ────────────────────────────────────────────────── */}
         {/*

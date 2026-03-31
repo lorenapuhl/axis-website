@@ -339,7 +339,7 @@ export default function FAQSection() {
           </p>
 
           {/* Section headline — <h2> because the page's single <h1> lives in HeroSection */}
-          <h2 className="font-playfair text-4xl md:text-5xl uppercase tracking-tight text-white-axis">
+          <h2 className="font-playfair text-4xl md:text-3xl uppercase tracking-tight text-white-axis">
             Questions &amp; Answers
           </h2>
         </motion.div>

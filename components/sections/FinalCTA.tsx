@@ -50,20 +50,13 @@ export default function FinalCTA() {
             text-white-axis = primary headline color token
             Large text size steps down gracefully on mobile via responsive classes
           */}
+
           <motion.h2
             variants={item}
             className="font-instrument tracking-tight text-white-axis text-4xl md:text-2xl lg:text-2xl"
           >
-            Start simple.
-            <br />
-          </motion.h2>
-
-          <motion.p
-            variants={item}
-            className="font-instrument tracking-tight text-white-axis text-4xl md:text-2xl lg:text-2xl"
-          >
             Free prototype.
-          </motion.p>
+          </motion.h2>
 
           <motion.p
             variants={item}
@@ -91,7 +84,7 @@ export default function FinalCTA() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="mt-16 md:mt-24"
+          className="mt-16 md:mt-24 flex flex-col items-center gap-4"
         >
           <motion.button
             whileHover={{ scale: 1.03 }}
@@ -100,6 +93,15 @@ export default function FinalCTA() {
           >
             Get your AXIS
           </motion.button>
+
+          {/* Small print below the button — text-sm is consistently small across all breakpoints */}
+          <motion.p
+            variants={item}
+            className="font-instrument tracking-tight text-white-axis text-sm"
+          >
+            Get one of the first 5 spots ! <br />
+            No setup fee. Cancel anytime.
+          </motion.p>
         </motion.div>
 
       </div>

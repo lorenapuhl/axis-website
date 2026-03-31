@@ -40,14 +40,13 @@ When building or modifying any file in the app/ directory, first read:
 - [x] Hero
 - [x] Intro
 - [x] Problem
+- [x] Features
 - [x] System Visual
 - [x] Product Visual
 - [x] Live Sync Visual
-- [x] Insta Gallery
-- [x] Features
-- [x] Solutions
-- [x] Final CTA
+- [x] Benefits
 - [x] FAQ
+- [x] Final CTA
 - [x] Footer
 
 --------------------------------------------

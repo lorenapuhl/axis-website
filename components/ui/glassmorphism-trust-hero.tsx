@@ -164,7 +164,7 @@ export default function HeroSection() {
             <h1 
               className="font-playfair animate-fade-in delay-200 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-light tracking-tighter leading-[0.9]"
 
-            >Turn your Instagram into a Booking Machine
+            >Turn your Instagram into bookings, payments, and members.
             </h1>
 
             {/* Sub-header text (Paragraph) */}
