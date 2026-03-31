@@ -336,13 +336,16 @@ export default function BenefitsSection() {
               The disclaimers live outside the black card but inside this column. */}
           <div className="w-full md:w-[60%] flex flex-col gap-6">
 
-            {/* ── BLACK DASHBOARD CARD ────────────────────────────────────── */}
+            {/* ── GLASSMORPHISM DASHBOARD CARD ────────────────────────────── */}
+            {/* Glassmorphism: semi-transparent dark surface + backdrop blur +
+                subtle border + rounded corners. Sits on bg-grey-axis (#121212),
+                so the slight transparency creates visible depth and separation. */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
               viewport={{ once: true }}
-              className="bg-black-axis border border-white-axis/10 p-6 md:p-8"
+              className="bg-black-axis/70 backdrop-blur-xl border border-white-axis/[0.08] rounded-2xl p-6 md:p-8"
             >
 
               {/* ── STAT ROW: primary stat (left) + glass card (right) ────── */}
@@ -357,7 +360,7 @@ export default function BenefitsSection() {
                   initial="hidden"
                   animate="show"
                   exit="exit"
-                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-8"
+                  className="flex flex-col sm:flex-row items-start sm:items-center gap-8 mb-8"
                 >
 
                   {/* Primary stat — Playfair Display, left side */}
@@ -375,33 +378,34 @@ export default function BenefitsSection() {
                     </p>
                   </div>
 
-                  {/* Glassmorphism metrics card — right side.
-                      Glassmorphism effect: semi-transparent white tint + blur +
-                      subtle border + rounded corners. Sits on the black surface.
-                      Both metrics stacked vertically inside one shared card. */}
-                  <div className="bg-white-axis/[0.06] backdrop-blur-md border border-white-axis/[0.10] rounded-xl p-4 flex-shrink-0 min-w-[140px]">
+                  {/* Glassmorphism metrics card — right side, next to the primary stat.
+                      Each metric is laid out as a horizontal row: value left,
+                      label right — aligned on the baseline so they read as one line.
+                      flex-shrink-0 prevents the card from being squeezed by the stat. */}
+                  <div className="bg-white-axis/[0.06] backdrop-blur-md border border-white-axis/[0.10] rounded-xl p-4 flex-shrink-0">
                     {active.sidebarMetrics.map((metric, mi) => (
-                      // Divider between the two stacked metrics (except after the last).
                       <div
                         key={mi}
                         className={[
-                          "py-2",
+                          // flex + items-baseline: value and label sit on the same
+                          // text baseline, so numbers and labels align cleanly.
+                          "flex items-baseline gap-2 py-1.5",
                           mi < active.sidebarMetrics.length - 1
-                            ? "border-b border-white-axis/[0.08] mb-2"
+                            ? "border-b border-white-axis/[0.08]"
                             : "",
                         ].join(" ")}
                       >
-                        {/* Metric value with ** superscript.
-                            "0" = zero manual processes — fully automated. */}
-                        <div className="font-playfair text-xl text-white-axis leading-none">
+                        {/* Value — compact size to keep the row tight */}
+                        <span className="font-playfair text-base text-white-axis leading-none flex-shrink-0">
                           {metric.value}
-                          <sup className="font-instrument text-[10px] text-soft-grey ml-0.5 align-super">
+                          <sup className="font-instrument text-[9px] text-soft-grey ml-0.5 align-super">
                             **
                           </sup>
-                        </div>
-                        <p className="font-instrument text-[11px] text-soft-grey mt-1 leading-snug">
+                        </span>
+                        {/* Label — sits directly to the right on the same line */}
+                        <span className="font-instrument text-[11px] text-soft-grey leading-snug">
                           {metric.label}
-                        </p>
+                        </span>
                       </div>
                     ))}
                   </div>
