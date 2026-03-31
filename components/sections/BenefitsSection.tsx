@@ -345,8 +345,22 @@ export default function BenefitsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
               viewport={{ once: true }}
-              className="bg-black-axis/70 backdrop-blur-xl border border-white-axis/[0.08] rounded-2xl p-6 md:p-8"
+              className="relative overflow-hidden bg-black-axis/70 backdrop-blur-xl border border-white-axis/[0.08] rounded-2xl p-6 md:p-8"
             >
+
+              {/* ── DECORATIVE GLOWS ────────────────────────────────────────── */}
+              {/* Two glow circles create an ambient light field across the card.
+                  Top-right: primary glow — brighter, larger.
+                  Bottom-left: secondary glow — same size, slightly dimmer.
+                  Together they give the card a lit surface feel on the dark bg. */}
+              <div
+                className="absolute top-0 right-0 -mr-20 -mt-20 h-80 w-80 rounded-full bg-white-axis/[0.08] blur-3xl pointer-events-none"
+                aria-hidden="true"
+              />
+              <div
+                className="absolute bottom-0 left-0 -ml-16 -mb-16 h-64 w-64 rounded-full bg-white-axis/[0.05] blur-3xl pointer-events-none"
+                aria-hidden="true"
+              />
 
               {/* ── STAT ROW: primary stat (left) + glass card (right) ────── */}
               {/* flex-col on mobile so the glass card stacks below the stat.
@@ -379,10 +393,18 @@ export default function BenefitsSection() {
                   </div>
 
                   {/* Glassmorphism metrics card — right side, next to the primary stat.
+                      relative overflow-hidden: required to contain the inner glow div.
                       Each metric is laid out as a horizontal row: value left,
                       label right — aligned on the baseline so they read as one line.
                       flex-shrink-0 prevents the card from being squeezed by the stat. */}
-                  <div className="bg-white-axis/[0.06] backdrop-blur-md border border-white-axis/[0.10] rounded-xl p-4 flex-shrink-0">
+                  <div className="relative overflow-hidden bg-white-axis/[0.06] backdrop-blur-md border border-white-axis/[0.10] rounded-xl p-4 flex-shrink-0">
+
+                    {/* Inner glow — top-right corner, smaller than the outer card's
+                        glow to match the card's smaller scale. */}
+                    <div
+                      className="absolute top-0 right-0 -mr-6 -mt-6 h-20 w-20 rounded-full bg-white-axis/[0.08] blur-2xl pointer-events-none"
+                      aria-hidden="true"
+                    />
                     {active.sidebarMetrics.map((metric, mi) => (
                       <div
                         key={mi}
