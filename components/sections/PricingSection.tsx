@@ -154,12 +154,16 @@ const TRUST_COLUMNS = [
 
 const TRUST_QUOTES = [
   {
-    text: "I spend hours replying to the same messages every day.",
-    source: "Pilates Studio Owner",
+    text: "My processes just became too messy… The waking up at 3am in the morning no longer happens. Clients just pay.",
+    source: "Claire Willett, Owner of Millstream Pilates, Oxfordshire",
   },
   {
-    text: "People ask but never book.",
-    source: "Yoga Studio",
+    text: "We found that we were missing stuff. We weren't sure where people were, whether they were showing up, whether their payments were going through.",
+    source: "Jake Allen, Founder of JPT Fitness, London",
+  },
+  {
+    text: "We were just on this hamster wheel of admin and organization… That's not what we want to do as Pilates instructors or yoga teachers. We just want to teach.",
+    source: "Katie Bell, Pilates Studio Owner & Business Coach",
   },
 ]
 
@@ -190,6 +194,36 @@ const item: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 }
 
+// bulletContainer: staggers each heading + bullet point within a trust column.
+// A tighter 0.08s stagger makes the list feel rapid-fire — like a waterfall of
+// advantages landing one by one rather than the whole column appearing at once.
+const bulletContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+}
+
+// bulletItemContainer: each li acts as a sub-orchestrator for its two children
+// (the ✓ and the text). staggerChildren: 0.08 means the text starts 80ms after
+// the checkmark — the checkmark always lands first, text confirms it.
+const bulletItemContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+}
+
+// checkmarkVariant: the ✓ slides in from the left as it fades in.
+// x: -8 → x: 0 gives it a short horizontal travel — purposeful, not bouncy.
+const checkmarkVariant: Variants = {
+  hidden: { opacity: 0, x: -8 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeOut" } },
+}
+
+// labelVariant: the text fades in after the checkmark has settled.
+// No y-movement here — the checkmark already provides the motion cue.
+const labelVariant: Variants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
+}
+
 // timelineNodeVariant: each timeline node (circle + label) fades up into place.
 // Mirrors the nodeVariant pattern from SystemVisualSection.tsx.
 const timelineNodeVariant: Variants = {
@@ -209,6 +243,25 @@ const timelineLineVariant: Variants = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function PricingSection() {
+
+  // quoteIndex: which of the 3 testimonial quotes is currently visible.
+  // Cycles 0 → 1 → 2 → 0 every 3 seconds unless the user is hovering.
+  const [quoteIndex, setQuoteIndex] = useState(0)
+
+  // quoteHovered: pauses the carousel while the user reads the active quote.
+  const [quoteHovered, setQuoteHovered] = useState(false)
+
+  // Auto-advance the quote carousel every 3 seconds.
+  // Returns early (without creating an interval) when quoteHovered is true —
+  // this effectively pauses the timer for as long as the user is hovering.
+  // Cleanup (clearInterval) prevents a memory leak on unmount.
+  useEffect(() => {
+    if (quoteHovered) return
+    const timer = setInterval(() => {
+      setQuoteIndex((prev) => (prev + 1) % TRUST_QUOTES.length)
+    }, 3000)
+    return () => clearInterval(timer)
+  }, [quoteHovered])
 
   // spots: tracks how many onboarding spots remain.
   // Counts down from 5 → 2 once per second after the component mounts,
@@ -530,42 +583,121 @@ export default function PricingSection() {
           {/* 3-column grid on desktop, stacked on mobile */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
 
-            {/* Columns 1 & 2 — Setup and Risk */}
+            {/* ── COLUMNS 1 & 2 — Setup and Risk ───────────────────────────
+                Each column uses bulletContainer to stagger its heading + bullets
+                individually, creating a rapid-fire waterfall of advantages.
+                The h3 + each li all appear as separate motion items. */}
             {TRUST_COLUMNS.map((col) => (
-              <motion.div key={col.id} variants={item}>
-                {/* h3: sub-item within the Trust h2 section */}
-                <h3 className="font-playfair uppercase tracking-tight text-white-axis text-lg mb-5">
+              <motion.div key={col.id} variants={bulletContainer}>
+
+                {/* h3: first child — appears first in the stagger sequence */}
+                <motion.h3
+                  variants={item}
+                  className="font-playfair uppercase tracking-tight text-white-axis text-lg mb-5"
+                >
                   {col.heading}
-                </h3>
+                </motion.h3>
+
+                {/* Each li is a sub-orchestrator (bulletItemContainer) that staggers
+                    its two children: ✓ slides in first, text fades in 80ms later.
+                    The li itself has no visual animation — only its children do. */}
                 <ul className="flex flex-col gap-3">
                   {col.points.map((point) => (
-                    <li key={point} className="flex items-start gap-3 font-instrument text-sm text-soft-grey">
-                      <span className="text-blue-axis text-xs mt-0.5 flex-shrink-0" aria-hidden="true">✓</span>
-                      {point}
-                    </li>
+                    <motion.li
+                      key={point}
+                      variants={bulletItemContainer}
+                      className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
+                    >
+                      {/* ✓ — slides in from the left first */}
+                      <motion.span
+                        variants={checkmarkVariant}
+                        className="text-blue-axis text-xs mt-0.5 flex-shrink-0 w-3 text-center"
+                        aria-hidden="true"
+                      >
+                        ✓
+                      </motion.span>
+
+                      {/* Text — fades in 80ms after the checkmark has landed */}
+                      <motion.span variants={labelVariant}>
+                        {point}
+                      </motion.span>
+                    </motion.li>
                   ))}
                 </ul>
+
               </motion.div>
             ))}
 
-            {/* Column 3 — Real problems: quote cards */}
-            <motion.div variants={item} className="flex flex-col gap-4">
-              <h3 className="font-playfair uppercase tracking-tight text-white-axis text-lg mb-1">
+            {/* ── COLUMN 3 — Quote carousel ─────────────────────────────────
+                3 real testimonial quotes cycling every 3 seconds.
+                Pauses on hover so users can read the full quote.
+                No card/box — transparent background, matching columns 1 & 2.
+                Large " marks in blue-axis anchor the quote visually. */}
+            <motion.div variants={item} className="flex flex-col">
+
+              <h3 className="font-playfair uppercase tracking-tight text-white-axis text-lg mb-5">
                 Solve your problems instantly
               </h3>
-              {TRUST_QUOTES.map((quote, i) => (
-                <div
-                  key={i}
-                  className="bg-grey-axis border border-white-axis/[0.06] rounded-xl p-5"
-                >
-                  <p className="font-instrument text-soft-grey text-sm leading-relaxed italic mb-3">
-                    &ldquo;{quote.text}&rdquo;
-                  </p>
-                  <p className="font-instrument text-xs uppercase tracking-widest text-white-axis/30">
-                    — {quote.source}
-                  </p>
-                </div>
-              ))}
+
+              {/* Carousel wrapper: hover detection pauses the auto-advance */}
+              <div
+                onMouseEnter={() => setQuoteHovered(true)}
+                onMouseLeave={() => setQuoteHovered(false)}
+                // min-h-[160px]: reserves enough vertical space for the longest quote
+                // so the section height never jumps when quotes switch.
+                className="relative min-h-[160px]"
+              >
+                {/* AnimatePresence: the exiting quote fades + slides up before
+                    the entering quote fades + slides up from below.
+                    mode="wait": exit animation completes before enter begins. */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={quoteIndex}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                  >
+                    {/* Large opening " — Playfair Display, blue accent, decorative but purposeful:
+                        it visually anchors the quote and signals "this is a testimonial". */}
+                    <span
+                      className="font-playfair text-5xl text-blue-axis leading-none block mb-1"
+                      aria-hidden="true"
+                    >
+                      &ldquo;
+                    </span>
+
+                    {/* Quote body */}
+                    <p className="font-instrument text-soft-grey text-sm leading-relaxed mb-4">
+                      {TRUST_QUOTES[quoteIndex].text}
+                    </p>
+
+                    {/* Attribution — matches the muted style of body text in cols 1 & 2 */}
+                    <p className="font-instrument text-xs uppercase tracking-widest text-white-axis/30">
+                      — {TRUST_QUOTES[quoteIndex].source}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Dot indicator — shows which quote is active (same pattern as BenefitsSection).
+                  3 small circles; active dot is full-white, inactive are muted. */}
+              <div className="flex gap-2 mt-5">
+                {TRUST_QUOTES.map((_, i) => (
+                  <motion.button
+                    key={i}
+                    onClick={() => setQuoteIndex(i)}
+                    className={[
+                      "w-1.5 h-1.5 rounded-full transition-colors",
+                      i === quoteIndex ? "bg-white-axis" : "bg-white-axis/20",
+                    ].join(" ")}
+                    whileHover={{ scale: 1.4 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    aria-label={`Show quote ${i + 1}`}
+                  />
+                ))}
+              </div>
+
             </motion.div>
 
           </div>
