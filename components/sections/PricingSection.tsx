@@ -6,13 +6,15 @@
 
 // useState: like a Python variable, but changing it automatically re-renders the UI.
 // useEffect: runs code after the component first appears in the browser (like window.onload).
+// useRef: creates a stable reference to a DOM element without triggering re-renders.
 // Fragment: a wrapper that doesn't add any extra element to the DOM — used for returning
 //           multiple sibling elements from a map() call that needs a key.
-import { useState, useEffect, Fragment } from "react"
+import { useState, useEffect, useRef, Fragment } from "react"
 
 // motion:         wraps any HTML element to give it animation superpowers.
 // AnimatePresence: lets elements play an exit animation before being removed from the DOM.
-import { motion, AnimatePresence } from "framer-motion"
+// useInView:      returns true once a referenced element scrolls into the viewport.
+import { motion, AnimatePresence, useInView } from "framer-motion"
 
 // Variants: TypeScript type for named animation state objects.
 // Without it TypeScript widens literal strings like "easeOut" to `string`,
@@ -263,20 +265,26 @@ export default function PricingSection() {
     return () => clearInterval(timer)
   }, [quoteHovered])
 
-  // spots: tracks how many onboarding spots remain.
-  // Counts down from 5 → 2 once per second after the component mounts,
-  // then stops. This creates a live-counter feel without being misleading.
+  // spots: tracks how many onboarding spots remain for the scarcity counter.
   const [spots, setSpots] = useState(5)
 
-  // useEffect with [spots] dependency: re-runs every time spots changes.
-  // If spots is already at 2, the early return stops the countdown.
-  // setTimeout fires once (not setInterval) so we can conditionally re-arm it.
-  // Cleanup clears the timeout if the component unmounts before it fires.
+  // scarcityRef: attached to the scarcity block div so we can detect when it
+  // enters the viewport. useInView returns true once the element is visible.
+  // once: true — the countdown triggers exactly once, never restarts on re-scroll.
+  const scarcityRef = useRef(null)
+  const scarcityInView = useInView(scarcityRef, { once: true })
+
+  // Countdown 5 → 2, triggered only after the scarcity block scrolls into view.
+  // Without scarcityInView guard the counter would finish before the user ever
+  // sees it. Each step takes 1.5 s — slow enough to feel live, urgent enough to
+  // create pressure. setTimeout (not setInterval) re-arms itself each step so
+  // the early-return at 2 cleanly stops the chain.
   useEffect(() => {
+    if (!scarcityInView) return
     if (spots <= 2) return
-    const timer = setTimeout(() => setSpots((prev) => prev - 1), 900)
+    const timer = setTimeout(() => setSpots((prev) => prev - 1), 1500)
     return () => clearTimeout(timer)
-  }, [spots])
+  }, [spots, scarcityInView])
 
   return (
     // Root element MUST be <section> per component.md rules.
@@ -1087,7 +1095,11 @@ export default function PricingSection() {
           </motion.p>
 
           {/* ── SCARCITY BLOCK ────────────────────────────────────────────── */}
+          {/* ref={scarcityRef}: tells useInView to watch this element.
+              When it enters the viewport, scarcityInView flips to true
+              and the countdown useEffect fires for the first time. */}
           <motion.div
+            ref={scarcityRef}
             variants={item}
             className="bg-grey-axis border border-white-axis/[0.06] rounded-xl p-6 max-w-sm mx-auto mb-12"
           >
