@@ -228,7 +228,7 @@ export default function BenefitsSection() {
   return (
     <section
       ref={sectionRef}
-      className="bg-grey-axis py-20 px-6 md:py-36 md:px-12"
+      className="bg-grey-axis py-20 px-6 md:py-36 md:px-12 [overflow-anchor:none]"
     >
       <div className="max-w-6xl mx-auto">
 
@@ -284,46 +284,44 @@ export default function BenefitsSection() {
                     {benefit.label}
                   </p>
 
-                  {/* Bullets — accordion: expands when active, collapses on exit.
-                      AnimatePresence lets the exit animation (height → 0) play
-                      before the element is removed from the DOM.
-                      Each item uses a ✓ checkmark as a minimal hook symbol. */}
-                  <AnimatePresence>
-                    {isActive && (
-                      <motion.ul
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
-                        className="mt-3 flex flex-col gap-2 overflow-hidden"
+                  {/* Bullets — always rendered in the DOM so height never changes.
+                      Only opacity animates: no layout shift, no scroll-anchor jitter.
+                      Inactive bullets are invisible but occupy the same space,
+                      which reads as generous whitespace (consistent with AXIS feel).
+                      pointer-events-none + select-none prevent interaction when hidden. */}
+                  <motion.ul
+                    animate={{ opacity: isActive ? 1 : 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className={[
+                      "mt-3 flex flex-col gap-2 overflow-hidden",
+                      !isActive ? "pointer-events-none select-none" : "",
+                    ].join(" ")}
+                  >
+                    {benefit.bullets.map((bullet, bi) => (
+                      // Stagger: each bullet fades in 80ms after the previous.
+                      <motion.li
+                        key={bi}
+                        initial={{ opacity: 0, x: -4 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          duration: 0.4,
+                          ease: "easeOut",
+                          delay: bi * 0.08,
+                        }}
+                        className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
                       >
-                        {benefit.bullets.map((bullet, bi) => (
-                          // Stagger: each bullet fades in 80ms after the previous.
-                          <motion.li
-                            key={bi}
-                            initial={{ opacity: 0, x: -4 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{
-                              duration: 0.4,
-                              ease: "easeOut",
-                              delay: bi * 0.08,
-                            }}
-                            className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
-                          >
-                            {/* Minimal checkmark hook symbol — blue accent, fixed width
-                                so all bullet text aligns regardless of check width */}
-                            <span
-                              className="text-blue-axis text-xs mt-0.5 flex-shrink-0 w-3 text-center"
-                              aria-hidden="true"
-                            >
-                              ✓
-                            </span>
-                            {bullet}
-                          </motion.li>
-                        ))}
-                      </motion.ul>
-                    )}
-                  </AnimatePresence>
+                        {/* Minimal checkmark hook symbol — blue accent, fixed width
+                            so all bullet text aligns regardless of check width */}
+                        <span
+                          className="text-blue-axis text-xs mt-0.5 flex-shrink-0 w-3 text-center"
+                          aria-hidden="true"
+                        >
+                          ✓
+                        </span>
+                        {bullet}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
 
                 </motion.button>
               )

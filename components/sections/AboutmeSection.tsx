@@ -136,12 +136,12 @@ export default function AboutmeSection() {
               a short horizontal stroke that visually anchors the label. */}
           <div className="flex items-center gap-3">
             {/* font-instrument uppercase tracking-[0.14em]: AXIS subheading style */}
-            <span className="font-instrument text-[11px] uppercase tracking-[0.14em] text-magenta-axis font-medium">
+            <span className="font-instrument text-[11px] uppercase tracking-[0.14em] text-blue-axis font-medium">
               Founding Story
             </span>
             {/* Decorative line — visual punctuation after the label.
                 aria-hidden: invisible to screen readers, purely decorative. */}
-            <span className="block w-8 h-px bg-magenta-axis opacity-50" aria-hidden="true" />
+            <span className="block w-8 h-px bg-blue-axis opacity-50" aria-hidden="true" />
           </div>
         </motion.div>
 
@@ -165,7 +165,7 @@ export default function AboutmeSection() {
                 aspect-[3/4]: portrait crop ratio — taller than wide.
                 overflow-hidden: clips the image and any absolute children to this box.
                 border border-white-axis/[0.08]: very subtle frame at 8% white opacity. */}
-            <div className="relative w-full aspect-[3/4] overflow-hidden border border-white-axis/[0.08] rounded-sm mb-5">
+            <div className="relative w-100 aspect-square overflow-hidden border border-white-axis/[0.08] rounded-xl mb-5">
 
               {/* next/image with fill prop: stretches to fill the relative parent.
                   object-cover: scales and crops the photo to cover the container
@@ -219,12 +219,12 @@ export default function AboutmeSection() {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  whileHover={{ y: -2, scale: 1.02 }}
+                  whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.35, ease: "easeOut" }}
                   className="bg-white-axis/[0.04] border border-white-axis/[0.08] rounded-sm px-4 py-3 cursor-default"
                 >
                   {/* Stat number — Playfair Display, magenta accent */}
-                  <div className="font-playfair text-xl text-magenta-axis leading-none mb-1">
+                  <div className="font-playfair text-xl text-white-axis leading-none mb-1">
                     {stat.num}
                   </div>
                   {/* Stat description — soft-grey base, bold keywords in white */}
@@ -254,8 +254,8 @@ export default function AboutmeSection() {
                 <em>: the italicised phrase uses UV accent to mark the key message.
                 Playfair italic + uppercase creates a deliberate typographic contrast. */}
             <h2 className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight mb-7">
-              Built by a scientist,{" "}
-              <em className="text-magenta-axis">designed for the studio floor.</em>
+              Built by a scientist,{" "} <br />
+              <em className="text-blue-axis">designed for the studio floor.</em>
             </h2>
 
             {/* BODY PARAGRAPHS
@@ -279,11 +279,11 @@ export default function AboutmeSection() {
             </p>
 
             {/* QUOTE BLOCK
-                border-l-2 border-magenta-axis: 2px left border in UV — structural accent
+                border-l-2 border-blue-axis: 2px left border in UV — structural accent
                 that anchors the quote visually and signals its importance.
                 pl-5 py-1: padding so the text doesn't touch the border.
                 my-8: generous vertical spacing separates this from surrounding text. */}
-            <blockquote className="border-l-2 border-magenta-axis pl-5 py-1 my-8">
+            <blockquote className="border-l-2 border-blue-axis pl-5 py-1 my-8">
               <p className="font-playfair italic text-white-axis text-lg leading-relaxed">
                 "I take the same rigor used in ML research and apply it to one goal: making your
                 studio grow while you sleep."
@@ -341,14 +341,14 @@ export default function AboutmeSection() {
             <div className="flex items-center gap-5">
 
               {/* PRIMARY CTA BUTTON
-                  bg-magenta-axis: UV accent as background, per user spec.
+                  bg-blue-axis: UV accent as background, per user spec.
                   text-white-axis: white text readable on the dark UV surface.
                   whileHover scale 1.03: slow, confident hover (0.35s easeOut) —
                   matches the AXIS primary button hover pattern. */}
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="bg-magenta-axis text-white-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
+                className="bg-blue-axis text-white-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
               >
                 Let&apos;s get in touch
               </motion.button>

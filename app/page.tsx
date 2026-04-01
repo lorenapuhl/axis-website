@@ -85,7 +85,7 @@ export default function Home() {
       {/*<InstaGallerySection /> */}
       <BenefitsSection />
       <OutcomeSection />
-      <AboutmeSection />
+      { /*<AboutmeSection /> */}
       <FAQSection />
       <FinalCTA />
       <FooterSection />

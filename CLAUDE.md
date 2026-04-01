@@ -45,10 +45,11 @@ When building or modifying any file in the app/ directory, first read:
 - [x] Product Visual
 - [x] Live Sync Visual
 - [x] Benefits
-- [x] About me
+- [ ] About me
 - [x] FAQ
 - [x] Final CTA
 - [x] Footer
+- [ ] Pricing
 
 --------------------------------------------
 
