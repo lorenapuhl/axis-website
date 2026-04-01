@@ -734,18 +734,26 @@ export default function FeatureSection() {
               Each item is an icon + short label — no descriptions needed. */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {techFeatures.map((feature) => (
-              <div
+              // motion.div: Framer Motion wrapper enables the whileHover lift effect.
+              // group: Tailwind group — lets child elements react to this div's hover state
+              // via group-hover: classes without needing JavaScript.
+              <motion.div
                 key={feature.label}
-                className="flex items-center gap-2.5 py-3 px-4 rounded-xl bg-grey-axis"
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="flex items-center gap-2.5 py-3 px-4 rounded-xl bg-grey-axis cursor-default"
                 // bg-grey-axis (#121212): very dark grey on black = subtle tile definition.
+                // cursor-default: tells the browser this is not a clickable link.
               >
-                <span className="text-soft-grey shrink-0">
+                {/* group-hover:text-white-axis: icon switches to white when the card is hovered */}
+                <span className="text-white-axis shrink-0">
                   <TechIcon path={feature.d} />
                 </span>
-                <span className="font-instrument text-xs text-soft-grey leading-tight">
+                {/* text-sm: one step up from xs — more readable at rest and on hover. */}
+                <span className="font-instrument text-sm text-white-axis leading-tight">
                   {feature.label}
                 </span>
-              </div>
+              </motion.div>
             ))}
           </div>
 
