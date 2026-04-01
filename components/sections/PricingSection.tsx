@@ -813,18 +813,34 @@ export default function PricingSection() {
           >
 
             {/* ── DESKTOP TIMELINE ───────────────────────────────────────────
-                flex-row mirrors the step cards row.
-                Each node is wrapped in flex-1 so its centre aligns with its card.
-                Each connector uses the same flex-shrink-0 px-4 as the arrow divs. */}
-            <div className="hidden md:flex flex-row items-start">
+                relative: lets the full-width line be positioned absolutely behind
+                the dots, which sit on top via z-10.
+                The two invisible flex-shrink-0 spacers preserve the same flex
+                column widths as the arrow connectors in the step cards row above,
+                keeping each node centred under its card. */}
+            <div className="hidden md:flex flex-row items-start relative">
 
-              {/* Node 1 wrapper — flex-1 matches Card 1 column */}
+              {/* Full-width line: draws left → right via scaleX 0 → 1.
+                  top-[5px]: aligns with the vertical centre of the 12px dot.
+                  transformOrigin left: the line grows from the left edge. */}
+              <motion.div
+                className="absolute left-0 right-0 bg-soft-grey/40 pointer-events-none"
+                style={{ top: "5px", height: "1px", transformOrigin: "left" }}
+                initial={{ scaleX: 0, opacity: 0 }}
+                whileInView={{ scaleX: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+                aria-hidden="true"
+              />
+
+              {/* Node 1 wrapper — flex-1 matches Card 1 column.
+                  z-10: floats above the absolute line. */}
               <motion.div
                 variants={timelineNodeVariant}
                 transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-                className="flex-1 flex flex-col items-center text-center"
+                className="flex-1 flex flex-col items-center text-center relative z-10"
               >
-                <div className="w-3 h-3 rounded-full border border-soft-grey" />
+                <div className="w-3 h-3 rounded-full border border-soft-grey bg-black-axis" />
                 <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
                   Day 1
                 </p>
@@ -833,28 +849,17 @@ export default function PricingSection() {
                 </p>
               </motion.div>
 
-              {/* Connector 1 — flex-shrink-0 px-4 mirrors the arrow connector */}
-              <div className="flex-shrink-0 flex items-center justify-center px-4 mt-[5px]" aria-hidden="true">
-                <svg width="32" height="2" viewBox="0 0 32 2">
-                  <motion.path
-                    d="M 0 1 L 32 1"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    fill="none"
-                    className="text-soft-grey"
-                    variants={timelineLineVariant}
-                    transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
-                  />
-                </svg>
-              </div>
+              {/* Invisible spacer — same flex-shrink-0 px-4 as the arrow connector,
+                  so the flex column widths stay identical to the step cards row. */}
+              <div className="flex-shrink-0 px-4" aria-hidden="true" />
 
               {/* Node 2 wrapper — flex-1 matches Card 2 column */}
               <motion.div
                 variants={timelineNodeVariant}
                 transition={{ duration: 0.7, ease: "easeOut", delay: 0.8 }}
-                className="flex-1 flex flex-col items-center text-center"
+                className="flex-1 flex flex-col items-center text-center relative z-10"
               >
-                <div className="w-3 h-3 rounded-full border border-soft-grey" />
+                <div className="w-3 h-3 rounded-full border border-soft-grey bg-black-axis" />
                 <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
                   Days 2–7
                 </p>
@@ -863,20 +868,8 @@ export default function PricingSection() {
                 </p>
               </motion.div>
 
-              {/* Connector 2 */}
-              <div className="flex-shrink-0 flex items-center justify-center px-4 mt-[5px]" aria-hidden="true">
-                <svg width="32" height="2" viewBox="0 0 32 2">
-                  <motion.path
-                    d="M 0 1 L 32 1"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    fill="none"
-                    className="text-soft-grey"
-                    variants={timelineLineVariant}
-                    transition={{ duration: 0.7, ease: "easeOut", delay: 1.1 }}
-                  />
-                </svg>
-              </div>
+              {/* Invisible spacer 2 */}
+              <div className="flex-shrink-0 px-4" aria-hidden="true" />
 
               {/* Node 3 wrapper — flex-1 matches Card 3 column */}
               {/* Destination node uses border-white-axis (full brightness) to signal
@@ -884,7 +877,7 @@ export default function PricingSection() {
               <motion.div
                 variants={timelineNodeVariant}
                 transition={{ duration: 0.7, ease: "easeOut", delay: 1.5 }}
-                className="flex-1 flex flex-col items-center text-center"
+                className="flex-1 flex flex-col items-center text-center relative z-10"
               >
                 <div className="relative flex items-center justify-center">
                   {/* One-shot glow halo */}
@@ -896,7 +889,8 @@ export default function PricingSection() {
                     viewport={{ once: true }}
                     transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" }}
                   />
-                  <div className="w-3 h-3 rounded-full border border-white-axis relative z-10" />
+                  {/* bg-black-axis fills the dot so the line doesn't bleed through it */}
+                  <div className="w-3 h-3 rounded-full border border-white-axis bg-black-axis relative z-10" />
                 </div>
                 <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
                   Days 7-8
