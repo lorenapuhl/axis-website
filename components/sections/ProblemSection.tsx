@@ -216,7 +216,7 @@ export default function ProblemSection() {
     // relative: anchor for the absolutely-positioned background chaos layer.
     // overflow-hidden: clips floating chaos elements near the edges.
     // bg-black-axis: this section is part of the same dark system — not a break.
-    <section className="relative overflow-hidden bg-black-axis py-20 px-6 md:py-36 md:px-12">
+    <section className="relative overflow-hidden bg-black-axis py-20 px-6 md:py-26 md:px-6">
 
       {/* ── BACKGROUND CHAOS LAYER ────────────────────────────────────────── */}
       {/*
@@ -277,7 +277,7 @@ export default function ProblemSection() {
       {/* ── MAIN CONTENT ──────────────────────────────────────────────────── */}
       {/* relative z-10: sits above the background chaos layer.
           max-w-6xl mx-auto: constrains content to 1152px, centered. */}
-      <div className="relative z-10 max-w-6xl mx-auto">
+      <div className="relative z-10 max-w-7xl mx-auto">
 
         {/* ── 2-COLUMN LAYOUT ─────────────────────────────────────────────── */}
         {/*
@@ -286,7 +286,7 @@ export default function ProblemSection() {
           md:items-center: vertically centers the two columns relative to each other.
           md:gap-16: generous horizontal spacing between columns (4rem).
         */}
-        <div className="flex flex-col md:flex-row md:items-center md:gap-16">
+        <div className="flex flex-col md:flex-row md:items-center md:gap-20">
 
           {/* ── LEFT COLUMN: CARD STACK ─────────────────────────────────── */}
           {/*
@@ -294,24 +294,26 @@ export default function ProblemSection() {
             On mobile, this stacks above the right panel.
             The CardStack is centered within this column via flex/justify.
           */}
-          <div className="md:w-[50%] flex justify-center">
+          <div className="md:w-[40%] flex justify-center">
             {/*
-              CardStack props updated for vertical pile layout:
-                spreadDeg   45 → 0    (zero Z rotation — eliminates the horizontal fan)
-                overlap    0.70→ 0.94 (260×0.06 ≈ 16px spacing — near-full card overlap)
-                maxVisible   5 → 3    (only 3 cards; pile reads cleanly with less noise)
-                randomOffsets=true (Y-jitter ±5–9px per card creates the pile look)
-              All other props unchanged.
+              CardStack props — vertical pile layout:
+                spreadDeg=0        zero Z rotation — pure vertical pile, no horizontal fan
+                overlap=0.94       260×0.06 ≈ 16px spacing — near-full card overlap
+                maxVisible=5       5 cards visible — richer pile with more background depth
+                activeLiftPx=50    front card lifts dramatically above the pile
+                cardHeight=280     taller cards = more vertical presence
+                randomOffsets=true Y-jitter ±5–9px per card creates an organic pile feel
             */}
             <CardStack
               items={items}
-              cardWidth={260}
-              cardHeight={210}
+              cardWidth={360}
+              cardHeight={290}
               overlap={0.94}
               spreadDeg={0}
               activeScale={1.06}
               inactiveScale={0.93}
-              maxVisible={3}
+              activeLiftPx={50}
+              maxVisible={5}
               autoAdvance={true}
               intervalMs={2400}
               pauseOnHover={true}
@@ -330,7 +332,7 @@ export default function ProblemSection() {
             mt-12: top margin on mobile only (when stacked below CardStack).
             md:mt-0: remove that margin on desktop (columns are side-by-side).
           */}
-          <div className="md:w-[50%] mt-12 md:mt-0">
+          <div className="md:flex-1 mt-12 md:mt-0">  
 
             {/* ── STATIC HEADLINE ─────────────────────────────────────────── */}
             {/*
@@ -346,7 +348,7 @@ export default function ProblemSection() {
             >
               <motion.h2
                 variants={animItem}
-                className="font-playfair uppercase tracking-tight text-white-axis text-xl md:text-2xl leading-tight mb-6 md:mb-8"
+                className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight mb-6 md:mb-8"
               >
                 Your studio has visibility — but no structure.
               </motion.h2>
@@ -373,7 +375,7 @@ export default function ProblemSection() {
               >
 
                 {/* TAG label — uppercase, wide tracking, muted grey */}
-                <p className="font-instrument uppercase tracking-widest text-soft-grey text-xs">
+                <p className="font-instrument uppercase tracking-widest text-magenta-axis text-base">
                   {TEXT_CONTENT[activeIndex]?.title}
                 </p>
 
@@ -381,7 +383,7 @@ export default function ProblemSection() {
                     Line 1 (muted grey): describes the symptom.
                     Line 2 (bold white): the consequence / punchline.
                     <br />: explicit line break between the two lines. */}
-                <p className="font-instrument text-sm mt-2 leading-relaxed">
+                <p className="font-instrument text-lg mt-2 leading-relaxed">
                   <span className="text-soft-grey">
                     {TEXT_CONTENT[activeIndex]?.line1}
                   </span>
@@ -406,7 +408,7 @@ export default function ProblemSection() {
                       aria-hidden: purely decorative, not read aloud by screen readers.
                       select-none: prevents accidental text selection of the glyph. */}
                   <span
-                    className="font-playfair text-5xl leading-none text-blue-axis select-none"
+                    className="font-playfair text-7xl leading-none text-magenta-axis select-none"
                     aria-hidden="true"
                   >
                     &ldquo;
@@ -414,13 +416,13 @@ export default function ProblemSection() {
 
                   {/* Quote body: Playfair italic, slight opacity to differentiate
                       from the headline above. -mt-2 pulls it up under the large quote mark. */}
-                  <p className="font-playfair italic text-white-axis/90 text-sm leading-relaxed -mt-2">
+                  <p className="font-playfair italic text-white-axis/90 text-lg leading-relaxed -mt-2">
                     {TEXT_CONTENT[activeIndex]?.quote}
                   </p>
 
                   {/* Attribution: instrument sans, muted, uppercase, wide tracked.
                       No truncation — wraps fully on narrow screens. */}
-                  <p className="font-instrument text-soft-grey text-xs uppercase tracking-widest mt-3">
+                  <p className="font-instrument text-soft-grey text-sm uppercase tracking-widest mt-3">
                     {TEXT_CONTENT[activeIndex]?.attribution}
                   </p>
                 </div>

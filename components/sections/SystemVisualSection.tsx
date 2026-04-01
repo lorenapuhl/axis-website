@@ -440,7 +440,7 @@ export default function SystemVisualSection() {
             <p
               className={[
                 "font-instrument uppercase tracking-widest",
-                "text-blue-axis text-xs",
+                "text-magenta-axis text-xs",
                 // text-blue-axis: the only accent color in this section.
                 // Used here as an "active state" label per brand conventions.
                 "mb-3",
@@ -572,7 +572,7 @@ export default function SystemVisualSection() {
                   "w-3 h-3 rounded-full",
                   // Same size and shape as the dot, so the glow starts from the dot's bounds.
 
-                  "bg-blue-axis",
+                  "bg-magenta-axis",
                   // bg-blue-axis: #0033FF — the glow uses the accent color for impact.
                   // The opacity animation in glowVariant controls visibility;
                   // the `scale` animation expands the ring outward.
@@ -603,7 +603,7 @@ export default function SystemVisualSection() {
                         <p
               className={[
                 "font-instrument uppercase tracking-widest",
-                "text-blue-axis text-xs",
+                "text-magenta-axis text-xs",
                 // text-blue-axis: the only accent color in this section.
                 // Used here as an "active state" label per brand conventions.
                 "mb-3",

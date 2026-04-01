@@ -86,7 +86,7 @@ function wrapIndex(n: number, len: number) {
 // Values are deliberately irregular so adjacent cards don't look mirrored.
 // Rotation in degrees; Y in pixels. Arrays wrap for any number of items.
 const CARD_ROT_JITTER = [ 2.1, -1.8,  3.4, -2.6,  1.2, -3.1,  0.8]
-const CARD_Y_JITTER   = [ 5,   -8,     3,   -6,    9,   -4,     6  ]
+const CARD_Y_JITTER   = [ 100,   -30,     50,   -70,    80,   -50,     90  ]
 
 /** Minimal signed offset from active index to i, with wrapping (for loop behavior). */
 function signedOffset(i: number, active: number, len: number, loop: boolean) {

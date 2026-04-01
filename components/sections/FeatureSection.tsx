@@ -237,11 +237,10 @@ export default function FeatureSection() {
             transition={{ duration: 0.35, ease: "easeOut" }}
             // transition: applies to the whileHover y-lift only.
             // The scroll-in animation uses the transition inside cardItem.show.
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm min-h-[340px] md:min-h-[400px]"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
             // bg-white-axis: white card on black background — strong contrast.
             // rounded-2xl: soft, modern card corners.
             // flex flex-col gap-5: stacks card sections vertically.
-            // min-h-[340px] md:min-h-[400px]: "large" card — taller than cards 3–6.
             // shadow-sm: static base shadow (Framer Motion handles the hover lift).
           >
             {/* Card top row: icon (left) + tag label (right) */}
@@ -336,7 +335,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm min-h-[340px] md:min-h-[400px]"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
