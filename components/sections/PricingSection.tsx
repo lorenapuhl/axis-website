@@ -199,7 +199,7 @@ const item: Variants = {
 // advantages landing one by one rather than the whole column appearing at once.
 const bulletContainer: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
+  show: { transition: { staggerChildren: 0.5 } },
 }
 
 // bulletItemContainer: each li acts as a sub-orchestrator for its two children
@@ -742,6 +742,9 @@ export default function PricingSection() {
                 <motion.div
                   variants={item}
                   className="flex-1 bg-grey-axis border border-white-axis/[0.06] rounded-2xl p-8 flex flex-col gap-4"
+                  // Hover: lift the card — same pattern as the pricing cards above.
+                  whileHover={{ y: -6 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
                 >
                   {/* Step number — large, Playfair, very muted — decorative but purposeful */}
                   <span className="font-playfair text-4xl text-white-axis/20 leading-none">
@@ -796,156 +799,204 @@ export default function PricingSection() {
           </div>
 
           {/* ── TIMELINE — SystemVisual-style circles + animated lines ────────
-              Mirrors the exact pattern from SystemVisualSection.tsx:
-              - Each phase is a node with a dot circle + label below it.
-              - SVG paths connect the dots and draw themselves left-to-right on
-                desktop (or top-to-bottom on mobile) using pathLength 0 → 1.
-              - A dedicated motion.div orchestrator broadcasts "hidden" → "show"
-                when the timeline scrolls into view, triggering all child variants.
-              - Per-element `transition.delay` values create the staggered sequence:
-                  Node 1 (Day 1):     delay 0.1s
-                  Line 1:             delay 0.4s
-                  Node 2 (Days 2–5):  delay 0.8s
-                  Line 2:             delay 1.1s
-                  Node 3 (Days 6–7):  delay 1.5s
+              On desktop: node wrappers use flex-1 (matching the step cards' flex-1)
+              and connectors use flex-shrink-0 px-4 (matching the arrow connectors).
+              This means Day 1 is automatically centred under Card 1, Days 2–7 under
+              Card 2, and Days 7-8 under Card 3 — pure CSS flexbox alignment.
+              On mobile: nodes and connectors stack vertically.
           ──────────────────────────────────────────────────────────────────── */}
           <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            // flex-col on mobile → vertical stack; md:flex-row on desktop → horizontal row.
-            // items-center: nodes sit on the same horizontal baseline on desktop.
-            className="mt-8 flex flex-col items-center md:flex-row md:items-start"
+            className="mt-8"
           >
 
-            {/* ── NODE 1: Day 1 — Call ────────────────────────────────────── */}
-            <motion.div
-              variants={timelineNodeVariant}
-              transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-              className="flex flex-col items-center text-center shrink-0"
-            >
-              {/* Node circle dot — hollow, soft-grey border */}
-              <div className="w-3 h-3 rounded-full border border-soft-grey" />
-              {/* Label below the dot */}
-              <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
-                Day 1
-              </p>
-              <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
-                Call
-              </p>
-            </motion.div>
+            {/* ── DESKTOP TIMELINE ───────────────────────────────────────────
+                flex-row mirrors the step cards row.
+                Each node is wrapped in flex-1 so its centre aligns with its card.
+                Each connector uses the same flex-shrink-0 px-4 as the arrow divs. */}
+            <div className="hidden md:flex flex-row items-start">
 
-            {/* ── CONNECTOR 1: desktop horizontal / mobile vertical ──────── */}
+              {/* Node 1 wrapper — flex-1 matches Card 1 column */}
+              <motion.div
+                variants={timelineNodeVariant}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+                className="flex-1 flex flex-col items-center text-center"
+              >
+                <div className="w-3 h-3 rounded-full border border-soft-grey" />
+                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
+                  Day 1
+                </p>
+                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
+                  Call
+                </p>
+              </motion.div>
 
-            {/* Desktop: horizontal SVG line that draws itself left → right.
-                flex-1: expands to fill space between the nodes.
-                mt-[5px]: nudges the line to align with the vertical center of the 12px dot. */}
-            <div className="hidden md:block flex-1 mt-[5px] px-6">
-              <svg className="w-full" height="2" viewBox="0 0 100 2" preserveAspectRatio="none">
-                <motion.path
-                  d="M 0 1 L 100 1"
-                  stroke="currentColor"
-                  strokeWidth="0.5"
-                  fill="none"
-                  // currentColor inherits from the Tailwind text-soft-grey class below.
-                  className="text-soft-grey"
-                  variants={timelineLineVariant}
-                  transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
-                />
-              </svg>
-            </div>
-
-            {/* Mobile: vertical SVG line between stacked nodes */}
-            <div className="flex md:hidden my-5">
-              <svg width="2" height="32" viewBox="0 0 2 32">
-                <motion.path
-                  d="M 1 0 L 1 32"
-                  stroke="currentColor"
-                  strokeWidth="0.5"
-                  fill="none"
-                  className="text-soft-grey"
-                  variants={timelineLineVariant}
-                  transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
-                />
-              </svg>
-            </div>
-
-            {/* ── NODE 2: Days 2–5 — Setup ────────────────────────────────── */}
-            <motion.div
-              variants={timelineNodeVariant}
-              transition={{ duration: 0.7, ease: "easeOut", delay: 0.8 }}
-              className="flex flex-col items-center text-center shrink-0"
-            >
-              <div className="w-3 h-3 rounded-full border border-soft-grey" />
-              <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
-                Days 2–5
-              </p>
-              <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
-                Setup
-              </p>
-            </motion.div>
-
-            {/* ── CONNECTOR 2 ───────────────────────────────────────────────── */}
-            <div className="hidden md:block flex-1 mt-[5px] px-6">
-              <svg className="w-full" height="2" viewBox="0 0 100 2" preserveAspectRatio="none">
-                <motion.path
-                  d="M 0 1 L 100 1"
-                  stroke="currentColor"
-                  strokeWidth="0.5"
-                  fill="none"
-                  className="text-soft-grey"
-                  variants={timelineLineVariant}
-                  transition={{ duration: 0.7, ease: "easeOut", delay: 1.1 }}
-                />
-              </svg>
-            </div>
-
-            <div className="flex md:hidden my-5">
-              <svg width="2" height="32" viewBox="0 0 2 32">
-                <motion.path
-                  d="M 1 0 L 1 32"
-                  stroke="currentColor"
-                  strokeWidth="0.5"
-                  fill="none"
-                  className="text-soft-grey"
-                  variants={timelineLineVariant}
-                  transition={{ duration: 0.7, ease: "easeOut", delay: 1.1 }}
-                />
-              </svg>
-            </div>
-
-            {/* ── NODE 3: Days 6–7 — Launch ───────────────────────────────── */}
-            {/* Destination node uses border-white-axis (full brightness) to signal
-                it is the goal state — same convention as SystemVisualSection. */}
-            <motion.div
-              variants={timelineNodeVariant}
-              transition={{ duration: 0.7, ease: "easeOut", delay: 1.5 }}
-              className="flex flex-col items-center text-center shrink-0"
-            >
-              <div className="relative flex items-center justify-center">
-                {/* One-shot glow halo: expands and fades after the node appears.
-                    Same glowVariant behaviour as the Booking node in SystemVisualSection. */}
-                <motion.div
-                  className="absolute w-3 h-3 rounded-full bg-blue-axis/[0.40] pointer-events-none"
-                  aria-hidden="true"
-                  initial={{ opacity: 0, scale: 1 }}
-                  whileInView={{
-                    opacity: [0, 0.5, 0],
-                    scale: [1, 3, 4.5],
-                  }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" }}
-                />
-                {/* Destination dot — full-white border to stand out as the end state */}
-                <div className="w-3 h-3 rounded-full border border-white-axis relative z-10" />
+              {/* Connector 1 — flex-shrink-0 px-4 mirrors the arrow connector */}
+              <div className="flex-shrink-0 flex items-center justify-center px-4 mt-[5px]" aria-hidden="true">
+                <svg width="32" height="2" viewBox="0 0 32 2">
+                  <motion.path
+                    d="M 0 1 L 32 1"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    fill="none"
+                    className="text-soft-grey"
+                    variants={timelineLineVariant}
+                    transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+                  />
+                </svg>
               </div>
-              <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
-                Days 6–7
-              </p>
-              <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
-                Launch
-              </p>
-            </motion.div>
+
+              {/* Node 2 wrapper — flex-1 matches Card 2 column */}
+              <motion.div
+                variants={timelineNodeVariant}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.8 }}
+                className="flex-1 flex flex-col items-center text-center"
+              >
+                <div className="w-3 h-3 rounded-full border border-soft-grey" />
+                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
+                  Days 2–7
+                </p>
+                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
+                  Setup
+                </p>
+              </motion.div>
+
+              {/* Connector 2 */}
+              <div className="flex-shrink-0 flex items-center justify-center px-4 mt-[5px]" aria-hidden="true">
+                <svg width="32" height="2" viewBox="0 0 32 2">
+                  <motion.path
+                    d="M 0 1 L 32 1"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    fill="none"
+                    className="text-soft-grey"
+                    variants={timelineLineVariant}
+                    transition={{ duration: 0.7, ease: "easeOut", delay: 1.1 }}
+                  />
+                </svg>
+              </div>
+
+              {/* Node 3 wrapper — flex-1 matches Card 3 column */}
+              {/* Destination node uses border-white-axis (full brightness) to signal
+                  it is the goal state — same convention as SystemVisualSection. */}
+              <motion.div
+                variants={timelineNodeVariant}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 1.5 }}
+                className="flex-1 flex flex-col items-center text-center"
+              >
+                <div className="relative flex items-center justify-center">
+                  {/* One-shot glow halo */}
+                  <motion.div
+                    className="absolute w-3 h-3 rounded-full bg-blue-axis/[0.40] pointer-events-none"
+                    aria-hidden="true"
+                    initial={{ opacity: 0, scale: 1 }}
+                    whileInView={{ opacity: [0, 0.5, 0], scale: [1, 3, 4.5] }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" }}
+                  />
+                  <div className="w-3 h-3 rounded-full border border-white-axis relative z-10" />
+                </div>
+                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
+                  Days 7-8
+                </p>
+                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
+                  Launch
+                </p>
+              </motion.div>
+
+            </div>
+            {/* END DESKTOP TIMELINE */}
+
+            {/* ── MOBILE TIMELINE — stacked vertically ─────────────────────── */}
+            <div className="flex md:hidden flex-col items-center">
+
+              {/* Node 1 */}
+              <motion.div
+                variants={timelineNodeVariant}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+                className="flex flex-col items-center text-center shrink-0"
+              >
+                <div className="w-3 h-3 rounded-full border border-soft-grey" />
+                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
+                  Day 1
+                </p>
+                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
+                  Call
+                </p>
+              </motion.div>
+
+              <div className="flex my-5" aria-hidden="true">
+                <svg width="2" height="32" viewBox="0 0 2 32">
+                  <motion.path
+                    d="M 1 0 L 1 32"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    fill="none"
+                    className="text-soft-grey"
+                    variants={timelineLineVariant}
+                    transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+                  />
+                </svg>
+              </div>
+
+              {/* Node 2 */}
+              <motion.div
+                variants={timelineNodeVariant}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 0.8 }}
+                className="flex flex-col items-center text-center shrink-0"
+              >
+                <div className="w-3 h-3 rounded-full border border-soft-grey" />
+                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
+                  Days 2–7
+                </p>
+                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
+                  Setup
+                </p>
+              </motion.div>
+
+              <div className="flex my-5" aria-hidden="true">
+                <svg width="2" height="32" viewBox="0 0 2 32">
+                  <motion.path
+                    d="M 1 0 L 1 32"
+                    stroke="currentColor"
+                    strokeWidth="0.5"
+                    fill="none"
+                    className="text-soft-grey"
+                    variants={timelineLineVariant}
+                    transition={{ duration: 0.7, ease: "easeOut", delay: 1.1 }}
+                  />
+                </svg>
+              </div>
+
+              {/* Node 3 */}
+              <motion.div
+                variants={timelineNodeVariant}
+                transition={{ duration: 0.7, ease: "easeOut", delay: 1.5 }}
+                className="flex flex-col items-center text-center shrink-0"
+              >
+                <div className="relative flex items-center justify-center">
+                  <motion.div
+                    className="absolute w-3 h-3 rounded-full bg-blue-axis/[0.40] pointer-events-none"
+                    aria-hidden="true"
+                    initial={{ opacity: 0, scale: 1 }}
+                    whileInView={{ opacity: [0, 0.5, 0], scale: [1, 3, 4.5] }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" }}
+                  />
+                  <div className="w-3 h-3 rounded-full border border-white-axis relative z-10" />
+                </div>
+                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
+                  Days 7-8
+                </p>
+                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
+                  Launch
+                </p>
+              </motion.div>
+
+            </div>
+            {/* END MOBILE TIMELINE */}
 
           </motion.div>
           {/* END TIMELINE */}
@@ -1101,7 +1152,7 @@ export default function PricingSection() {
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
             >
-              Start accepting bookings
+              get your axis
             </motion.button>
           </motion.div>
 
