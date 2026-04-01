@@ -83,41 +83,55 @@ const items: ProblemCard[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 // TEXT BLOCK CONTENT
 // Each entry maps to a card by array index (0-based, matches items above).
-// Shown in the dynamic text block that sits below the CardStack.
-//   title — uppercase label (e.g. "DM OVERLOAD")
-//   line1 — first line of paragraph: muted/grey, normal weight
-//   line2 — second line: white, bold — the punchline
+// Shown in the right-panel that sits beside the CardStack on desktop.
+//   title       — uppercase label (e.g. "DM OVERLOAD")
+//   line1       — first line of paragraph: muted/grey, normal weight
+//   line2       — second line: white, bold — the punchline
+//   quote       — real quote from a studio owner (sourced from prompts/problem-quotes.md)
+//   attribution — speaker name and studio, displayed below the quote
 // ─────────────────────────────────────────────────────────────────────────────
 const TEXT_CONTENT = [
   {
     title: "DM OVERLOAD",
     line1: "Clients constantly ask for schedules, prices, and availability in DMs.",
     line2: "You spend hours replying manually instead of running your studio.",
+    quote: "\"I did everything — managing socials and outreach... If a client needed me at 6am, I was there. [...]\"",
+    attribution: "— Gaby Noble, Founder of Exhale Pilates, London",
   },
   {
     title: "NO STRUCTURE",
     line1: "Visitors land on your Instagram but don't know how to book a class.",
     line2: "Without a clear next step, most leave without taking action.",
+    quote: "\"Having thousands of followers who don't take your classes, don't engage with your product, and don't live in a vicinity [...] doesn't help you out in the day-to-day.\"",
+    attribution: "— Lesley Logan, Pilates Studio Owner",
   },
   {
     title: "LOST CLIENTS",
     line1: "Conversations start in DMs but rarely turn into confirmed bookings.",
     line2: "Each back-and-forth increases the chance the client disappears.",
+    quote: "\"Consumers demand immediate responses [...]. How quickly you respond can determine whether they become a paying member or walk away.\"",
+    attribution: "— Jim Thomas, Founder and President of Fitness Management USA",
   },
   {
     title: "NO GOOGLE PRESENCE",
     line1: "People search for studios like yours on Google but can't find you.",
     line2: "You miss high-intent clients who are ready to book.",
+    quote: "\"Engagement is down. Posts aren't reaching people anymore. We're getting likes, but not bookings.\"",
+    attribution: "— Fitness Studio Owner (via AppInstitute research)",
   },
   {
     title: "BAD UX",
     line1: "Important information is buried in story highlights and scattered posts.",
     line2: "Clients waste time searching and often give up before booking.",
+    quote: "\"From spending hours and hours with inquiries and problems that kept cropping up [...]\"",
+    attribution: "— Michelle Koton, Owner of MPower Pilates, Sydney",
   },
   {
     title: "NO SYSTEM",
     line1: "Bookings, payments, schedules, and messages are handled across different tools.",
     line2: "Without a system, everything depends on you and nothing scales.",
+    quote: "\"Before, I had spreadsheets which I had to juggle, and occasionally I would miss payments. Six months later I'd realize someone hadn't paid me and it was too late to ask them.\"",
+    attribution: "— Jane Mansley, Owner of Ease Pilates, Cambridge",
   },
 ]
 
@@ -160,7 +174,7 @@ function renderProblemCard(
       {/* Full-bleed screenshot.
           `fill` stretches the image to cover the parent's width and height.
           The parent (CardStack's card div) has explicit px dimensions set via
-          the cardWidth/cardHeight props (340×280), so fill works correctly.
+          the cardWidth/cardHeight props (260×210), so fill works correctly.
           No width/height props needed when using fill — parent dimensions apply. */}
       <Image
         src={`/problems_visual/img_${cardItem.id}.png`}
@@ -195,7 +209,7 @@ export default function ProblemSection() {
   // activeIndex: 0-based index of the card currently in front of the stack.
   // Initialized to 0 (first card). Updated by the onChangeIndex callback
   // that CardStack fires whenever the active card changes (auto-advance or click).
-  // Drives the dynamic text block below the stack.
+  // Drives the right-panel text and quote.
   const [activeIndex, setActiveIndex] = useState(0)
 
   return (
@@ -265,104 +279,163 @@ export default function ProblemSection() {
           max-w-6xl mx-auto: constrains content to 1152px, centered. */}
       <div className="relative z-10 max-w-6xl mx-auto">
 
-        {/* ── HEADLINE ────────────────────────────────────────────────────── */}
-        {/* h2: SEO requirement — one h2 per section. The page's h1 is in Hero.
-            Uses the stagger container: h2 fades in first, subline 120ms later.
-            viewport={{ once: true }}: plays once as section enters viewport. */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="text-center mb-12 md:mb-16"
-        >
-          <motion.h2
-            variants={animItem}
-            className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight"
-          >
-            Your studio has visibility — but no structure.
-          </motion.h2>
-          <motion.p
-            variants={animItem}
-            className="font-instrument text-soft-grey text-sm md:text-base tracking-wide mt-3"
-          >
-            And visibility doesn&apos;t scale.
-          </motion.p>
-        </motion.div>
-        {/* END HEADLINE */}
-
-        {/* ── CARD STACK ────────────────────────────────────────────────── */}
+        {/* ── 2-COLUMN LAYOUT ─────────────────────────────────────────────── */}
         {/*
-          CardStack from components/ui/card-stack.tsx.
-          Props unchanged from previous version — only onChangeIndex is added.
-
-          onChangeIndex: CardStack fires this callback whenever the active card
-          changes (auto-advance, click, or drag). We use it to keep activeIndex
-          in sync so the text block below updates correctly.
+          On mobile (default): flex-col stacks left col above right col.
+          On md+: flex-row places CardStack (55%) left and right panel (45%) right.
+          md:items-center: vertically centers the two columns relative to each other.
+          md:gap-16: generous horizontal spacing between columns (4rem).
         */}
-        <CardStack
-          items={items}
-          cardWidth={340}
-          cardHeight={280}
-          overlap={0.65}
-          spreadDeg={65}
-          activeScale={1.06}
-          inactiveScale={0.93}
-          autoAdvance={true}
-          intervalMs={2400}
-          pauseOnHover={true}
-          loop={true}
-          showDots={true}
-          randomOffsets={true}
-          renderCard={renderProblemCard}
-          onChangeIndex={(index) => setActiveIndex(index)}
-        />
-        {/* END CARD STACK */}
+        <div className="flex flex-col md:flex-row md:items-center md:gap-16">
 
-        {/* ── DYNAMIC TEXT BLOCK ──────────────────────────────────────────── */}
-        {/*
-          Updates every time the active card changes.
-          AnimatePresence with mode="wait": waits for the exit animation to
-          finish before mounting the new content — creating a clean fade-out →
-          fade-in sequence (not a cross-fade overlap).
-          key={activeIndex}: React re-mounts the motion.div on every index change,
-          triggering the entrance animation from scratch.
-        */}
-        <div className="mt-12 md:mt-16 flex flex-col items-center text-center">
-          <AnimatePresence mode="wait">
+          {/* ── LEFT COLUMN: CARD STACK ─────────────────────────────────── */}
+          {/*
+            md:w-[55%]: occupies 55% of the row on desktop.
+            On mobile, this stacks above the right panel.
+            The CardStack is centered within this column via flex/justify.
+          */}
+          <div className="md:w-[55%] flex justify-center">
+            {/*
+              CardStack props updated for 2-column layout:
+                cardWidth  340 → 260  (narrower to fit within 55% column)
+                cardHeight 280 → 210  (shorter to avoid overflowing viewport height)
+                spreadDeg   65 → 45   (tighter fan angle for compact display)
+                overlap    0.65→ 0.70 (slightly more overlap, less total stage width)
+                maxVisible      → 5   (fewer background cards to reduce visual noise)
+              All interaction props (autoAdvance, loop, etc.) unchanged.
+            */}
+            <CardStack
+              items={items}
+              cardWidth={260}
+              cardHeight={210}
+              overlap={0.70}
+              spreadDeg={45}
+              activeScale={1.06}
+              inactiveScale={0.93}
+              maxVisible={5}
+              autoAdvance={true}
+              intervalMs={2400}
+              pauseOnHover={true}
+              loop={true}
+              showDots={true}
+              randomOffsets={true}
+              renderCard={renderProblemCard}
+              onChangeIndex={(index) => setActiveIndex(index)}
+            />
+          </div>
+          {/* END LEFT COLUMN */}
+
+          {/* ── RIGHT COLUMN: HEADLINE + DYNAMIC TEXT + QUOTE ───────────── */}
+          {/*
+            md:w-[45%]: occupies 45% of the row on desktop.
+            mt-12: top margin on mobile only (when stacked below CardStack).
+            md:mt-0: remove that margin on desktop (columns are side-by-side).
+          */}
+          <div className="md:w-[45%] mt-12 md:mt-0">
+
+            {/* ── STATIC HEADLINE ─────────────────────────────────────────── */}
+            {/*
+              Wrapped in the stagger container so it animates in on scroll.
+              This h2 is static — it does NOT change per card.
+              viewport={{ once: true }}: plays the animation only once.
+            */}
             <motion.div
-              key={activeIndex}
-              // Entrance: fade in from slightly below (y: 5 → 0)
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              // Exit: fade out moving slightly upward (y: 0 → -5)
-              exit={{ opacity: 0, y: -5 }}
-              // 250ms: fast enough to feel responsive, slow enough to feel intentional
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              className="max-w-[560px]"
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
             >
-              {/* Title: uppercase, small, wide tracking, muted */}
-              <p className="font-instrument text-xl uppercase tracking-widest text-soft-grey">
-                {TEXT_CONTENT[activeIndex]?.title}
-              </p>
-
-              {/* Two-line paragraph.
-                  Line 1: muted/grey — describes the symptom
-                  Line 2: white + bold — the consequence / punchline
-                  <br />: explicit line break between the two lines */}
-              <p className="font-instrument text-xm mt-3 leading-relaxed">
-                <span className="text-soft-grey">
-                  {TEXT_CONTENT[activeIndex]?.line1}
-                </span>
-                <br />
-                <span className="text-white-axis font-bold">
-                  {TEXT_CONTENT[activeIndex]?.line2}
-                </span>
-              </p>
+              <motion.h2
+                variants={animItem}
+                className="font-playfair uppercase tracking-tight text-white-axis text-xl md:text-2xl leading-tight mb-6 md:mb-8"
+              >
+                Your studio has visibility — but no structure.
+              </motion.h2>
             </motion.div>
-          </AnimatePresence>
+            {/* END STATIC HEADLINE */}
+
+            {/* ── ANIMATED PANEL: TAG + TEXT + SEPARATOR + QUOTE ──────────── */}
+            {/*
+              AnimatePresence mode="wait": the exit animation finishes before
+              the new content mounts — clean fade-out → fade-in, no overlap.
+              key={activeIndex}: React sees a new component on every index
+              change, triggering the entrance animation fresh each time.
+            */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeIndex}
+                // Entrance: fade in from slightly below
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                // Exit: fade out moving slightly upward
+                exit={{ opacity: 0, y: -5 }}
+                // 250ms: fast enough to feel responsive, slow enough to feel intentional
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+
+                {/* TAG label — uppercase, wide tracking, muted grey */}
+                <p className="font-instrument uppercase tracking-widest text-soft-grey text-xs">
+                  {TEXT_CONTENT[activeIndex]?.title}
+                </p>
+
+                {/* Two-line paragraph.
+                    Line 1 (muted grey): describes the symptom.
+                    Line 2 (bold white): the consequence / punchline.
+                    <br />: explicit line break between the two lines. */}
+                <p className="font-instrument text-sm mt-2 leading-relaxed">
+                  <span className="text-soft-grey">
+                    {TEXT_CONTENT[activeIndex]?.line1}
+                  </span>
+                  <br />
+                  <span className="text-white-axis font-bold">
+                    {TEXT_CONTENT[activeIndex]?.line2}
+                  </span>
+                </p>
+
+                {/* ── HORIZONTAL SEPARATOR ────────────────────────────────── */}
+                {/* Thin line to visually separate the text block from the quote.
+                    w-8 = 2rem wide, h-px = 1px tall, soft-grey at 30% opacity. */}
+                <div className="w-8 h-px bg-soft-grey/30 my-6" aria-hidden="true" />
+
+                {/* ── QUOTE BLOCK ──────────────────────────────────────────── */}
+                {/*
+                  Displays a real quote from a studio owner sourced from
+                  prompts/problem-quotes.md. Updates in sync with the active card.
+                */}
+                <div>
+                  {/* Large decorative opening quotation mark.
+                      aria-hidden: purely decorative, not read aloud by screen readers.
+                      select-none: prevents accidental text selection of the glyph. */}
+                  <span
+                    className="font-playfair text-5xl leading-none text-blue-axis select-none"
+                    aria-hidden="true"
+                  >
+                    &ldquo;
+                  </span>
+
+                  {/* Quote body: Playfair italic, slight opacity to differentiate
+                      from the headline above. -mt-2 pulls it up under the large quote mark. */}
+                  <p className="font-playfair italic text-white-axis/90 text-sm leading-relaxed -mt-2">
+                    {TEXT_CONTENT[activeIndex]?.quote}
+                  </p>
+
+                  {/* Attribution: instrument sans, muted, uppercase, wide tracked.
+                      No truncation — wraps fully on narrow screens. */}
+                  <p className="font-instrument text-soft-grey text-xs uppercase tracking-widest mt-3">
+                    {TEXT_CONTENT[activeIndex]?.attribution}
+                  </p>
+                </div>
+                {/* END QUOTE BLOCK */}
+
+              </motion.div>
+            </AnimatePresence>
+            {/* END ANIMATED PANEL */}
+
+          </div>
+          {/* END RIGHT COLUMN */}
+
         </div>
-        {/* END DYNAMIC TEXT BLOCK */}
+        {/* END 2-COLUMN LAYOUT */}
 
       </div>
       {/* END MAIN CONTENT */}
