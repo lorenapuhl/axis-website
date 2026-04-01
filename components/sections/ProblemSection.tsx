@@ -282,7 +282,7 @@ export default function ProblemSection() {
         {/* ── 2-COLUMN LAYOUT ─────────────────────────────────────────────── */}
         {/*
           On mobile (default): flex-col stacks left col above right col.
-          On md+: flex-row places CardStack (55%) left and right panel (45%) right.
+          On md+: flex-row places CardStack (50%) left and right panel (50%) right.
           md:items-center: vertically centers the two columns relative to each other.
           md:gap-16: generous horizontal spacing between columns (4rem).
         */}
@@ -290,29 +290,28 @@ export default function ProblemSection() {
 
           {/* ── LEFT COLUMN: CARD STACK ─────────────────────────────────── */}
           {/*
-            md:w-[55%]: occupies 55% of the row on desktop.
+            md:w-[50%]: occupies 50% of the row on desktop.
             On mobile, this stacks above the right panel.
             The CardStack is centered within this column via flex/justify.
           */}
-          <div className="md:w-[55%] flex justify-center">
+          <div className="md:w-[50%] flex justify-center">
             {/*
-              CardStack props updated for 2-column layout:
-                cardWidth  340 → 260  (narrower to fit within 55% column)
-                cardHeight 280 → 210  (shorter to avoid overflowing viewport height)
-                spreadDeg   65 → 45   (tighter fan angle for compact display)
-                overlap    0.65→ 0.70 (slightly more overlap, less total stage width)
-                maxVisible      → 5   (fewer background cards to reduce visual noise)
-              All interaction props (autoAdvance, loop, etc.) unchanged.
+              CardStack props updated for vertical pile layout:
+                spreadDeg   45 → 0    (zero Z rotation — eliminates the horizontal fan)
+                overlap    0.70→ 0.94 (260×0.06 ≈ 16px spacing — near-full card overlap)
+                maxVisible   5 → 3    (only 3 cards; pile reads cleanly with less noise)
+                randomOffsets=true (Y-jitter ±5–9px per card creates the pile look)
+              All other props unchanged.
             */}
             <CardStack
               items={items}
               cardWidth={260}
               cardHeight={210}
-              overlap={0.70}
-              spreadDeg={45}
+              overlap={0.94}
+              spreadDeg={0}
               activeScale={1.06}
               inactiveScale={0.93}
-              maxVisible={5}
+              maxVisible={3}
               autoAdvance={true}
               intervalMs={2400}
               pauseOnHover={true}
@@ -331,7 +330,7 @@ export default function ProblemSection() {
             mt-12: top margin on mobile only (when stacked below CardStack).
             md:mt-0: remove that margin on desktop (columns are side-by-side).
           */}
-          <div className="md:w-[45%] mt-12 md:mt-0">
+          <div className="md:w-[50%] mt-12 md:mt-0">
 
             {/* ── STATIC HEADLINE ─────────────────────────────────────────── */}
             {/*
