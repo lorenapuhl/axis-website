@@ -28,6 +28,7 @@ import LiveSyncSection from "@/components/sections/LiveSyncSection"
 import FeatureSection from "@/components/sections/FeatureSection"
 import OutcomeSection from "@/components/sections/OutcomeSection"
 import BenefitsSection from "@/components/sections/BenefitsSection"
+import AboutmeSection from "@/components/sections/AboutmeSection"
 import FAQSection from "@/components/sections/FAQSection"
 import FinalCTA from "@/components/sections/FinalCTA"
 import FooterSection from "@/components/sections/FooterSection"
@@ -84,6 +85,7 @@ export default function Home() {
       {/*<InstaGallerySection /> */}
       <BenefitsSection />
       <OutcomeSection />
+      <AboutmeSection />
       <FAQSection />
       <FinalCTA />
       <FooterSection />

@@ -1,0 +1,279 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+:root {
+  --accent: #b8f07a;
+  --on-dark: #f0ede6;
+  --muted: #888880;
+  --border: rgba(255,255,255,0.08);
+  --card-bg: rgba(255,255,255,0.04);
+}
+.ab-wrap {
+  background: #0d0d0b;
+  color: var(--on-dark);
+  font-family: 'DM Sans', sans-serif;
+  padding: 80px 0 100px;
+  position: relative;
+  overflow: hidden;
+}
+.ab-wrap::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(184,240,122,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ab-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+.ab-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ab-label::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.5;
+}
+.ab-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 56px;
+  align-items: start;
+}
+.ab-left {}
+.ab-portrait {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: var(--card-bg);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ab-portrait-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.25;
+}
+.ab-portrait-placeholder svg {
+  width: 48px;
+  height: 48px;
+}
+.ab-portrait-placeholder span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.ab-portrait-tag {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(13,13,11,0.85);
+  border: 0.5px solid var(--border);
+  border-radius: 3px;
+  padding: 8px 12px;
+}
+.ab-portrait-tag .name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--on-dark);
+  margin: 0 0 2px;
+}
+.ab-portrait-tag .role {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0;
+}
+.ab-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.ab-stat {
+  background: var(--card-bg);
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  padding: 14px 16px;
+}
+.ab-stat .num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.ab-stat .desc {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.ab-right {}
+.ab-heading {
+  font-family: 'DM Serif Display', serif;
+  font-size: 38px;
+  line-height: 1.15;
+  color: var(--on-dark);
+  margin: 0 0 28px;
+  font-weight: 400;
+}
+.ab-heading em {
+  font-style: italic;
+  color: var(--accent);
+}
+.ab-body {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #a8a89e;
+  margin: 0 0 20px;
+}
+.ab-body strong {
+  color: var(--on-dark);
+  font-weight: 500;
+}
+.ab-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--border);
+  margin: 32px 0;
+}
+.ab-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+.ab-pill {
+  font-size: 12px;
+  color: var(--muted);
+  border: 0.5px solid rgba(255,255,255,0.1);
+  border-radius: 40px;
+  padding: 6px 14px;
+  letter-spacing: 0.02em;
+}
+.ab-quote-block {
+  border-left: 2px solid var(--accent);
+  padding: 4px 0 4px 20px;
+  margin: 32px 0;
+}
+.ab-quote-block p {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--on-dark);
+  line-height: 1.5;
+  margin: 0;
+}
+.ab-cta-row {
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.ab-cta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--accent);
+  color: #0d0d0b;
+  border: none;
+  border-radius: 3px;
+  padding: 11px 22px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.ab-link {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 0.5px solid rgba(136,136,128,0.4);
+  padding-bottom: 1px;
+}
+@media (max-width: 600px) {
+  .ab-grid { grid-template-columns: 1fr; gap: 40px; }
+  .ab-heading { font-size: 28px; }
+}
+</style>
+<div class="ab-wrap">
+  <div class="ab-inner">
+    <div class="ab-label">About the founder</div>
+    <div class="ab-grid">
+      <div class="ab-left">
+        <div class="ab-portrait">
+          <div class="ab-portrait-placeholder">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="18" r="10" stroke="white" stroke-width="1.5"/>
+              <path d="M6 42c0-9.94 8.06-18 18-18s18 8.06 18 18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span>Add your photo here</span>
+          </div>
+          <div class="ab-portrait-tag">
+            <p class="name">Lorena Puhl</p>
+            <p class="role">Data Scientist & Founder</p>
+          </div>
+        </div>
+        <div class="ab-stats">
+          <div class="ab-stat">
+            <div class="num">5+</div>
+            <div class="desc">years building data systems</div>
+          </div>
+          <div class="ab-stat">
+            <div class="num">4</div>
+            <div class="desc">languages, 5 countries</div>
+          </div>
+          <div class="ab-stat">
+            <div class="num">M.Sc.</div>
+            <div class="desc">Physics, Heidelberg</div>
+          </div>
+          <div class="ab-stat">
+            <div class="num">0</div>
+            <div class="desc">need to touch code, ever</div>
+          </div>
+        </div>
+      </div>
+      <div class="ab-right">
+        <h2 class="ab-heading">I built this because <em>I watched it happen</em> over and over.</h2>
+        <p class="ab-body">I'm Lorena — a data scientist and ML engineer. I spent years building systems for embassies, insurance companies, and research labs. But the problem that stuck with me wasn't corporate. It was personal.</p>
+        <p class="ab-body"><strong>The best studios I knew — the ones with incredible coaches, loyal clients, and real community — were completely invisible online.</strong> Fully booked through DMs. Losing clients to Google searches they'd never show up in. Spending Sunday nights manually coordinating class schedules in WhatsApp.</p>
+        <div class="ab-quote-block">
+          <p>"Your studio is already working. Your website just needs to catch up."</p>
+        </div>
+        <p class="ab-body">So I built AutoSync — not as a generic website builder, but as a system designed specifically for how fitness studios actually run: Instagram-first, owner-operated, and always short on time.</p>
+        <p class="ab-body">I bring the same rigor I applied to <strong>60GB research pipelines and AI automation at diplomatic offices</strong> — now focused entirely on one problem: helping studio owners stop losing revenue to a gap their Instagram can't fill.</p>
+        <div class="ab-divider"></div>
+        <p class="ab-body" style="font-size:13px; color: #666; margin:0;">Background in machine learning, data engineering, and full-stack development. Based in Mexico City. Fluent in English, Spanish, German and French.</p>
+        <div class="ab-pills">
+          <span class="ab-pill">Machine Learning</span>
+          <span class="ab-pill">Data Engineering</span>
+          <span class="ab-pill">Automation Systems</span>
+          <span class="ab-pill">SaaS Development</span>
+          <span class="ab-pill">Mexico City</span>
+        </div>
+        <div class="ab-cta-row">
+          <button class="ab-cta" onclick="window.sendPrompt && sendPrompt('How does AutoSync work? Give me a quick demo.')">See how it works</button>
+          <a class="ab-link" href="https://linkedin.com/in/lorena-puhl">LinkedIn ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
