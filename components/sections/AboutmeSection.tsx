@@ -87,9 +87,10 @@ const stats: Stat[] = [
 const pills: string[] = [
   "Next.js Development",
   "Machine Learning Architecture",
+  "Data Science and Statistics",
   "Business Automation",
   "UI/UX for SaaS",
-  "Belgium / Mexico City",
+  "Brussels / Mexico City",
 ]
 
 // ─────────────────────────────────────────────────────────────────────────────

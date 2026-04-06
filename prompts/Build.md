@@ -12,18 +12,18 @@ Confirm you have read all four files and summarize:
 
 # 2. Build
 
-Build: Create components/sections/AboutmeSection.tsx
+Build: Build a MockWebsitePreview component for a SaaS lead funnel and CTA flow.
 
-Content: Read @prompts/AboutmeSection.md for exact instructions.
+Content: Read @prompts/MockWebsitePreview.md for exact instructions.
 
 Purpose: Create the About me section of the landing page
 
 Rules:
 - Follow exactly the rules stated in CLAUDE.md, component.md, animate-section.md, SEO.md. 
-- Use the setup specified in @prompts/AboutmeSection.md. If there are contradictions between both guidelines, ask me first and let me specify what I need.
+- Use the setup specified in @prompts/@prompts/MockWebsitePreview.md . If there are contradictions between both guidelines, ask me first and let me specify what I need.
 - If anything is unclear to you, ask me first and let me clarify things for you 
 before building anything.
-- Only apply the changes specified in @prompts/AboutmeSection.md. do not change anything else.
+- Only apply the changes specified in @prompts/@prompts/MockWebsitePreview.md . do not change anything else.
 
 
 

@@ -10,9 +10,6 @@
 // Fragment: a wrapper that doesn't add any extra element to the DOM — used for returning
 //           multiple sibling elements from a map() call that needs a key.
 import { useState, useEffect, useRef, Fragment } from "react"
-// useCTAModal gives us openModal() from the global CTA context.
-// Called by all CTA buttons on this page so clicking any of them opens the funnel.
-import { useCTAModal } from "@/components/cta/CTAContext"
 
 // motion:         wraps any HTML element to give it animation superpowers.
 // AnimatePresence: lets elements play an exit animation before being removed from the DOM.
@@ -116,7 +113,7 @@ const PROCESS_STEPS: ProcessStep[] = [
     title: "Send us your Instagram",
     bullets: [
       "Share your handle",
-      "We create your preview automatically",
+      "Quick call to understand your studio",
       "No long forms",
     ],
     microLine: "Takes less than 2 minutes",
@@ -248,10 +245,6 @@ const timelineLineVariant: Variants = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function PricingSection() {
-
-  // Get the openModal function from the CTA context.
-  // All three card CTAs and the repeat CTA use this to open the funnel modal.
-  const { openModal } = useCTAModal()
 
   // quoteIndex: which of the 3 testimonial quotes is currently visible.
   // Cycles 0 → 1 → 2 → 0 every 3 seconds unless the user is hovering.
@@ -542,7 +535,6 @@ export default function PricingSection() {
                            so all three card CTAs align at the same vertical position.
                   component.md: always use <button> — never <a> styled as a button. */}
               <motion.button
-                onClick={openModal}
                 className={[
                   "mt-auto w-full font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-6 py-4",
                   card.isHero
@@ -1016,6 +1008,51 @@ export default function PricingSection() {
         </motion.div>
         {/* END BLOCK 4 */}
 
+
+        {/* ══════════════════════════════════════════════════════════════════
+            BLOCK 5 — "WHAT HAPPENS AFTER YOU CLICK"
+            CTA + numbered list of next steps placed directly under it.
+            Eliminates last-moment hesitation by making the path crystal clear.
+        ══════════════════════════════════════════════════════════════════ */}
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          viewport={{ once: true }}
+          className="text-center mb-24 md:mb-36"
+        >
+
+          {/* Primary CTA button — component.md: bg-white-axis text-black-axis */}
+          <motion.button
+            className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4 mb-10"
+            whileHover={{ scale: 1.03 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+          >
+            Start accepting bookings
+          </motion.button>
+
+          {/* "After you click" label + numbered steps */}
+          <p className="font-instrument text-soft-grey text-xs uppercase tracking-widest mb-5">
+            After you click:
+          </p>
+          <ol className="flex flex-col gap-3">
+            {WHAT_HAPPENS.map((step, i) => (
+              <li
+                key={i}
+                className="flex items-center justify-center gap-4 font-instrument text-sm text-soft-grey"
+              >
+                {/* Step number — Playfair, muted */}
+                <span className="font-playfair text-white-axis/30 text-sm">{i + 1}.</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+
+        </motion.div>
+        {/* END BLOCK 5 */}
+
+
         {/* ══════════════════════════════════════════════════════════════════
             BLOCK 6 — EXCLUSIVITY + URGENCY
             Creates a sense of personal attention and limited availability.
@@ -1119,7 +1156,6 @@ export default function PricingSection() {
           {/* ── REPEAT CTA ────────────────────────────────────────────────── */}
           <motion.div variants={item}>
             <motion.button
-              onClick={openModal}
               className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.35, ease: "easeOut" }}

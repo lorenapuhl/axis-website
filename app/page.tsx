@@ -17,6 +17,10 @@ import type { Metadata } from "next"
 // project root, so "@/components/sections/HeaderSection" resolves to
 // components/sections/HeaderSection.tsx — no relative path gymnastics needed.
 import HeaderSection from "@/components/sections/HeaderSection"
+// CTAProvider is a client-side context wrapper. It wraps the entire page so
+// any section button can call openModal() without prop drilling.
+// The modal itself is rendered inside CTAProvider — not directly here.
+import CTAProvider from "@/components/cta/CTAContext"
 //import ShuffleHeroSection from "@/components/sections/ShuffleHeroSection"
 import TrustHeroSection from "@/components/sections/TrustHeroSection"
 import IntroSection from "@/components/sections/IntroSection"
@@ -65,30 +69,37 @@ export default function Home() {
   //               preventing a white flash below short content.
   return (
     <main className="bg-black-axis min-h-screen">
+      {/*
+        CTAProvider wraps all sections. It is a Client Component (has "use client")
+        that provides the openModal() function to any child via React Context.
+        This pattern keeps page.tsx as a Server Component (better SEO) while
+        enabling any button anywhere in the tree to open the modal.
+      */}
+      <CTAProvider>
+        {/* Components are used like custom HTML tags. <HeaderSection /> calls the
+            HeaderSection function and renders whatever JSX it returns.
+            Self-closing syntax (<HeaderSection />) is used when there are no
+            child elements to pass in. */}
+        <HeaderSection />
 
-      {/* Components are used like custom HTML tags. <HeaderSection /> calls the
-          HeaderSection function and renders whatever JSX it returns.
-          Self-closing syntax (<HeaderSection />) is used when there are no
-          child elements to pass in. */}
-      <HeaderSection />
-
-      {/* Future sections go here — HeroSection, AttentionSection, etc.
-          Each will be imported at the top and dropped in as a tag below. */}
-      {/*<ShuffleHeroSection />*/}
-      <TrustHeroSection />
-      <IntroSection />
-      <ProblemSection />
-      <FeatureSection /> 
-      <SystemVisualSection />
-      <ProductVisualSection />
-      <LiveSyncSection />
-      {/*<InstaGallerySection /> */}
-      <BenefitsSection />
-      <OutcomeSection />
-      { /*<AboutmeSection /> */}
-      <FAQSection />
-      <FinalCTA />
-      <FooterSection />
+        {/* Future sections go here — HeroSection, AttentionSection, etc.
+            Each will be imported at the top and dropped in as a tag below. */}
+        {/*<ShuffleHeroSection />*/}
+        <TrustHeroSection />
+        <IntroSection />
+        <ProblemSection />
+        <FeatureSection />
+        <SystemVisualSection />
+        <ProductVisualSection />
+        <LiveSyncSection />
+        {/*<InstaGallerySection /> */}
+        <BenefitsSection />
+        <OutcomeSection />
+        { /*<AboutmeSection /> */}
+        <FAQSection />
+        <FinalCTA />
+        <FooterSection />
+      </CTAProvider>
 
     </main>
   )

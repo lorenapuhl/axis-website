@@ -1,5 +1,8 @@
 "use client"
 import { motion } from "framer-motion"
+// useCTAModal gives us the openModal() function from CTAContext.
+// Calling openModal() opens the CTA funnel modal from anywhere on the page.
+import { useCTAModal } from "@/components/cta/CTAContext"
 
 // Stagger container: each child animates in sequence, 0.12s apart
 const container = {
@@ -22,6 +25,10 @@ const buttonVariant = {
 }
 
 export default function FinalCTA() {
+  // Get the openModal function from the CTA context.
+  // This connects the button below to the modal funnel.
+  const { openModal } = useCTAModal();
+
   return (
     // Black background, generous vertical padding, full-bleed section
     // py-20 px-6 = mobile-first; md: overrides kick in at medium breakpoint
@@ -86,7 +93,9 @@ export default function FinalCTA() {
           viewport={{ once: true }}
           className="mt-16 md:mt-24 flex flex-col items-center gap-4"
         >
+          {/* onClick={openModal} connects this button to the CTA funnel modal */}
           <motion.button
+            onClick={openModal}
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="bg-white-axis text-black-axis text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"

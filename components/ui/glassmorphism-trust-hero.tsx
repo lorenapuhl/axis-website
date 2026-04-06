@@ -1,9 +1,12 @@
-// "use client" is a directive that tells Next.js to run this code in the user's browser.
-// Think of it like a Python import that requires a specific environment (like a GUI library).
 "use client"
+// ^ This must be the very first line — no blank lines, no comments above it.
 
 // Import the animation engine. 'motion' is like a CSS-supercharger for HTML tags.
 import { motion } from "framer-motion"
+
+// useCTAModal gives us the openModal() function from the global CTA context.
+// Any component inside <CTAProvider> can call this to open the booking modal.
+import { useCTAModal } from "@/components/cta/CTAContext"
 
 // Importing specific social media icons. These act like custom HTML tags (<SiInstagram />).
 import {
@@ -107,6 +110,10 @@ const StatItem = ({ value, label }: { value: string; label: string }) => (
 // --- MAIN COMPONENT ---
 // This is the main "HeroSection" function that builds the whole visual area.
 export default function HeroSection() {
+  // Get the openModal function from the CTA context.
+  // Calling openModal() opens the CTA funnel modal overlay.
+  const { openModal } = useCTAModal();
+
   return (
     // Outer Wrapper: 'bg-zinc-950' is a CSS color (near black), 'relative' allows absolute positioning inside.
     <div className="relative w-full bg-zinc-950 text-white overflow-hidden font-instrument">
@@ -177,7 +184,9 @@ export default function HeroSection() {
 
 		{/* Action Buttons Container */}
 		<motion.div variants={item}>
+		  {/* onClick={openModal} wires this button to the global CTA modal */}
 		  <motion.button
+		    onClick={openModal}
 		    whileHover={{ scale: 1.03 }}
 		    transition={{ duration: 0.35, ease: "easeOut" }}
 		    className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
