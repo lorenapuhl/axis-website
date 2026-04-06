@@ -440,7 +440,7 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     pricingTiers: [
       { name: 'Single Session', price: '$22',    description: 'Drop into any class, any day.',                  highlighted: false },
       { name: '8-Class Bundle',  price: '$149',   description: 'Explore different modalities at your pace.',     highlighted: true  },
-      { name: 'Monthly Seeker',  price: '$99/mo', description: 'Unlimited classes. Quiet your mind daily.',      highlighted: false },
+      { name: 'Monthly Seeker',  price: '$199/mo', description: 'Unlimited classes. Quiet your mind daily.',      highlighted: false },
     ],
     defaultFallbackImages: [
       'https://placehold.co/800x600/f9fafb/f9fafb?text=',

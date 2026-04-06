@@ -5,7 +5,7 @@
 
 import Image from "next/image"
 // motion — wraps standard HTML/SVG elements to make them animatable via Framer Motion
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 // Variants: TypeScript type for named animation state objects (e.g. "hidden" / "show").
 // Without it, TypeScript widens literal strings like "easeOut" to `string`,
 // which breaks Framer Motion's Easing union type.
@@ -13,6 +13,7 @@ import type { Variants } from "framer-motion"
 // ReactNode: TypeScript type for anything renderable in JSX —
 // strings, elements, arrays, fragments, etc.
 import type { ReactNode } from "react"
+import { useState } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES
@@ -111,11 +112,90 @@ const itemVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 }
 
+// formContainer: stagger the three form fields in on entry, then stagger them
+// back out in reverse order on exit (staggerDirection: -1 reverses the sequence).
+const formContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+  exit: { transition: { staggerChildren: 0.07, staggerDirection: -1 } },
+}
+
+// formField: each individual form field slides up + fades in on entry,
+// slides down + fades out on exit — matching the AXIS 0.4–0.8s timing range.
+const formField: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  exit: { opacity: 0, y: 10, transition: { duration: 0.35, ease: "easeOut" } },
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function AboutmeSection() {
+
+  // ─── Contact form state ────────────────────────────────────────────────────
+  // formState drives which UI block is rendered:
+  //   idle       → CTA button visible, form hidden
+  //   open       → form visible, button hidden
+  //   submitting → form visible, Send button disabled + loading dots
+  //   success    → confirmation message visible, form hidden
+  //   error      → form visible, error message below Send button
+  const [formState, setFormState] = useState<"idle" | "open" | "submitting" | "success" | "error">("idle")
+
+  // Controlled input values — one per field
+  const [email, setEmail] = useState("")
+  const [whatsapp, setWhatsapp] = useState("")
+  const [message, setMessage] = useState("")
+
+  // Field-level validation error messages (undefined = no error for that field)
+  const [fieldErrors, setFieldErrors] = useState<{
+    email?: string
+    whatsapp?: string
+    message?: string
+  }>({})
+
+  // ─── Submit handler ────────────────────────────────────────────────────────
+  // Validates all fields, then POSTs to /api/contact.
+  // Updates formState to reflect loading, success, or error.
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+
+    // Client-side validation — check all fields are non-empty and email is valid
+    const errs: typeof fieldErrors = {}
+    if (!email) {
+      errs.email = "Email is required"
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = "Enter a valid email address"
+    }
+    if (!whatsapp) errs.whatsapp = "WhatsApp number is required"
+    if (!message) errs.message = "Message is required"
+
+    // If any validation failed, show errors and stop — do not submit
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs)
+      return
+    }
+
+    // All valid — clear errors and begin submission
+    setFieldErrors({})
+    setFormState("submitting")
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, whatsapp, message }),
+      })
+
+      // success: show confirmation. error: show error message.
+      setFormState(res.ok ? "success" : "error")
+    } catch {
+      // Network failure or unexpected error
+      setFormState("error")
+    }
+  }
+
   return (
     // bg-black-axis: primary surface (#000000)
     // Mobile-first padding: py-20 px-6 | Desktop override: md:py-36 md:px-12
@@ -337,40 +417,208 @@ export default function AboutmeSection() {
             </motion.div>
             {/* END SKILLS PILLS */}
 
-            {/* CTA ROW
-                flex items-center gap-5: button and link sit on the same baseline. */}
-            <div className="flex items-center gap-5">
+            {/* ── CTA AREA ──────────────────────────────────────────────────────── */}
+            {/* Contains three mutually exclusive states managed by formState:
+                idle       → CTA button + LinkedIn link
+                open/submitting/error → inline contact form
+                success    → confirmation message
+                AnimatePresence enables exit animations before unmounting. */}
+            <div>
 
-              {/* PRIMARY CTA BUTTON
-                  bg-blue-axis: UV accent as background, per user spec.
-                  text-white-axis: white text readable on the dark UV surface.
-                  whileHover scale 1.03: slow, confident hover (0.35s easeOut) —
-                  matches the AXIS primary button hover pattern. */}
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className="bg-blue-axis text-white-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
-              >
-                Let&apos;s get in touch
-              </motion.button>
+              {/* BUTTON ROW
+                  The CTA button exits with a fade-down when the form opens.
+                  The LinkedIn link stays visible regardless of form state. */}
+              <div className="flex items-center gap-5">
 
-              {/* LINKEDIN LINK
-                  External URL — <a href> is allowed here per component.md rules.
-                  ("never <a> styled as a button unless navigating to an external URL"
-                  — this is a text link, not styled as a button.)
-                  border-b: underline-style stroke signals clickability without bold weight.
-                  rel="noopener noreferrer": security best practice for target="_blank". */}
-              <a
-                href="https://linkedin.com/in/lorena-puhl"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-instrument text-[13px] text-soft-grey border-b border-soft-grey/40 pb-px"
-              >
-                LinkedIn ↗
-              </a>
+                {/* AnimatePresence: allows the button to animate OUT before React
+                    removes it from the DOM when formState leaves "idle". */}
+                <AnimatePresence>
+                  {formState === "idle" && (
+                    <motion.button
+                      key="cta-button"
+                      // Exit: fades out and drops 8px before unmounting
+                      exit={{ opacity: 0, y: 8, transition: { duration: 0.4, ease: "easeOut" } }}
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      onClick={() => setFormState("open")}
+                      className="bg-blue-axis text-white-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
+                    >
+                      Let&apos;s get in touch
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+
+                {/* LINKEDIN LINK — external URL, <a> is allowed per component.md */}
+                <a
+                  href="https://linkedin.com/in/lorena-puhl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-instrument text-[13px] text-soft-grey border-b border-soft-grey/40 pb-px"
+                >
+                  LinkedIn ↗
+                </a>
+
+              </div>
+              {/* END BUTTON ROW */}
+
+              {/* CONTACT FORM
+                  Mounts when formState is open, submitting, or error.
+                  Unmounts (with stagger exit) when formState becomes success.
+                  motion.form uses formContainer variants to stagger its children. */}
+              <AnimatePresence>
+                {(formState === "open" || formState === "submitting" || formState === "error") && (
+                  <motion.form
+                    key="contact-form"
+                    variants={formContainer}
+                    initial="hidden"
+                    animate="show"
+                    exit="exit"
+                    onSubmit={handleSubmit}
+                    // noValidate: we handle validation ourselves — disable browser defaults
+                    noValidate
+                    className="mt-6 space-y-4"
+                  >
+
+                    {/* EMAIL FIELD */}
+                    <motion.div variants={formField}>
+                      <input
+                        type="email"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value)
+                          // Clear the field error as the user types — live feedback
+                          setFieldErrors(prev => ({ ...prev, email: undefined }))
+                        }}
+                        className="w-full bg-white-axis/[0.04] border border-white-axis/[0.08] text-white-axis font-instrument text-sm px-4 py-3 placeholder:text-soft-grey/50 focus:outline-none focus:border-blue-axis/40"
+                      />
+                      {/* Inline error — only rendered when validation has failed this field */}
+                      {fieldErrors.email && (
+                        <p className="font-instrument text-xs text-soft-grey italic mt-1">
+                          {fieldErrors.email}
+                        </p>
+                      )}
+                    </motion.div>
+
+                    {/* WHATSAPP FIELD */}
+                    <motion.div variants={formField}>
+                      <input
+                        type="tel"
+                        placeholder="+1 234 567 8900"
+                        value={whatsapp}
+                        onChange={(e) => {
+                          setWhatsapp(e.target.value)
+                          setFieldErrors(prev => ({ ...prev, whatsapp: undefined }))
+                        }}
+                        className="w-full bg-white-axis/[0.04] border border-white-axis/[0.08] text-white-axis font-instrument text-sm px-4 py-3 placeholder:text-soft-grey/50 focus:outline-none focus:border-blue-axis/40"
+                      />
+                      {fieldErrors.whatsapp && (
+                        <p className="font-instrument text-xs text-soft-grey italic mt-1">
+                          {fieldErrors.whatsapp}
+                        </p>
+                      )}
+                    </motion.div>
+
+                    {/* MESSAGE FIELD */}
+                    <motion.div variants={formField}>
+                      <textarea
+                        placeholder="Tell me about your studio…"
+                        value={message}
+                        onChange={(e) => {
+                          setMessage(e.target.value)
+                          setFieldErrors(prev => ({ ...prev, message: undefined }))
+                        }}
+                        rows={4}
+                        // resize-none: prevents the user from manually resizing the textarea,
+                        // which would break the layout's vertical rhythm.
+                        className="w-full bg-white-axis/[0.04] border border-white-axis/[0.08] text-white-axis font-instrument text-sm px-4 py-3 placeholder:text-soft-grey/50 focus:outline-none focus:border-blue-axis/40 resize-none"
+                      />
+                      {fieldErrors.message && (
+                        <p className="font-instrument text-xs text-soft-grey italic mt-1">
+                          {fieldErrors.message}
+                        </p>
+                      )}
+                    </motion.div>
+
+                    {/* SEND BUTTON + GLOBAL ERROR */}
+                    <motion.div variants={formField} className="flex flex-col gap-3">
+
+                      {/* Submit button — disabled during submission to prevent double-sends.
+                          Shows animated loading dots while submitting (Framer Motion only). */}
+                      <motion.button
+                        type="submit"
+                        disabled={formState === "submitting"}
+                        whileHover={formState !== "submitting" ? { scale: 1.03 } : {}}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="self-start bg-blue-axis text-white-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4 disabled:opacity-50 flex items-center gap-2"
+                      >
+                        {formState === "submitting" ? (
+                          <>
+                            Sending
+                            {/* Animated dots — three circles cycling opacity via Framer Motion.
+                                Each dot is delayed by 0.25s to create a wave effect. */}
+                            <span className="flex gap-1 items-center ml-1">
+                              {[0, 1, 2].map((i) => (
+                                <motion.span
+                                  key={i}
+                                  className="w-1 h-1 rounded-full bg-white-axis inline-block"
+                                  animate={{ opacity: [0.3, 1, 0.3] }}
+                                  transition={{
+                                    duration: 0.8,
+                                    repeat: Infinity,
+                                    delay: i * 0.25,
+                                    ease: "easeInOut",
+                                  }}
+                                />
+                              ))}
+                            </span>
+                          </>
+                        ) : (
+                          "Send"
+                        )}
+                      </motion.button>
+
+                      {/* Global error message — shown when the API call fails */}
+                      {formState === "error" && (
+                        <p className="font-instrument text-xs text-soft-grey italic">
+                          Something went wrong. Please try again.
+                        </p>
+                      )}
+
+                    </motion.div>
+
+                  </motion.form>
+                )}
+              </AnimatePresence>
+              {/* END CONTACT FORM */}
+
+              {/* SUCCESS MESSAGE
+                  Fades in + scales up from 0.97 when formState === "success".
+                  Playfair Display italic, centred, with a blue horizontal accent below. */}
+              <AnimatePresence>
+                {formState === "success" && (
+                  <motion.div
+                    key="success-message"
+                    initial={{ opacity: 0, scale: 0.97 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    className="mt-6 text-center"
+                  >
+                    <p className="font-playfair italic text-white-axis text-lg leading-relaxed">
+                      Thanks for contacting me!
+                    </p>
+                    <p className="font-playfair italic text-white-axis text-lg leading-relaxed">
+                      I&apos;ll come back to you in the next 24 hours.
+                    </p>
+                    {/* Subtle Electric Blue underline accent below the confirmation */}
+                    <div className="w-12 h-px bg-blue-axis mx-auto mt-5" aria-hidden="true" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              {/* END SUCCESS MESSAGE */}
 
             </div>
-            {/* END CTA ROW */}
+            {/* END CTA AREA */}
 
           </motion.div>
           {/* END RIGHT COLUMN */}

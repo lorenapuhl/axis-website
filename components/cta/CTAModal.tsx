@@ -219,6 +219,7 @@ export default function CTAModal({ onClose }: CTAModalProps) {
             >
               <Step3
                 flowData={completeFlow}
+                ownerWhatsApp={process.env.NEXT_PUBLIC_OWNER_WHATSAPP ?? ''}
               />
             </motion.div>
           )}

@@ -48,6 +48,20 @@ export const PROBLEM_LABELS = [
   "Other",
 ] as const;
 
+// Feature labels (index 0–7, matching the UI toggles in Step2.tsx)
+// Exported so Step3.tsx can map activeFeatures indices to human-readable strings
+// without duplicating the label strings.
+export const FEATURE_LABELS = [
+  'Let clients book classes online (24/7)',
+  'Accept payments (cards, Apple Pay, etc.)',
+  'Show a structured class schedule',
+  'Display pricing clearly (no more DM questions)',
+  'Show a Gallery-section with latest Instagram content automatically',
+  'Promote offers, events or workshops from my Instagram',
+  'Track bookings and client activity',
+  'Collect client details automatically',
+] as const;
+
 // Goal labels (index 0–6, matching the UI tiles in Step1.tsx)
 export const GOAL_LABELS = [
   "Automate booking- and client-data management",

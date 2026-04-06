@@ -111,6 +111,14 @@ export default function PreviewMock({ data }: PreviewMockProps) {
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 2 — HERO
             ═══════════════════════════════════════════════════════════════ */}
+        {(() => {
+          // heroImageUrl is always set (placehold.co fallback ensures it's never null).
+          // We distinguish between a real user upload (base64, starts with "data:") and
+          // a placehold.co placeholder. Only a real photo warrants white-on-dark text;
+          // a placeholder is a flat light color so we use the theme's dark text instead.
+          const hasRealPhoto = data.heroImageUrl?.startsWith('data:') ?? false;
+
+          return (
         <div
           className="relative min-h-[280px] flex items-center justify-center bg-cover bg-center"
           style={{
@@ -120,14 +128,16 @@ export default function PreviewMock({ data }: PreviewMockProps) {
             backgroundColor: data.heroImageUrl ? undefined : '#1a1a1a',
           }}
         >
-          {/* Overlay — softens the hero image so text reads cleanly on top */}
-          <div
-            className="absolute inset-0"
-            style={{ backgroundColor: theme.heroOverlay }}
-          />
+          {/* Overlay — only applied over real photos to darken them for readability */}
+          {hasRealPhoto && (
+            <div
+              className="absolute inset-0"
+              style={{ backgroundColor: theme.heroOverlay }}
+            />
+          )}
           {/* Hero content — positioned above the overlay via relative + z-10 */}
           <div className="relative z-10 text-center px-6 py-12">
-            <p className={`text-xs uppercase tracking-widest mb-3 ${data.heroImageUrl ? 'text-white/70' : theme.textMuted}`}>
+            <p className={`text-xs uppercase tracking-widest mb-3 ${hasRealPhoto ? 'text-white/70' : theme.textMuted}`}>
               {data.resolvedSeoLine}
             </p>
             {/*
@@ -137,12 +147,12 @@ export default function PreviewMock({ data }: PreviewMockProps) {
             */}
             <h2
               className={`font-playfair text-3xl uppercase tracking-tight mb-3 ${
-                data.heroImageUrl ? 'text-white' : theme.text
+                hasRealPhoto ? 'text-white' : theme.text
               }`}
             >
               {data.studioName}
             </h2>
-            <p className={`text-sm mb-6 max-w-xs mx-auto leading-relaxed ${data.heroImageUrl ? 'text-white/80' : theme.textMuted}`}>
+            <p className={`text-sm mb-6 max-w-xs mx-auto leading-relaxed ${hasRealPhoto ? 'text-white/80' : theme.textMuted}`}>
               {data.resolvedTagline}
             </p>
             {/* Hover effect on hero CTA */}
@@ -157,6 +167,8 @@ export default function PreviewMock({ data }: PreviewMockProps) {
             </motion.button>
           </div>
         </div>
+          );
+        })()}
 
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 3 — CLASS SCHEDULE
