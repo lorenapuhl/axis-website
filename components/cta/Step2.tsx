@@ -21,13 +21,16 @@ interface Step2Props {
 }
 
 // ─── Vibe options ─────────────────────────────────────────────────────────────
-// bgClass is used for all vibes except 'earthy', which uses an inline style for
-// the warm taupe swatch (#c4a882 — a runtime color not in Tailwind tokens).
+// bgClass is used for most vibes. Earthy and energetic use inline styles:
+//   earthy:    warm taupe #c4a882 — not in Tailwind tokens
+//   energetic: dynamic — shows the currently selected energeticColor
+// Both are documented runtime-color exceptions.
 const VIBES: { key: Vibe; label: string; desc: string; bgClass?: string; bgStyle?: React.CSSProperties }[] = [
   { key: 'minimal',   label: 'Clean & Minimal',    desc: 'White, simple, editorial',       bgClass: 'bg-white' },
   { key: 'dark',      label: 'Bold & Dark',         desc: 'Black, dramatic, high-contrast', bgClass: 'bg-zinc-950' },
   { key: 'earthy',    label: 'Warm & Earthy',       desc: 'Stone, natural, calm',           bgStyle: { backgroundColor: '#c4a882' } },
-  { key: 'energetic', label: 'Bright & Energetic',  desc: 'Orange, vivid, action',          bgClass: 'bg-orange-400' },
+  // energetic has no static bgClass — the swatch is rendered inline with the live energeticColor
+  { key: 'energetic', label: 'Bright & Energetic',  desc: 'Orange, vivid, action' },
 ];
 
 // ─── Energetic accent color options ──────────────────────────────────────────
@@ -359,35 +362,22 @@ export default function Step2({ initialData, onBack, onBuild }: Step2Props) {
                   ${isSelected ? 'border-white ring-1 ring-white' : 'border-zinc-700 hover:border-zinc-500'}
                 `}
               >
-                {/* Color swatch — earthy uses inline style (runtime color not in Tailwind tokens) */}
+                {/* Color swatch:
+                    - minimal/dark use a static bgClass
+                    - earthy uses bgStyle (warm taupe — not in Tailwind tokens)
+                    - energetic uses the live energeticColor state so it updates
+                      immediately when the user picks a dot below the grid */}
                 <div
                   className={`${bgClass ?? ''} h-10 w-full rounded-md mb-3`}
-                  style={bgStyle}
+                  style={key === 'energetic'
+                    ? { backgroundColor: energeticColor }
+                    : bgStyle
+                  }
                 />
                 <p className={`font-instrument text-sm font-semibold mb-0.5 ${isSelected ? 'text-white' : 'text-zinc-300'}`}>
                   {label}
                 </p>
                 <p className="font-instrument text-xs text-zinc-500">{desc}</p>
-
-                {/* When 'energetic' is selected, show 5 color dot buttons */}
-                {key === 'energetic' && isSelected && (
-                  <div className="flex gap-2 mt-3" onClick={(e) => e.stopPropagation()}>
-                    {ENERGETIC_COLORS.map(({ hex, label: colorLabel }) => (
-                      <button
-                        key={hex}
-                        onClick={() => setEnergeticColor(hex)}
-                        aria-label={`Select ${colorLabel} accent`}
-                        className="w-6 h-6 rounded-full flex-shrink-0 transition-all"
-                        style={{
-                          backgroundColor: hex,
-                          // White ring on selected dot; transparent ring otherwise
-                          outline: energeticColor === hex ? '2px solid white' : '2px solid transparent',
-                          outlineOffset: '2px',
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
 
                 {isSelected && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center">
@@ -398,6 +388,31 @@ export default function Step2({ initialData, onBack, onBuild }: Step2Props) {
             );
           })}
         </div>
+
+        {/* Energetic color picker — rendered OUTSIDE the button grid to avoid
+            nested <button> elements (invalid HTML). Appears below the tile grid
+            only when the 'energetic' vibe is selected. */}
+        {vibe === 'energetic' && (
+          <div className="mt-3 px-1">
+            <p className="font-instrument text-xs text-zinc-500 mb-2">Pick your accent color:</p>
+            <div className="flex gap-2">
+              {ENERGETIC_COLORS.map(({ hex, label: colorLabel }) => (
+                <button
+                  key={hex}
+                  onClick={() => setEnergeticColor(hex)}
+                  aria-label={`Select ${colorLabel} accent`}
+                  className="w-6 h-6 rounded-full flex-shrink-0 transition-all"
+                  style={{
+                    backgroundColor: hex,
+                    // White ring on selected dot; transparent ring otherwise
+                    outline: energeticColor === hex ? '2px solid white' : '2px solid transparent',
+                    outlineOffset: '2px',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Navigation: Back + Build ──────────────────────────────────── */}

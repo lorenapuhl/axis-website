@@ -275,15 +275,28 @@ export default function PreviewMock({ data }: PreviewMockProps) {
                 ✦ Your story, in your words — this section is fully editable.
               </p>
             </div>
-            {/* Show second gallery image if available */}
+            {/* About image — always present (either user upload or palette-tinted placeholder).
+                We check if the src is a base64 data URL (user upload) or a placehold.co URL.
+                For placeholders we render a themed div so the color updates when the user
+                picks a different energetic palette — a static <img> would stay orange. */}
             {data.galleryImages[0] && (
               <div className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={data.galleryImages[0]}
-                  alt="Studio interior"
-                  className="w-full h-full object-cover"
-                />
+                {data.galleryImages[0].startsWith('data:') ? (
+                  // User-uploaded image — show as-is
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={data.galleryImages[0]}
+                    alt="Studio interior"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  // Fallback placeholder — use the theme's surface color so it
+                  // responds to palette changes (e.g. blue-50, purple-50, etc.)
+                  <div
+                    className={`w-full h-full ${theme.surface}`}
+                    style={surfaceColorOverride ? { backgroundColor: surfaceColorOverride } : {}}
+                  />
+                )}
               </div>
             )}
           </div>

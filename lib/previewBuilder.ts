@@ -23,6 +23,7 @@ import { extractDominantColors } from './colorExtractor';
 import {
   STUDIO_PROFILES,
   VIBE_THEMES,
+  ENERGETIC_PALETTES,
   type StudioProfile,
   type VibeTheme,
   type StudioType,
@@ -162,8 +163,17 @@ export async function buildPreviewData(flow: FlowData): Promise<PreviewData> {
 
   // ── Step 3: Resolve vibe theme ───────────────────────────────────────────
   // Use the user's selected vibe, or fall back to the profile's default.
+  // For 'energetic', look up the full per-color palette so the entire mock
+  // (surface, border, soft tints, etc.) is harmoniously themed — not just the
+  // accent button. Falls back to the orange energetic palette if color is unknown.
   const vibeKey: Vibe = flow.vibe ?? profile.defaultVibe;
-  const theme: VibeTheme = VIBE_THEMES[vibeKey] ?? VIBE_THEMES['minimal'];
+  let theme: VibeTheme;
+  if (vibeKey === 'energetic') {
+    const energeticHex = flow.energeticColor ?? '#F97316';
+    theme = ENERGETIC_PALETTES[energeticHex] ?? ENERGETIC_PALETTES['#F97316'];
+  } else {
+    theme = VIBE_THEMES[vibeKey] ?? VIBE_THEMES['minimal'];
+  }
 
   // ── Step 4: Clean up name and location with fallbacks ───────────────────
   const studioName = flow.handle?.trim() || 'Your Studio';
@@ -203,17 +213,13 @@ export async function buildPreviewData(flow: FlowData): Promise<PreviewData> {
   }
 
   // ── Step 8: Map color overrides ─────────────────────────────────────────
-  // If extraction returned colors, use them as overrides.
-  // If user selected an energetic color and no image was extracted, use that.
+  // If the user uploaded images and we extracted colors, use them as overrides.
+  // For the 'energetic' vibe we now use full per-color palettes (ENERGETIC_PALETTES),
+  // so we never need the energeticColor as a runtime override — the palette's
+  // Tailwind classes handle accent, surface, border, etc. consistently.
   // Otherwise null — the mock uses the Tailwind theme classes unchanged.
-  let accentColorOverride  = extractedColors[0] ?? null;
+  const accentColorOverride  = extractedColors[0] ?? null;
   const surfaceColorOverride = extractedColors[1] ?? null;
-
-  // If the user chose the 'energetic' vibe and picked a specific accent color
-  // (and no uploaded image color was extracted), apply the chosen color as the accent.
-  if (flow.vibe === 'energetic' && flow.energeticColor && !accentColorOverride) {
-    accentColorOverride = flow.energeticColor;
-  }
 
   // ── Step 9: Map selected problem labels ─────────────────────────────────
   const selectedProblems = (flow.problems ?? []).map(

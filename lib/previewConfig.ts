@@ -154,6 +154,93 @@ export const VIBE_THEMES: Record<Vibe, VibeTheme> = {
   },
 };
 
+// ─── Energetic per-color palettes ─────────────────────────────────────────────
+// When the user picks a specific accent color for the "Bright & Energetic" vibe,
+// we swap the entire theme to a harmonious palette built around that color.
+// This is a lookup from hex → full VibeTheme so the mock uses consistent,
+// matching colors (surface, border, soft tints) — not just the accent button.
+//
+// Each palette uses:
+//   bg:          always bg-white (clean, high-contrast base)
+//   surface:     tinted card background (e.g. bg-blue-50)
+//   accent:      the chosen color as a Tailwind bg class
+//   border:      very light tinted border (e.g. border-blue-100)
+//   surfaceSoft: ultra-light surface for Instagram tiles
+//   accentSoft:  muted accent for placeholder tiles
+//   highlight:   the raw hex used in inline-style contexts
+export const ENERGETIC_PALETTES: Record<string, VibeTheme> = {
+  '#2563EB': {
+    bg: 'bg-white',
+    surface: 'bg-blue-50',
+    text: 'text-gray-900',
+    textMuted: 'text-gray-500',
+    accent: 'bg-blue-600',
+    accentText: 'text-white',
+    border: 'border-blue-100',
+    navBg: 'bg-white/90',
+    heroOverlay: 'rgba(37,99,235,0.15)',
+    surfaceSoft: '#eff6ff',   // blue-50
+    accentSoft: '#bfdbfe',    // blue-200
+    highlight: '#2563eb',     // blue-600
+  },
+  '#DC2626': {
+    bg: 'bg-white',
+    surface: 'bg-red-50',
+    text: 'text-gray-900',
+    textMuted: 'text-gray-500',
+    accent: 'bg-red-600',
+    accentText: 'text-white',
+    border: 'border-red-100',
+    navBg: 'bg-white/90',
+    heroOverlay: 'rgba(220,38,38,0.15)',
+    surfaceSoft: '#fef2f2',   // red-50
+    accentSoft: '#fecaca',    // red-200
+    highlight: '#dc2626',     // red-600
+  },
+  '#F97316': {
+    bg: 'bg-white',
+    surface: 'bg-orange-50',
+    text: 'text-gray-900',
+    textMuted: 'text-gray-500',
+    accent: 'bg-orange-500',
+    accentText: 'text-white',
+    border: 'border-orange-100',
+    navBg: 'bg-white/90',
+    heroOverlay: 'rgba(255,120,0,0.15)',
+    surfaceSoft: '#fff7ed',   // orange-50
+    accentSoft: '#fed7aa',    // orange-200
+    highlight: '#f97316',     // orange-500
+  },
+  '#7C3AED': {
+    bg: 'bg-white',
+    surface: 'bg-purple-50',
+    text: 'text-gray-900',
+    textMuted: 'text-gray-500',
+    accent: 'bg-purple-600',
+    accentText: 'text-white',
+    border: 'border-purple-100',
+    navBg: 'bg-white/90',
+    heroOverlay: 'rgba(124,58,237,0.15)',
+    surfaceSoft: '#faf5ff',   // purple-50
+    accentSoft: '#ddd6fe',    // purple-200
+    highlight: '#7c3aed',     // purple-600
+  },
+  '#16A34A': {
+    bg: 'bg-white',
+    surface: 'bg-green-50',
+    text: 'text-gray-900',
+    textMuted: 'text-gray-500',
+    accent: 'bg-green-600',
+    accentText: 'text-white',
+    border: 'border-green-100',
+    navBg: 'bg-white/90',
+    heroOverlay: 'rgba(22,163,74,0.15)',
+    surfaceSoft: '#f0fdf4',   // green-50
+    accentSoft: '#bbf7d0',    // green-200
+    highlight: '#16a34a',     // green-600
+  },
+};
+
 // ─── Studio Profiles ─────────────────────────────────────────────────────────
 
 export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
@@ -183,8 +270,8 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     defaultVibe: 'minimal',
     instagramOverlays: {
       news:       ['New: Yin Yoga Deep Dive', 'Meet Sarah, our new teacher', 'Extended hours this weekend'],
-      promotions: ['First class free this month', '10% off 10-class packs', 'Summer unlimited — $99/mo'],
-      events:     ['Sunset Rooftop Flow — Sat', 'Pilates & Brunch Workshop', 'Full Moon Yin — this Friday'],
+      promotions: ['First class free this month', '10% off 10-class packs', 'Summer offer — $99/mo'],
+      events:     ['Sunset Rooftop Flow — Sat', 'Pilates & Brunch Workshop', 'Extended Yin — this Friday'],
     },
   },
 
@@ -242,9 +329,9 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     ],
     defaultVibe: 'energetic',
     instagramOverlays: {
-      news:       ['New Salsa class Fridays', 'Welcome our new hip-hop coach', 'Extended beginner schedule'],
+      news:       ['New Salsa class Fridays', 'New hip-hop coach', 'Extended beginner schedule'],
       promotions: ['First class free this month', 'Monthly unlimited — $130', 'Kids classes — 20% off'],
-      events:     ['End-of-term showcase — June', 'Salsa social this Friday', 'Contemporary workshop Sat'],
+      events:     ['End-of-term show !', 'Salsa social this Friday', 'Contemporary workshop Sat'],
     },
   },
 
@@ -302,7 +389,7 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     ],
     defaultVibe: 'dark',
     instagramOverlays: {
-      news:       ['New Muay Thai class added', 'Sifu Rodriguez joins the dojo', 'Open mat extended — Sundays'],
+      news:       ['New Muay Thai class added', 'Sifu Rodriguez joins the dojo', 'Open mat — Sundays'],
       promotions: ['Trial week — $39 this month', 'Monthly membership — $139', 'Refer a friend — 1 month free'],
       events:     ['Belt grading — this Saturday', 'Sparring session this Sunday', 'Self-defense seminar Fri'],
     },
@@ -333,7 +420,7 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     defaultVibe: 'earthy',
     instagramOverlays: {
       news:       ['Cold plunge open Sundays', 'New therapist — book now', 'Red light hours extended'],
-      promotions: ['Intro pack — 3 sessions $79', 'Monthly member — save 20%', 'Bring a friend free'],
+      promotions: ['Intro pack — 3 sessions $79', 'Today — save 20%', 'Bring a friend free'],
       events:     ['Recovery & yoga Sunday', 'Ice bath challenge — Sat', 'Mobility masterclass this Fri'],
     },
   },
@@ -346,9 +433,9 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     seoLine: 'Meditation and breathwork in {location}. Find us on Google.',
     classSuggestions: [
       { name: 'Morning Breathwork', time: 'Mon / Wed / Fri — 7:00 AM', spots: 12, duration: '45 min' },
-      { name: 'Sound Bath',         time: 'Thu — 7:30 PM',              spots: 15, duration: '75 min' },
+      { name: 'Sound Meditation',         time: 'Thu — 7:30 PM',              spots: 15, duration: '75 min' },
       { name: 'Guided Meditation',  time: 'Tue / Sat — 8:00 AM',        spots: 20, duration: '30 min' },
-      { name: 'Wim Hof Method',     time: 'Sun — 9:00 AM',              spots: 10, duration: '90 min' },
+      { name: 'Deep Relaxation',     time: 'Sun — 9:00 AM',              spots: 10, duration: '90 min' },
     ],
     pricingTiers: [
       { name: 'Single Session', price: '$22',    description: 'Drop into any class, any day.',                  highlighted: false },
@@ -362,9 +449,9 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     ],
     defaultVibe: 'minimal',
     instagramOverlays: {
-      news:       ['New sound bath — Fri evenings', 'Teacher Luna joins us', 'Morning session now daily'],
+      news:       ['Let go — Fri night', 'Teacher Luna joins us', 'Morning session now daily'],
       promotions: ['First session free this month', '8-class bundle — $149', 'Monthly seeker — $99/mo'],
-      events:     ['New Moon ceremony — this Fri', 'Wim Hof workshop Saturday', 'Full Moon sound bath — Fri'],
+      events:     ['Full Meditation — this Fri', 'Breath workshop Saturday', 'Sound Experience — Fri'],
     },
   },
 
