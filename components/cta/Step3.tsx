@@ -317,7 +317,7 @@ export default function Step3({ flowData, ownerWhatsApp }: Step3Props) {
 
                   {/* Sub-headline */}
                   <p className="font-instrument text-sm text-zinc-400 leading-relaxed mb-6">
-                    Instead of managing bookings in DMs — this is what your clients will see.
+                    Instead of managing bookings in DMs — this is what your clients will see. We'll customize your Axis-System to your specific needs and taste.
                   </p>
 
                   {/* Personalization callout box */}

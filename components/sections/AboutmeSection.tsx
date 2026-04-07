@@ -604,10 +604,10 @@ export default function AboutmeSection() {
                     transition={{ duration: 0.7, ease: "easeOut" }}
                     className="mt-6 text-center"
                   >
-                    <p className="font-playfair italic text-white-axis text-lg leading-relaxed">
+                    <p className="font-instrument text-white-axis text-sm leading-relaxed">
                       Thanks for contacting me!
                     </p>
-                    <p className="font-playfair italic text-white-axis text-lg leading-relaxed">
+                    <p className="font-instrument text-white-axis text-sm leading-relaxed">
                       I&apos;ll come back to you in the next 24 hours.
                     </p>
                     {/* Subtle Electric Blue underline accent below the confirmation */}

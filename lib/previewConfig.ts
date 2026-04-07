@@ -259,8 +259,8 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     ],
     pricingTiers: [
       { name: 'Drop-in',         price: '$25',  description: 'Single class, any style. No commitment.',          highlighted: false },
-      { name: '10-Class Pack',   price: '$195', description: 'Best value. Use across all class formats.',        highlighted: true  },
-      { name: 'Monthly Unlimited', price: '$149/mo', description: 'Unlimited classes. Cancel any time.',         highlighted: false },
+      { name: '10-Class Pack',   price: '$149', description: 'Best value. Use across all class formats.',        highlighted: true  },
+      { name: 'Monthly Unlimited', price: '$195/mo', description: 'Unlimited classes. Cancel any time.',         highlighted: false },
     ],
     defaultFallbackImages: [
       'https://placehold.co/800x600/d6d3d1/d6d3d1?text=',
@@ -269,7 +269,7 @@ export const STUDIO_PROFILES: Record<StudioType, StudioProfile> = {
     ],
     defaultVibe: 'minimal',
     instagramOverlays: {
-      news:       ['New: Yin Yoga Deep Dive', 'Meet Sarah, our new teacher', 'Extended hours this weekend'],
+      news:       ['New: Yin Yoga Deep Dive', 'Meet Sarah, our new teacher', 'Special guest - Fri'],
       promotions: ['First class free this month', '10% off 10-class packs', 'Summer offer — $99/mo'],
       events:     ['Sunset Rooftop Flow — Sat', 'Pilates & Brunch Workshop', 'Extended Yin — this Friday'],
     },
