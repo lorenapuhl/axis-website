@@ -66,7 +66,7 @@ const item = {
   // `as const` narrows "easeOut" from type `string` to the literal type
   // "easeOut" — Framer Motion's Variants type requires a specific Easing
   // literal, not a plain string.
-  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const as const } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const } },
 }
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────

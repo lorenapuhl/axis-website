@@ -69,7 +69,7 @@ const container = {
 // This defines the "Child" animation: start invisible and 20px down, end visible at 0px.
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const as const } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const } },
 }
 
 // --- SUB-COMPONENTS ---
