@@ -135,7 +135,7 @@ export default function ProductVisualSection() {
   // ── GRID IMAGE ANIMATION ──────────────────────────────────────────────────
   // Returns the Framer Motion `animate` target for a given grid image ID.
   // Non-animated images always return an empty object (no override).
-  function getGridAnimate(id: string): Record<string, unknown> {
+  function getGridAnimate(id: string): { scale?: number; filter?: string; opacity?: number } {
     if (!ANIMATED_IDS.has(id)) return {}
 
     if (step === 1) {
