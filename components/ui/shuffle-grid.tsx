@@ -116,7 +116,7 @@ const ShuffleGrid = () => {
   // squares holds the array of JSX tile elements currently rendered.
   // Every time setSquares is called with a new shuffled array, the grid re-renders
   // and Framer Motion's layout animation handles the smooth repositioning.
-  const [squares, setSquares] = useState<JSX.Element[]>([])
+  const [squares, setSquares] = useState<React.JSX.Element[]>([])
 
   // useEffect runs after the first render — like __init__ code that needs the DOM ready.
   // The empty dependency array [] means "run once on mount, never again".
