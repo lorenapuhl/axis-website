@@ -25,7 +25,7 @@ const container = {
 const item = {
   hidden: { opacity: 0, y: 20 },
   // opacity 0 = invisible; y: 20 = shifted 20px downward
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
   // Animate to fully visible and in final position over 0.7s
 }
 
@@ -207,7 +207,7 @@ export const ShuffleHero = () => {
           <motion.div variants={item}>
             <motion.button
               whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
+              transition={{ duration: 0.35, ease: "easeOut" as const }}
               className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
             >
               Get your AXIS

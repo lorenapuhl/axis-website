@@ -244,7 +244,7 @@ export default function LiveSyncSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           className="text-center mx-auto mb-20 md:mb-28 max-w-[600px]"
         >
@@ -305,7 +305,7 @@ export default function LiveSyncSection() {
                         layoutId={activeLoop.id}
                         initial={{ opacity: 0, x: -16 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        transition={{ duration: 0.5, ease: "easeOut" as const }}
                         // overflow-hidden on THIS element — OVERFLOW CLIPPING RULE
                         className="absolute inset-0 rounded-sm overflow-hidden"
                       >
@@ -326,7 +326,7 @@ export default function LiveSyncSection() {
                         key={post.id}
                         className="w-24 h-24 shrink-0 overflow-hidden rounded-sm relative"
                         whileHover={{ scale: 1.03 }}
-                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        transition={{ duration: 0.35, ease: "easeOut" as const }}
                       >
                         <Image src={post.src} alt="Fitness studio Instagram content" fill className="object-cover" />
                       </motion.div>
@@ -382,7 +382,7 @@ export default function LiveSyncSection() {
             <motion.div
               initial={{ opacity: 0.2, y: 10 }}
               animate={{ opacity: websiteOpacity, y: step >= 2 ? 0 : 10 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               className="bg-white-axis rounded-2xl p-6"
             >
 
@@ -435,7 +435,7 @@ export default function LiveSyncSection() {
                         <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
                           <div className="w-29 h-30
                           relative shrink-0">
-                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" }}>
+                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" as const }}>
                               <Image src={p.src} alt={`New schedule post: ${p.text}`} fill className="object-cover" />
                             </motion.div>
                           </div>
@@ -504,7 +504,7 @@ export default function LiveSyncSection() {
                       {settledLoopPosts.filter(p => p.targetSection === "promo").map(p => (
                         <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
                           <div className="w-30 h-30 relative shrink-0">
-                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" }}>
+                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" as const }}>
                               <Image src={p.src} alt={`New promotion: ${p.text}`} fill className="object-cover" />
                             </motion.div>
                           </div>
@@ -548,7 +548,7 @@ export default function LiveSyncSection() {
                       {settledLoopPosts.filter(p => p.targetSection === "events").map(p => (
                         <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
                           <div className="w-30 h-30 relative shrink-0">
-                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" }}>
+                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" as const }}>
                               <Image src={p.src} alt={`New event post: ${p.text}`} fill className="object-cover" />
                             </motion.div>
                           </div>
@@ -707,7 +707,7 @@ export default function LiveSyncSection() {
                                   strokeLinecap="round"
                                   initial={{ pathLength: 0 }}
                                   animate={{ pathLength: uiVisible ? 1 : 0 }}
-                                  transition={{ duration: 2, ease: "easeOut", delay: 0.3 }}
+                                  transition={{ duration: 2, ease: "easeOut" as const, delay: 0.3 }}
                                 />
                               </g>
                             ))}
@@ -833,7 +833,7 @@ export default function LiveSyncSection() {
                           initial={{ opacity: 0, y: -12, scale: 0.97 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.35, ease: "easeOut" }}
+                          transition={{ duration: 0.35, ease: "easeOut" as const }}
                           whileHover={{ scale: 1.02 }}
                           className="flex items-start gap-2 p-2 bg-black-axis/5 rounded-lg shrink-0"
                         >

@@ -45,7 +45,7 @@ export default function TrustHeroSection() {
         aria-hidden
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
+        transition={{ duration: 0.7, ease: "easeOut" as const }}
         className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-white/[0.02] blur-[120px] rounded-full pointer-events-none"
       />
 

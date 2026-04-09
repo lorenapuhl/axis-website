@@ -95,7 +95,7 @@ const glowVariant = {
       delay: 2.3,            // Fires after Booking node has fully appeared
                              // (node delay 1.6s + duration 0.7s ≈ 2.3s).
       duration: 1.2,
-      ease: "easeOut",
+      ease: "easeOut" as const,
     },
   },
 }
@@ -171,7 +171,7 @@ export default function SystemVisualSection() {
           // whileInView: switches to this state when the element scrolls into view.
           // Framer Motion monitors the element's position relative to the viewport.
 
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           // duration 0.7s and easeOut = slow, decelerating reveal.
           // Brand guideline: "animations are slow and confident."
 
@@ -275,7 +275,7 @@ export default function SystemVisualSection() {
             // Framer Motion looks up "hidden" and "show" from that object when
             // the parent broadcasts the corresponding state.
 
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0 }}
             // delay: 0 → appears immediately when the section enters view.
             // This is the anchor of the sequence — everything else follows it.
 
@@ -382,7 +382,7 @@ export default function SystemVisualSection() {
                 variants={lineVariant}
                 // Connects to the lineVariant object: pathLength 0 → 1 (draw animation).
 
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.4 }}
                 // delay: 0.4s → starts drawing after Instagram has appeared (delay 0 + ~0.3s).
                 // The line "draws" for 0.7s, finishing around t=1.1s.
               />
@@ -406,7 +406,7 @@ export default function SystemVisualSection() {
                 fill="none"
                 className="text-soft-grey"
                 variants={lineVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.4 }}
                 // Same delay as the desktop connector — both are connector 1.
               />
             </svg>
@@ -419,7 +419,7 @@ export default function SystemVisualSection() {
           ════════════════════════════════════════════════════════════════ */}
           <motion.div
             variants={nodeVariant}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.8 }}
+            transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.8 }}
             // delay: 0.8s → connector 1 finishes drawing at ~1.1s.
             // 0.8s means Websystem STARTS appearing while the line is still drawing
             // (overlap is intentional — it feels more continuous).
@@ -479,7 +479,7 @@ export default function SystemVisualSection() {
                   exit={{ opacity: 0, y: -6 }}
                   // Exits by fading out and sliding slightly upward.
 
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: "easeOut" as const }}
                   // 0.4s is the minimum allowed duration — appropriate for a
                   // small, subtle element like this label.
 
@@ -516,7 +516,7 @@ export default function SystemVisualSection() {
                 fill="none"
                 className="text-soft-grey"
                 variants={lineVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 1.2 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.2 }}
                 // delay: 1.2s → draws after Websystem has appeared (delay 0.8 + ~0.4s).
               />
             </svg>
@@ -532,7 +532,7 @@ export default function SystemVisualSection() {
                 fill="none"
                 className="text-soft-grey"
                 variants={lineVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 1.2 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.2 }}
               />
             </svg>
           </div>
@@ -544,7 +544,7 @@ export default function SystemVisualSection() {
           ════════════════════════════════════════════════════════════════ */}
           <motion.div
             variants={nodeVariant}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 1.6 }}
+            transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.6 }}
             // delay: 1.6s → connector 2 begins drawing at 1.2s and takes 0.7s (= 1.9s).
             // Booking starts appearing at 1.6s for a deliberate slight overlap with the line.
 
@@ -638,7 +638,7 @@ export default function SystemVisualSection() {
                   exit={{ opacity: 0, y: -6 }}
                   // Exits by fading out and sliding slightly upward.
 
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: "easeOut" as const }}
                   // 0.4s is the minimum allowed duration — appropriate for a
                   // small, subtle element like this label.
 

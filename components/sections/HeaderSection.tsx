@@ -87,7 +87,7 @@ export default function HeaderSection() {
       //        it stays pinned at the top as the user scrolls.
       // z-50: stacking order — ensures the header sits above all page content.
       animate={{ backgroundColor: scrolled ? "#121212" : "rgba(0,0,0,0)" }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: "easeOut" as const }}
       // duration 0.5s: slow and confident — matches the brand feel.
       // easeOut: starts fast, decelerates to a stop. Never use linear or bounce.
     >
@@ -161,7 +161,7 @@ export default function HeaderSection() {
               // whileHover: Framer Motion animates to these values when the user
               // hovers. When they stop hovering, it animates back automatically.
               whileHover={{ opacity: 0.6 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.3, ease: "easeOut" as const }}
               // 0.3s is the shortest duration we use — appropriate for a quick hover.
             >
               {/* {label} renders the string value from the NAV_LINKS object,

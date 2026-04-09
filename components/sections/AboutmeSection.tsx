@@ -109,7 +109,7 @@ const containerVariants: Variants = {
 // itemVariants: each staggered child fades in and rises 20px from below.
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
 // formContainer: stagger the three form fields in on entry, then stagger them
@@ -124,8 +124,8 @@ const formContainer: Variants = {
 // slides down + fades out on exit — matching the AXIS 0.4–0.8s timing range.
 const formField: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-  exit: { opacity: 0, y: 10, transition: { duration: 0.35, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+  exit: { opacity: 0, y: 10, transition: { duration: 0.35, ease: "easeOut" as const } },
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -207,7 +207,7 @@ export default function AboutmeSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           // mb-10: breathing room between the label and the two-column grid
           className="mb-10"
@@ -237,7 +237,7 @@ export default function AboutmeSection() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+            transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.1 }}
             viewport={{ once: true }}
           >
 
@@ -301,7 +301,7 @@ export default function AboutmeSection() {
                   key={index}
                   variants={itemVariants}
                   whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  transition={{ duration: 0.35, ease: "easeOut" as const }}
                   className="bg-white-axis/[0.04] border border-white-axis/[0.08] rounded-sm px-4 py-3 cursor-default"
                 >
                   {/* Stat number — Playfair Display, magenta accent */}
@@ -325,7 +325,7 @@ export default function AboutmeSection() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+            transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.2 }}
             viewport={{ once: true }}
           >
 
@@ -408,7 +408,7 @@ export default function AboutmeSection() {
                   key={index}
                   variants={itemVariants}
                   whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  transition={{ duration: 0.35, ease: "easeOut" as const }}
                   className="font-instrument text-[12px] text-white-axis border border-white-axis/10 rounded-full px-[14px] py-[6px] tracking-[0.02em] cursor-default"
                 >
                   {pill}
@@ -437,9 +437,9 @@ export default function AboutmeSection() {
                     <motion.button
                       key="cta-button"
                       // Exit: fades out and drops 8px before unmounting
-                      exit={{ opacity: 0, y: 8, transition: { duration: 0.4, ease: "easeOut" } }}
+                      exit={{ opacity: 0, y: 8, transition: { duration: 0.4, ease: "easeOut" as const } }}
                       whileHover={{ scale: 1.03 }}
-                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      transition={{ duration: 0.35, ease: "easeOut" as const }}
                       onClick={() => setFormState("open")}
                       className="bg-blue-axis text-white-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
                     >
@@ -549,7 +549,7 @@ export default function AboutmeSection() {
                         type="submit"
                         disabled={formState === "submitting"}
                         whileHover={formState !== "submitting" ? { scale: 1.03 } : {}}
-                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        transition={{ duration: 0.35, ease: "easeOut" as const }}
                         className="self-start bg-blue-axis text-white-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4 disabled:opacity-50 flex items-center gap-2"
                       >
                         {formState === "submitting" ? (
@@ -601,7 +601,7 @@ export default function AboutmeSection() {
                     key="success-message"
                     initial={{ opacity: 0, scale: 0.97 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    transition={{ duration: 0.7, ease: "easeOut" as const }}
                     className="mt-6 text-center"
                   >
                     <p className="font-instrument text-white-axis text-sm leading-relaxed">

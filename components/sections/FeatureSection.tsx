@@ -26,13 +26,13 @@ const container: Variants = {
 // item: the standard fade-up animation (per animate-section.md: 0.7s, easeOut).
 const item: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const as const } },
 }
 
 // cardItem: same fade-up for the grid cards — slightly larger travel distance.
 const cardItem: Variants = {
   hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const as const } },
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -235,7 +235,7 @@ export default function FeatureSection() {
           <motion.div
             variants={cardItem}
             whileHover={{ y: -6 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
             // transition: applies to the whileHover y-lift only.
             // The scroll-in animation uses the transition inside cardItem.show.
             className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
@@ -289,7 +289,7 @@ export default function FeatureSection() {
                   <motion.div
                     className="absolute inset-0 bg-blue-axis"
                     animate={{ opacity: selectedSlot === i ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    transition={{ duration: 0.4, ease: "easeOut" as const }}
                   />
 
                   {/* Slot text sits on top of the animated overlay via z-10.
@@ -309,7 +309,7 @@ export default function FeatureSection() {
                       <motion.span
                         initial={{ opacity: 0, scale: 0.6 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        transition={{ duration: 0.3, ease: "easeOut" as const }}
                         className="text-white-axis font-instrument text-xs"
                       >
                         &#10003;
@@ -323,7 +323,7 @@ export default function FeatureSection() {
               {/* Primary action button for this UI fragment */}
               <motion.button
                 whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
+                transition={{ duration: 0.35, ease: "easeOut" as const }}
                 className="mt-2 bg-black-axis text-white-axis font-instrument text-xs uppercase tracking-widest py-2.5 rounded-lg w-full"
               >
                 Book Now
@@ -335,7 +335,7 @@ export default function FeatureSection() {
           <motion.div
             variants={cardItem}
             whileHover={{ y: -6 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
             className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
           >
             <div className="flex items-start justify-between">
@@ -431,7 +431,7 @@ export default function FeatureSection() {
                   {/* CTA button — mt-auto pushes it to the bottom of the card */}
                   <motion.button
                     whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    transition={{ duration: 0.35, ease: "easeOut" as const }}
                     className="mt-auto bg-black-axis text-white-axis font-instrument text-xs uppercase tracking-widest py-2.5 rounded-lg w-full"
                   >
                     {plan.cta}
@@ -450,7 +450,7 @@ export default function FeatureSection() {
           <motion.div
             variants={cardItem}
             whileHover={{ y: -6 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
             className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
           >
             <div className="flex items-start justify-between">
@@ -506,7 +506,7 @@ export default function FeatureSection() {
                   ) : (
                     <motion.button
                       whileHover={{ scale: 1.08 }}
-                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      transition={{ duration: 0.25, ease: "easeOut" as const }}
                       className="font-instrument text-xs uppercase tracking-widest text-white-axis bg-black-axis rounded-md px-2.5 py-1"
                     >
                       Book
@@ -521,7 +521,7 @@ export default function FeatureSection() {
           <motion.div
             variants={cardItem}
             whileHover={{ y: -6 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
             className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
           >
             <div className="flex items-start justify-between">
@@ -586,7 +586,7 @@ export default function FeatureSection() {
           <motion.div
             variants={cardItem}
             whileHover={{ y: -6 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
             className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
           >
             <div className="flex items-start">
@@ -645,7 +645,7 @@ export default function FeatureSection() {
           <motion.div
             variants={cardItem}
             whileHover={{ y: -6 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
             className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
           >
             <div className="flex items-start justify-between">
@@ -697,7 +697,7 @@ export default function FeatureSection() {
                   opacity goes 0.25 (dim) → 1 (bright) on a 0.6s ease transition. */}
               <motion.div
                 animate={{ opacity: instaVisible ? 1 : 0.25 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
+                transition={{ duration: 0.6, ease: "easeOut" as const }}
                 className="flex-1 rounded-xl border border-soft-grey aspect-square flex flex-col items-center justify-center gap-1.5 px-3"
               >
                 {/* Placeholder content lines representing a website text block */}
@@ -722,7 +722,7 @@ export default function FeatureSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           className="mt-16 md:mt-24"
         >
@@ -741,7 +741,7 @@ export default function FeatureSection() {
               <motion.div
                 key={feature.label}
                 whileHover={{ y: -4 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
+                transition={{ duration: 0.35, ease: "easeOut" as const }}
                 className="flex items-center gap-2.5 py-3 px-4 rounded-xl bg-grey-axis cursor-default"
                 // bg-grey-axis (#121212): very dark grey on black = subtle tile definition.
                 // cursor-default: tells the browser this is not a clickable link.

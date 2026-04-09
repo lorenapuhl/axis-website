@@ -28,7 +28,7 @@ export default function IntroSection() {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: "easeOut" as const }}
             viewport={{ once: true }}
             className="flex flex-col items-center gap-3 font-playfair text-3xl md:text-4xl text-soft-grey tracking-tight leading-tight"
           >
@@ -134,7 +134,7 @@ export default function IntroSection() {
               // 0.45 → opacity 1  (still fully visible — the "beat of silence")
               // 1    → opacity 0  (fully evaporated)
 
-              ease: "easeOut",
+              ease: "easeOut" as const,
               delay: 1.5,
               // delay: 1.5s after section enters view — gives the spring words
               // time to settle before the tragedy drops.

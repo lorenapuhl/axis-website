@@ -132,7 +132,7 @@ export default function ProductVisualSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           className="text-center mx-auto mb-20 md:mb-28 max-w-[600px]"
         >
@@ -188,7 +188,7 @@ export default function ProductVisualSection() {
                         key={img.id}
                         className={`${img.aspect} overflow-hidden rounded-sm relative`}
                         whileHover={{ scale: 1.03 }}
-                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        transition={{ duration: 0.35, ease: "easeOut" as const }}
                       >
                         <Image src={img.src} alt={img.alt} fill className="object-cover" />
                       </motion.div>
@@ -255,7 +255,7 @@ export default function ProductVisualSection() {
             <motion.div
               initial={{ opacity: 0.2, y: 10 }}
               animate={{ opacity: websiteOpacity, y: step >= 2 ? 0 : 10 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               className="bg-white-axis rounded-2xl p-6"
             >
 
@@ -294,7 +294,7 @@ export default function ProductVisualSection() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: uiVisible ? 1 : 0, y: uiVisible ? 0 : 8 }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  transition={{ duration: 0.5, ease: "easeOut" as const }}
                   className="absolute bottom-4 left-4 flex flex-col gap-2 z-20"
                 >
                   <p className="font-instrument text-white-axis text-sm font-semibold leading-snug">
@@ -302,7 +302,7 @@ export default function ProductVisualSection() {
                   </p>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    transition={{ duration: 0.35, ease: "easeOut" as const }}
                     className="bg-black-axis text-white-axis font-instrument text-xs font-semibold rounded-lg px-3 h-9 w-fit"
                   >
                     Book a class
@@ -349,7 +349,7 @@ export default function ProductVisualSection() {
                     <motion.div
                       initial={{ opacity: 0, x: 8 }}
                       animate={{ opacity: uiVisible ? 1 : 0, x: uiVisible ? 0 : 8 }}
-                      transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.05 }}
+                      transition={{ duration: 0.5, ease: "easeOut" as const, delay: i * 0.05 }}
                       className="flex-1 min-w-0"
                     >
                       <p className="font-instrument text-black-axis text-xs font-semibold leading-tight">
@@ -364,7 +364,7 @@ export default function ProductVisualSection() {
                     <motion.button
                       initial={{ opacity: 0 }}
                       animate={{ opacity: uiVisible ? 1 : 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut", delay: i * 0.05 }}
+                      transition={{ duration: 0.4, ease: "easeOut" as const, delay: i * 0.05 }}
                       whileHover={{ scale: 1.02 }}
                       className="font-instrument text-xs text-black-axis border border-black-axis/20 rounded px-3 py-1 shrink-0"
                     >
@@ -379,7 +379,7 @@ export default function ProductVisualSection() {
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: uiVisible ? 1 : 0, y: uiVisible ? 0 : 8 }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+                transition={{ duration: 0.5, ease: "easeOut" as const, delay: 0.1 }}
                 className="mt-5 grid grid-cols-3 gap-2"
               >
                 {PRICING_CARDS.map((card, i) => (
@@ -424,7 +424,7 @@ export default function ProductVisualSection() {
                     </p>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      transition={{ duration: 0.35, ease: "easeOut" as const }}
                       className="font-instrument text-xs text-white-axis bg-black-axis rounded px-2 py-1 mt-1 relative z-10"
                     >
                       {card.cta}
@@ -437,7 +437,7 @@ export default function ProductVisualSection() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: uiVisible ? 1 : 0 }}
-                transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
+                transition={{ duration: 0.4, ease: "easeOut" as const, delay: 0.2 }}
                 className="mt-4 text-center"
               >
                 <button className="font-instrument text-xs text-black-axis/50 underline">

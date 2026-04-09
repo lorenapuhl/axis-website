@@ -41,7 +41,7 @@ const item = {
   // Starts invisible and 20px below its final position.
   hidden: { opacity: 0, y: 20 },
   // Animates to fully visible and in its natural position.
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -141,7 +141,7 @@ export default function FooterSection() {
             // whileHover: Framer Motion fades the link slightly on hover.
             // Never use raw CSS :hover for interactive elements — always Framer Motion.
             whileHover={{ opacity: 0.5 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.3, ease: "easeOut" as const }}
           >
             Instagram
           </motion.a>
@@ -164,7 +164,7 @@ export default function FooterSection() {
               href="/PrivacyPolicy"
               className="font-instrument text-soft-grey text-xs uppercase tracking-[0.15em]"
               whileHover={{ opacity: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.3, ease: "easeOut" as const }}
             >
               Privacy Policy
             </MotionLink>
@@ -175,7 +175,7 @@ export default function FooterSection() {
               href="/TermsOfService"
               className="font-instrument text-soft-grey text-xs uppercase tracking-[0.15em]"
               whileHover={{ opacity: 0.5 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.3, ease: "easeOut" as const }}
             >
               Terms of Service
             </MotionLink>

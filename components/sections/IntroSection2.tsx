@@ -28,7 +28,7 @@ export default function IntroSection() {
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: "easeOut" as const }}
             viewport={{ once: true }}
             className="flex flex-col items-center gap-3 font-playfair text-3xl md:text-4xl text-soft-grey tracking-tight leading-tight"
           >
@@ -134,7 +134,7 @@ export default function IntroSection() {
               // 0.45 → opacity 1  (still fully visible — the "beat of silence")
               // 1    → opacity 0  (fully evaporated)
 
-              ease: "easeOut",
+              ease: "easeOut" as const,
               delay: 1.5,
               // delay: 1.5s after section enters view — gives the spring words
               // time to settle before the tragedy drops.
@@ -196,7 +196,7 @@ export default function IntroSection() {
               viewport={{ once: true, amount: 0.5 }}
               // amount: 0.5 → animation fires only when 50% of the section is
               // in the viewport, ensuring the user is focused on this content.
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" as const, delay: 0 }}
               className="font-playfair text-4xl md:text-3xl tracking-tight text-soft-grey leading-tight"
             >
               Your studio has visibility.
@@ -214,7 +214,7 @@ export default function IntroSection() {
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.6, ease: "easeOut", delay: 0.85 }}
+              transition={{ duration: 0.6, ease: "easeOut" as const, delay: 0.85 }}
               className="h-px bg-soft-grey w-full mt-2 origin-left"
             />
           </div>

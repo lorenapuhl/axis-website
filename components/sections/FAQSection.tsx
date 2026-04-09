@@ -329,7 +329,7 @@ export default function FAQSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           className="mb-16 md:mb-24 text-center"
         >
@@ -388,7 +388,7 @@ export default function FAQSection() {
                   // This gives a tactile "pointer" feel without being decorative.
                   // Active items don't move — they're already selected.
                   whileHover={isActive ? {} : { x: 4 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: "easeOut" as const }}
                   className={[
                     // Layout: icon and text side-by-side
                     "flex items-center gap-3 text-left",
@@ -432,7 +432,7 @@ export default function FAQSection() {
             animate={{ opacity: 1, y: 0 }}
             // `animate` (not `whileInView`) because this re-animation is triggered
             // by user interaction (clicking a tab), not by scrolling into view.
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.4, ease: "easeOut" as const }}
             className="w-full max-w-3xl"
           >
 
@@ -457,7 +457,7 @@ export default function FAQSection() {
                 <motion.button
                   onClick={() => handleToggleQuestion(index)}
                   whileHover={{ x: 2 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: "easeOut" as const }}
                   className="w-full flex items-start justify-between gap-6 py-6 text-left group"
                   aria-expanded={openQuestion === index}
                 >
@@ -492,7 +492,7 @@ export default function FAQSection() {
                   */}
                   <motion.div
                     animate={{ rotate: openQuestion === index ? 180 : 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    transition={{ duration: 0.4, ease: "easeOut" as const }}
                     className="flex-shrink-0 mt-1"
                   >
                     <ChevronDown
@@ -526,7 +526,7 @@ export default function FAQSection() {
                       animate={{ height: "auto", opacity: 1 }}
                       // On exit: shrinks back to 0 height while fading out.
                       exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
+                      transition={{ duration: 0.4, ease: "easeOut" as const }}
                       // overflow-hidden: clips the answer text as the container
                       // grows and shrinks. Without this, text would be visible
                       // outside the animated height boundary during the transition.

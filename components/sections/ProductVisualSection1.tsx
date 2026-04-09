@@ -184,7 +184,7 @@ export default function ProductVisualSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           className="text-center mx-auto mb-20 md:mb-28 max-w-[600px]"
           // max-w-[600px] → arbitrary Tailwind value. Constrains the headline width
@@ -335,7 +335,7 @@ export default function ProductVisualSection() {
                 opacity: websiteOpacity,
                 y: step >= 3 ? 0 : 10,
               }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
+              transition={{ duration: 0.7, ease: "easeOut" as const }}
               className="bg-white-axis rounded-2xl p-6"
               // bg-white-axis → #FFFFFF. The website panel uses the white-axis token.
             >
@@ -378,7 +378,7 @@ export default function ProductVisualSection() {
                     opacity: uiVisible ? 1 : 0,
                     y:       uiVisible ? 0 : 8,
                   }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
+                  transition={{ duration: 0.5, ease: "easeOut" as const }}
                   className="absolute bottom-4 left-4 flex flex-col gap-2 z-10"
                   // z-10 → renders on top of the image and dark overlay beneath it.
                 >
@@ -387,7 +387,7 @@ export default function ProductVisualSection() {
                   </p>
                   <motion.button
                     whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    transition={{ duration: 0.35, ease: "easeOut" as const }}
                     className="bg-black-axis text-white-axis font-instrument text-xs font-semibold rounded-lg px-3 h-9 w-fit"
                     // w-fit → button only as wide as its text content, not full-width.
                     // h-9   → 36px height per spec.
@@ -444,7 +444,7 @@ export default function ProductVisualSection() {
                       }}
                       transition={{
                         duration: 0.5,
-                        ease: "easeOut",
+                        ease: "easeOut" as const,
                         delay: i * 0.05,
                       }}
                       className="flex-1 min-w-0"
@@ -470,7 +470,7 @@ export default function ProductVisualSection() {
                       animate={{ opacity: uiVisible ? 1 : 0 }}
                       transition={{
                         duration: 0.4,
-                        ease: "easeOut",
+                        ease: "easeOut" as const,
                         delay: i * 0.05,
                       }}
                       whileHover={{ scale: 1.02 }}
@@ -497,7 +497,7 @@ export default function ProductVisualSection() {
                   opacity: uiVisible ? 1 : 0,
                   y:       uiVisible ? 0 : 8,
                 }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+                transition={{ duration: 0.5, ease: "easeOut" as const, delay: 0.1 }}
                 // delay: 0.1 → pricing appears slightly after the first schedule row.
                 className="mt-5 grid grid-cols-3 gap-2"
               >
@@ -516,7 +516,7 @@ export default function ProductVisualSection() {
                     </p>
                     <motion.button
                       whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      transition={{ duration: 0.35, ease: "easeOut" as const }}
                       className="font-instrument text-xs text-white-axis bg-black-axis rounded px-2 py-1 mt-1"
                     >
                       {card.cta}
@@ -531,7 +531,7 @@ export default function ProductVisualSection() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: uiVisible ? 1 : 0 }}
-                transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
+                transition={{ duration: 0.4, ease: "easeOut" as const, delay: 0.2 }}
                 className="mt-4 text-center"
               >
                 <button className="font-instrument text-xs text-black-axis/50 underline">

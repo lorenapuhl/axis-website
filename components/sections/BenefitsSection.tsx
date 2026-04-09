@@ -184,15 +184,15 @@ const container: Variants = {
 
 const animItem: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
 // "Weightless Dissolve": 2px Y-shift + fade.
 // Applied to every dynamic element in the dashboard whenever activeIndex changes.
 const dissolve: Variants = {
   hidden: { opacity: 0, y: 2 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
-  exit:   { opacity: 0, y: -2, transition: { duration: 0.3, ease: "easeOut" } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
+  exit:   { opacity: 0, y: -2, transition: { duration: 0.3, ease: "easeOut" as const } },
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -276,7 +276,7 @@ export default function BenefitsSection() {
                   key={benefit.id}
                   onClick={() => setActiveIndex(index)}
                   animate={{ opacity: isActive ? 1 : 0.3 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: "easeOut" as const }}
                   className={[
                     "text-left w-full px-6 py-5 border-l-2",
                     isActive ? "border-blue-axis" : "border-transparent",
@@ -303,7 +303,7 @@ export default function BenefitsSection() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        transition={{ duration: 0.4, ease: "easeOut" as const }}
                         style={{ overflow: "hidden" }}
                       >
                         <ul className="mt-3 flex flex-col gap-2">
@@ -315,7 +315,7 @@ export default function BenefitsSection() {
                               animate={{ opacity: 1, x: 0 }}
                               transition={{
                                 duration: 0.4,
-                                ease: "easeOut",
+                                ease: "easeOut" as const,
                                 delay: bi * 0.08,
                               }}
                               className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
@@ -354,7 +354,7 @@ export default function BenefitsSection() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+              transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.2 }}
               viewport={{ once: true }}
               className="relative overflow-hidden bg-black-axis/70 backdrop-blur-xl border border-white-axis/[0.08] rounded-2xl p-6 md:p-8"
             >
@@ -488,8 +488,8 @@ export default function BenefitsSection() {
                       opacity:    isInView ? 1 : 0,
                     }}
                     transition={{
-                      pathLength: { duration: 0.8, ease: "easeOut" },
-                      opacity:    { duration: 0.3, ease: "easeOut" },
+                      pathLength: { duration: 0.8, ease: "easeOut" as const },
+                      opacity:    { duration: 0.3, ease: "easeOut" as const },
                     }}
                   />
 
@@ -508,7 +508,7 @@ export default function BenefitsSection() {
                           opacity: isInView ? 1 : 0,
                           scale:   isInView ? 1 : 0,
                         }}
-                        transition={{ duration: 0.4, ease: "easeOut", delay: 0.7 }}
+                        transition={{ duration: 0.4, ease: "easeOut" as const, delay: 0.7 }}
                       />
                     )
                   })()}

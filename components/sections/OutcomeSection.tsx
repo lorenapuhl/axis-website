@@ -47,7 +47,7 @@ const fadeItem = {
       // → 0.8s for the most languid, headline-weight feel.
       // → 0.5s if three lines in sequence feels too slow on mobile.
 
-      ease: "easeOut",
+      ease: "easeOut" as const,
       // easeOut: the element decelerates as it arrives — feels like it floats into place.
       // → "easeInOut" for a more symmetrical acceleration curve.
     },

@@ -15,13 +15,13 @@ const container = {
 // Each text line fades up individually
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } }
 }
 
 // The button fades in slightly after the text block
 const buttonVariant = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } }
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } }
 }
 
 export default function FinalCTA() {
@@ -97,7 +97,7 @@ export default function FinalCTA() {
           <motion.button
             onClick={openModal}
             whileHover={{ scale: 1.03 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
             className="bg-white-axis text-black-axis text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
           >
             Get your AXIS

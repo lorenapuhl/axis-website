@@ -66,7 +66,7 @@ const item = {
   // `as const` narrows "easeOut" from type `string` to the literal type
   // "easeOut" — Framer Motion's Variants type requires a specific Easing
   // literal, not a plain string.
-  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const as const } },
 }
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
@@ -106,7 +106,7 @@ export default function HeroSection() {
             <span className="relative flex h-2 w-2">
               <motion.span
                 animate={{ scale: [1, 1.8, 1.8], opacity: [0.7, 0, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" as const }}
                 className="absolute inline-flex h-full w-full rounded-full bg-blue-axis"
               />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-axis" />
@@ -157,7 +157,7 @@ export default function HeroSection() {
         <motion.div variants={item}>
           <motion.button
             whileHover={{ scale: 1.03 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
             className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
           >
             Get your AXIS
@@ -174,7 +174,7 @@ export default function HeroSection() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+        transition={{ duration: 0.8, ease: "easeOut" as const, delay: 0.3 }}
         viewport={{ once: true }}
         className="lg:col-span-5 space-y-6 lg:mt-12"
       >
@@ -273,7 +273,7 @@ export default function HeroSection() {
                   key={i}
                   initial={{ opacity: 0.3 }}
                   whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: "easeOut" as const }}
                   className="flex items-center gap-2 cursor-default text-soft-grey"
                 >
                   {/* color="currentColor" inherits the text-soft-grey value from the parent */}

@@ -42,7 +42,7 @@ const fadeItem = {
     y: 0,                          // Rises into its natural position
     transition: {
       duration: 0.7,               // Slow and confident — matches brand feel
-      ease: "easeOut",
+      ease: "easeOut" as const,
     },
   },
 }

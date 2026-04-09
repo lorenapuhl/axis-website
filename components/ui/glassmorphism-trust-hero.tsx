@@ -69,7 +69,7 @@ const container = {
 // This defines the "Child" animation: start invisible and 20px down, end visible at 0px.
 const item = {
   hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" as const as const } },
 }
 
 // --- SUB-COMPONENTS ---
@@ -188,7 +188,7 @@ export default function HeroSection() {
 		  <motion.button
 		    onClick={openModal}
 		    whileHover={{ scale: 1.03 }}
-		    transition={{ duration: 0.35, ease: "easeOut" }}
+		    transition={{ duration: 0.35, ease: "easeOut" as const }}
 		    className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
 		  >
 		    Get your AXIS

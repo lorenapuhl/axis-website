@@ -193,7 +193,7 @@ const container: Variants = {
 // duration 0.7s + easeOut: slow and confident — matches the AXIS brand feel.
 const item: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
 // bulletContainer: staggers each heading + bullet point within a trust column.
@@ -216,14 +216,14 @@ const bulletItemContainer: Variants = {
 // x: -8 → x: 0 gives it a short horizontal travel — purposeful, not bouncy.
 const checkmarkVariant: Variants = {
   hidden: { opacity: 0, x: -8 },
-  show: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeOut" } },
+  show: { opacity: 1, x: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
 }
 
 // labelVariant: the text fades in after the checkmark has settled.
 // No y-movement here — the checkmark already provides the motion cue.
 const labelVariant: Variants = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
+  show: { opacity: 1, transition: { duration: 0.5, ease: "easeOut" as const } },
 }
 
 // timelineNodeVariant: each timeline node (circle + label) fades up into place.
@@ -406,7 +406,7 @@ export default function PricingSection() {
                   ? { y: -10 }
                   : { y: -4 }
               }
-              transition={{ duration: 0.35, ease: "easeOut" }}
+              transition={{ duration: 0.35, ease: "easeOut" as const }}
             >
 
               {/* ── AMBIENT GLOW PULSE (Growth card only) ───────────────────
@@ -542,7 +542,7 @@ export default function PricingSection() {
                     : "border border-white-axis/40 text-white-axis",
                 ].join(" ")}
                 whileHover={{ scale: 1.03 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
+                transition={{ duration: 0.35, ease: "easeOut" as const }}
               >
                 {card.cta}
               </motion.button>
@@ -666,7 +666,7 @@ export default function PricingSection() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    transition={{ duration: 0.5, ease: "easeOut" as const }}
                   >
                     {/* Large opening " — Playfair Display, blue accent, decorative but purposeful:
                         it visually anchors the quote and signals "this is a testimonial". */}
@@ -702,7 +702,7 @@ export default function PricingSection() {
                       i === quoteIndex ? "bg-white-axis" : "bg-white-axis/20",
                     ].join(" ")}
                     whileHover={{ scale: 1.4 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    transition={{ duration: 0.2, ease: "easeOut" as const }}
                     aria-label={`Show quote ${i + 1}`}
                   />
                 ))}
@@ -754,7 +754,7 @@ export default function PricingSection() {
                   className="flex-1 bg-grey-axis border border-white-axis/[0.06] rounded-2xl p-8 flex flex-col gap-4"
                   // Hover: lift the card — same pattern as the pricing cards above.
                   whileHover={{ y: -6 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  transition={{ duration: 0.35, ease: "easeOut" as const }}
                 >
                   {/* Step number — large, Playfair, very muted — decorative but purposeful */}
                   <span className="font-playfair text-4xl text-white-axis/20 leading-none">
@@ -839,7 +839,7 @@ export default function PricingSection() {
                 initial={{ scaleX: 0, opacity: 0 }}
                 whileInView={{ scaleX: 1, opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}
+                transition={{ duration: 1.2, ease: "easeOut" as const, delay: 0.3 }}
                 aria-hidden="true"
               />
 
@@ -847,7 +847,7 @@ export default function PricingSection() {
                   z-10: floats above the absolute line. */}
               <motion.div
                 variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.1 }}
                 className="flex-1 flex flex-col items-center text-center relative z-10"
               >
                 <div className="w-3 h-3 rounded-full border border-soft-grey bg-black-axis" />
@@ -866,7 +866,7 @@ export default function PricingSection() {
               {/* Node 2 wrapper — flex-1 matches Card 2 column */}
               <motion.div
                 variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.8 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.8 }}
                 className="flex-1 flex flex-col items-center text-center relative z-10"
               >
                 <div className="w-3 h-3 rounded-full border border-soft-grey bg-black-axis" />
@@ -886,7 +886,7 @@ export default function PricingSection() {
                   it is the goal state — same convention as SystemVisualSection. */}
               <motion.div
                 variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 1.5 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.5 }}
                 className="flex-1 flex flex-col items-center text-center relative z-10"
               >
                 <div className="relative flex items-center justify-center">
@@ -897,7 +897,7 @@ export default function PricingSection() {
                     initial={{ opacity: 0, scale: 1 }}
                     whileInView={{ opacity: [0, 0.5, 0], scale: [1, 3, 4.5] }}
                     viewport={{ once: true }}
-                    transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" }}
+                    transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" as const }}
                   />
                   {/* bg-black-axis fills the dot so the line doesn't bleed through it */}
                   <div className="w-3 h-3 rounded-full border border-white-axis bg-black-axis relative z-10" />
@@ -919,7 +919,7 @@ export default function PricingSection() {
               {/* Node 1 */}
               <motion.div
                 variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.1 }}
                 className="flex flex-col items-center text-center shrink-0"
               >
                 <div className="w-3 h-3 rounded-full border border-soft-grey" />
@@ -940,7 +940,7 @@ export default function PricingSection() {
                     fill="none"
                     className="text-soft-grey"
                     variants={timelineLineVariant}
-                    transition={{ duration: 0.7, ease: "easeOut", delay: 0.4 }}
+                    transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.4 }}
                   />
                 </svg>
               </div>
@@ -948,7 +948,7 @@ export default function PricingSection() {
               {/* Node 2 */}
               <motion.div
                 variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.8 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.8 }}
                 className="flex flex-col items-center text-center shrink-0"
               >
                 <div className="w-3 h-3 rounded-full border border-soft-grey" />
@@ -969,7 +969,7 @@ export default function PricingSection() {
                     fill="none"
                     className="text-soft-grey"
                     variants={timelineLineVariant}
-                    transition={{ duration: 0.7, ease: "easeOut", delay: 1.1 }}
+                    transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.1 }}
                   />
                 </svg>
               </div>
@@ -977,7 +977,7 @@ export default function PricingSection() {
               {/* Node 3 */}
               <motion.div
                 variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 1.5 }}
+                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.5 }}
                 className="flex flex-col items-center text-center shrink-0"
               >
                 <div className="relative flex items-center justify-center">
@@ -987,7 +987,7 @@ export default function PricingSection() {
                     initial={{ opacity: 0, scale: 1 }}
                     whileInView={{ opacity: [0, 0.5, 0], scale: [1, 3, 4.5] }}
                     viewport={{ once: true }}
-                    transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" }}
+                    transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" as const }}
                   />
                   <div className="w-3 h-3 rounded-full border border-white-axis relative z-10" />
                 </div>
@@ -1018,7 +1018,7 @@ export default function PricingSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
           viewport={{ once: true }}
           className="text-center mb-24 md:mb-36"
         >
@@ -1027,7 +1027,7 @@ export default function PricingSection() {
           <motion.button
             className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4 mb-10"
             whileHover={{ scale: 1.03 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            transition={{ duration: 0.35, ease: "easeOut" as const }}
           >
             Start accepting bookings
           </motion.button>
@@ -1122,7 +1122,7 @@ export default function PricingSection() {
                   initial={{ opacity: 0, y: -12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 12 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: "easeOut" as const }}
                   className="font-playfair text-white-axis text-2xl uppercase tracking-tight leading-none"
                 >
                   {spots}
@@ -1158,7 +1158,7 @@ export default function PricingSection() {
             <motion.button
               className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
               whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
+              transition={{ duration: 0.35, ease: "easeOut" as const }}
             >
               get your axis
             </motion.button>

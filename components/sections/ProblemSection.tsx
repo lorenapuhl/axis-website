@@ -150,7 +150,7 @@ const container: Variants = {
 
 const animItem: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
 
@@ -371,7 +371,7 @@ export default function ProblemSection() {
                 // Exit: fade out moving slightly upward
                 exit={{ opacity: 0, y: -5 }}
                 // 250ms: fast enough to feel responsive, slow enough to feel intentional
-                transition={{ duration: 0.25, ease: "easeOut" }}
+                transition={{ duration: 0.25, ease: "easeOut" as const }}
               >
 
                 {/* TAG label — uppercase, wide tracking, muted grey */}
