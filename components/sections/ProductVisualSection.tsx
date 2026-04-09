@@ -111,7 +111,7 @@ export default function ProductVisualSection() {
   // Only img1–img5 get the highlight; fillers always return {}.
   // At step 2, these images unmount from the grid entirely (via AnimatePresence),
   // so no animate value is needed for step >= 2.
-  function getGridAnimate(id: string): Record<string, unknown> {
+  function getGridAnimate(id: string): { scale?: number; filter?: string; opacity?: number } {
     if (!ANIMATED_IDS.has(id)) return {}
     if (step === 1) return { scale: 1.05, filter: "brightness(1.3)", opacity: 1 }
     return {}
