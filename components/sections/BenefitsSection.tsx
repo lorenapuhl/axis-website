@@ -251,13 +251,19 @@ export default function BenefitsSection() {
         </motion.div>
 
         {/* ── TWO-COLUMN LAYOUT ────────────────────────────────────────────── */}
-        <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-start">
+        {/* md:min-h-[520px]: anchors the layout height at desktop width so the
+            accordion expanding on the left never pushes the section floor down.
+            The right-column card is ~520px tall — both columns always share
+            that reserved space, so content below never shifts. */}
+        <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-start md:min-h-[520px]">
 
           {/* ── LEFT COLUMN: BENEFIT BLOCKS (40%) ───────────────────────────── */}
           {/* Hover on the column as a whole pauses the auto-cycle.
               Moving between blocks doesn't restart the timer. */}
+          {/* justify-start: explicit flex alignment — items stack from the top,
+              both on mobile (where columns are stacked) and desktop. */}
           <div
-            className="w-full md:w-[40%] flex flex-col gap-1"
+            className="w-full md:w-[40%] flex flex-col gap-1 justify-start"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
@@ -284,44 +290,51 @@ export default function BenefitsSection() {
                     {benefit.label}
                   </p>
 
-                  {/* Bullets — always rendered in the DOM so height never changes.
-                      Only opacity animates: no layout shift, no scroll-anchor jitter.
-                      Inactive bullets are invisible but occupy the same space,
-                      which reads as generous whitespace (consistent with AXIS feel).
-                      pointer-events-none + select-none prevent interaction when hidden. */}
-                  <motion.ul
-                    animate={{ opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                    className={[
-                      "mt-3 flex flex-col gap-2 overflow-hidden",
-                      !isActive ? "pointer-events-none select-none" : "",
-                    ].join(" ")}
-                  >
-                    {benefit.bullets.map((bullet, bi) => (
-                      // Stagger: each bullet fades in 80ms after the previous.
-                      <motion.li
-                        key={bi}
-                        initial={{ opacity: 0, x: -4 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                          duration: 0.4,
-                          ease: "easeOut",
-                          delay: bi * 0.08,
-                        }}
-                        className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
+                  {/* Bullets — conditionally mounted/unmounted so inactive blocks
+                      take up zero vertical space, eliminating dead air gaps.
+                      AnimatePresence initial={false}: suppresses the enter animation
+                      on first render, preventing a flash when the page loads.
+                      motion.div wrapper animates height 0 → "auto" with overflow:hidden
+                      to create a smooth unfold/collapse without layout jumps. */}
+                  <AnimatePresence initial={false}>
+                    {isActive && (
+                      <motion.div
+                        key="bullets"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        style={{ overflow: "hidden" }}
                       >
-                        {/* Minimal checkmark hook symbol — blue accent, fixed width
-                            so all bullet text aligns regardless of check width */}
-                        <span
-                          className="text-blue-axis text-xs mt-0.5 flex-shrink-0 w-3 text-center"
-                          aria-hidden="true"
-                        >
-                          ✓
-                        </span>
-                        {bullet}
-                      </motion.li>
-                    ))}
-                  </motion.ul>
+                        <ul className="mt-3 flex flex-col gap-2">
+                          {benefit.bullets.map((bullet, bi) => (
+                            // Stagger: each bullet slides in 80ms after the previous.
+                            <motion.li
+                              key={bi}
+                              initial={{ opacity: 0, x: -4 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{
+                                duration: 0.4,
+                                ease: "easeOut",
+                                delay: bi * 0.08,
+                              }}
+                              className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
+                            >
+                              {/* Minimal checkmark — blue accent, fixed width
+                                  so all bullet text aligns regardless of check width */}
+                              <span
+                                className="text-blue-axis text-xs mt-0.5 flex-shrink-0 w-3 text-center"
+                                aria-hidden="true"
+                              >
+                                ✓
+                              </span>
+                              {bullet}
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                 </motion.button>
               )

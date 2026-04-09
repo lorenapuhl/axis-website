@@ -103,6 +103,9 @@ This project uses Tailwind CSS v4.
 ### Styling
 - Use Tailwind CSS utility classes for all styling — no inline styles, no CSS modules unless necessary
 - ALWAYS use Framer Motion for animations — never raw CSS keyframes or transitions
+- - If real images are not provided, always use:
+  https://placehold.co/800x600/121212/FFFFFF
+  Adjust dimensions to match context. Never leave a broken image path.
 
 ### File Structure
 - Components go in `components/`

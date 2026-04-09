@@ -5,6 +5,7 @@
 // browser's IntersectionObserver API. Both require a Client Component.
 
 import { motion } from "framer-motion"
+import type { Variants } from "framer-motion"
 import { useState, useEffect } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -14,7 +15,7 @@ import { useState, useEffect } from "react"
 // ─────────────────────────────────────────────────────────────────────────────
 
 // container: no visual animation — only coordinates child stagger timing.
-const container = {
+const container: Variants = {
   hidden: {},
   show: {
     transition: { staggerChildren: 0.12 },
@@ -23,13 +24,13 @@ const container = {
 }
 
 // item: the standard fade-up animation (per animate-section.md: 0.7s, easeOut).
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 }
 
 // cardItem: same fade-up for the grid cards — slightly larger travel distance.
-const cardItem = {
+const cardItem: Variants = {
   hidden: { opacity: 0, y: 28 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
 }
