@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 // motion is Framer Motion's special version of HTML elements.
 // motion.div and motion.button accept animation props like whileHover, initial, etc.
 
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 // useEffect: runs code after the component renders — used here to start the shuffle timer.
 // useRef: holds a value (the timer ID) that won't trigger a re-render when it changes.
 // useState: holds reactive state — when squares changes, the component re-renders.
@@ -83,7 +83,7 @@ const shuffle = (array: SquareItem[]): SquareItem[] => {
 // Shuffles squareData and maps each entry to a Framer Motion div.
 // The `layout` prop tells Framer Motion to animate the tile smoothly
 // whenever its position in the DOM changes — this is how the shuffle looks fluid.
-const generateSquares = (): JSX.Element[] => {
+const generateSquares = (): React.JSX.Element[] => {
   return shuffle([...squareData]).map((sq) => (
     <motion.div
       key={sq.id}
