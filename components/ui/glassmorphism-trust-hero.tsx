@@ -165,7 +165,10 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8 items-start">
 
           {/* --- LEFT COLUMN (Text and Buttons) --- */}
-          <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-8">
+          {/* items-center text-center: centers hero content on mobile (375px).
+              lg:items-start lg:text-left: reverts to left-aligned on desktop.
+              pb-6: adds breathing room below the CTA button before the stats card. */}
+          <div className="lg:col-span-7 flex flex-col items-center text-center lg:items-start lg:text-left justify-center space-y-8 pt-8 pb-6">
 
             {/* Main Title: Uses 'leading-[0.9]' for tight line spacing. */}
             <h1 

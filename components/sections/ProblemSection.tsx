@@ -3,7 +3,7 @@
 // This component uses useState (active card tracking) and Framer Motion's
 // whileInView / AnimatePresence — all browser-only APIs that require a Client Component.
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 // next/image: Next.js optimized image component. Required for all images.
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
@@ -212,6 +212,27 @@ export default function ProblemSection() {
   // Drives the right-panel text and quote.
   const [activeIndex, setActiveIndex] = useState(0)
 
+  // cardDims: responsive card dimensions — smaller on phone (< 768px = md breakpoint),
+  // standard size on desktop. Reads window.innerWidth in useEffect because `window`
+  // doesn't exist on the server; this component is client-only but the initial render
+  // happens server-side. useState default = desktop values to avoid layout shift.
+  const [cardDims, setCardDims] = useState({ width: 360, height: 290, lift: 50 })
+
+  useEffect(() => {
+    function update() {
+      if (window.innerWidth < 768) {
+        // On phone: narrower card (fits within 375px content area), shorter height,
+        // and reduced lift so the lifted card doesn't bleed into the text below.
+        setCardDims({ width: 280, height: 220, lift: 35 })
+      } else {
+        setCardDims({ width: 360, height: 290, lift: 50 })
+      }
+    }
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
+  }, [])
+
   return (
     // relative: anchor for the absolutely-positioned background chaos layer.
     // overflow-hidden: clips floating chaos elements near the edges.
@@ -306,13 +327,13 @@ export default function ProblemSection() {
             */}
             <CardStack
               items={items}
-              cardWidth={360}
-              cardHeight={290}
+              cardWidth={cardDims.width}
+              cardHeight={cardDims.height}
               overlap={0.94}
               spreadDeg={0}
               activeScale={1.06}
               inactiveScale={0.93}
-              activeLiftPx={50}
+              activeLiftPx={cardDims.lift}
               maxVisible={5}
               autoAdvance={true}
               intervalMs={2400}
@@ -332,7 +353,9 @@ export default function ProblemSection() {
             mt-12: top margin on mobile only (when stacked below CardStack).
             md:mt-0: remove that margin on desktop (columns are side-by-side).
           */}
-          <div className="md:flex-1 mt-12 md:mt-0">  
+          {/* mt-16 on mobile: extra clearance so the lifted card doesn't overlap
+              this text column when both are stacked vertically on phone. */}
+          <div className="md:flex-1 mt-16 md:mt-0">
 
             {/* ── STATIC HEADLINE ─────────────────────────────────────────── */}
             {/*
@@ -348,7 +371,7 @@ export default function ProblemSection() {
             >
               <motion.h2
                 variants={animItem}
-                className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight mb-6 md:mb-8"
+                className="font-playfair uppercase tracking-tight text-white-axis text-4xl leading-tight mb-6 md:mb-8"
               >
                 Your studio has visibility — but no structure.
               </motion.h2>
@@ -383,7 +406,7 @@ export default function ProblemSection() {
                     Line 1 (muted grey): describes the symptom.
                     Line 2 (bold white): the consequence / punchline.
                     <br />: explicit line break between the two lines. */}
-                <p className="font-instrument text-lg mt-2 leading-relaxed">
+                <p className="font-instrument text-base mt-2 leading-relaxed">
                   <span className="text-soft-grey">
                     {TEXT_CONTENT[activeIndex]?.line1}
                   </span>
@@ -416,7 +439,7 @@ export default function ProblemSection() {
 
                   {/* Quote body: Playfair italic, slight opacity to differentiate
                       from the headline above. -mt-2 pulls it up under the large quote mark. */}
-                  <p className="font-playfair italic text-white-axis/90 text-lg leading-relaxed -mt-2">
+                  <p className="font-playfair italic text-white-axis/90 text-base leading-relaxed -mt-2">
                     {TEXT_CONTENT[activeIndex]?.quote}
                   </p>
 

@@ -30,7 +30,7 @@ export default function IntroSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" as const }}
             viewport={{ once: true }}
-            className="flex flex-col items-center gap-3 font-playfair text-3xl md:text-4xl text-soft-grey tracking-tight leading-tight"
+            className="flex flex-col items-center gap-3 font-playfair text-4xl text-soft-grey tracking-tight leading-tight"
           >
             {/* Instagram logo sits above the headline text */}
             <SiInstagram className="text-soft-grey" size={28} />

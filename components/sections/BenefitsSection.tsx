@@ -243,7 +243,7 @@ export default function BenefitsSection() {
         >
           <motion.h2
             variants={animItem}
-            className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight"
+            className="font-playfair uppercase tracking-tight text-white-axis text-4xl leading-tight"
           >
             Stop running your studio manually.<br />
             Start running it like a system.
