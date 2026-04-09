@@ -26,13 +26,13 @@ const container: Variants = {
 // item: the standard fade-up animation (per animate-section.md: 0.7s, easeOut).
 const item: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
 // cardItem: same fade-up for the grid cards — slightly larger travel distance.
 const cardItem: Variants = {
   hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
