@@ -80,7 +80,7 @@ const glitchItem = {
       duration: 0.4,
       // [0.16, 1, 0.3, 1] is a cubic-bezier with a very fast initial acceleration
       // that snaps to a clean stop. Still eases out — just with sharper intent.
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
     },
   },
 }
