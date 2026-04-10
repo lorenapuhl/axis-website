@@ -119,11 +119,15 @@ export default function HeaderSection() {
                 by reserving space before the image loads.
                 width/height tell Next.js the rendered size in pixels so it can
                 generate the correct optimised variant. */}
+            {/* mix-blend-screen: because the PNG has a solid black background,
+                this blend mode makes all black pixels transparent — the logo
+                mark visually merges with whatever colour is behind it. */}
             <Image
               src="/logo.png"
               alt="AXIS logo"
               width={70}
               height={70}
+              className="mix-blend-screen"
             />
 
             {/* flex flex-col: stacks the wordmark and subtitle vertically.

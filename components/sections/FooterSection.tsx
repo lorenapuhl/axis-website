@@ -85,11 +85,14 @@ export default function FooterSection() {
           {/* next/image is required for all images — never a raw <img> tag.
               width and height tell Next.js what size to render the image at,
               so it can prepare the correct optimised variant. */}
+          {/* mix-blend-screen: makes the PNG's solid black background transparent
+              so the logo merges with the section background behind it. */}
           <Image
             src="/logo.png"
             alt="AXIS logo mark"
             width={52}
             height={52}
+            className="mix-blend-screen"
           />
 
           {/* flex flex-col: stacks the wordmark and subtitle vertically.
@@ -117,49 +120,33 @@ export default function FooterSection() {
         {/* ── Right block: social links + legal ──────────────────────────── */}
         <motion.div
           variants={item}
-          // flex flex-col gap-5: stacks the Instagram link and the legal row vertically.
-          // md:items-end: on desktop, right-aligns the content so it sits flush
-          //   with the right edge of the container.
+          // flex flex-col gap-5: stacks the content vertically on both mobile and desktop.
+          // md:items-end: on desktop, right-aligns everything to the container edge.
           className="flex flex-col gap-5 md:items-end"
         >
 
-          {/* Instagram social link ─────────────────────────────────────────
-              This is an external link so we use a plain <a> tag — next/link
-              is only for internal navigation within this site.
-              target="_blank": opens in a new tab.
-              rel="noopener noreferrer": security best practice for external links
-              opened in a new tab — prevents the new page from accessing this one
-              via window.opener.
-              Replace the href with the actual Instagram profile URL before launch. */}
+          {/* ── DESKTOP layout (hidden on mobile) ─────────────────────────────
+              Instagram sits above the legal row on desktop, right-aligned. */}
           <motion.a
             href="https://www.instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            // font-instrument uppercase tracking-[0.2em]: wide-tracked sans label.
-            // text-white-axis text-xs: small white label, consistent with nav style.
-            className="font-instrument uppercase tracking-[0.2em] text-white-axis text-xs w-fit"
-            // whileHover: Framer Motion fades the link slightly on hover.
-            // Never use raw CSS :hover for interactive elements — always Framer Motion.
+            // hidden: invisible on mobile — the mobile layout below handles Instagram.
+            // md:block: visible on desktop as a block element.
+            className="hidden md:block font-instrument uppercase tracking-[0.2em] text-white-axis text-xs w-fit"
             whileHover={{ opacity: 0.5 }}
             transition={{ duration: 0.3, ease: "easeOut" as const }}
           >
             Instagram
           </motion.a>
 
-          {/* Legal row: copyright + internal policy links ─────────────────
-              flex flex-col gap-3: stacks items vertically on mobile.
-              md:flex-row md:gap-6 md:items-center: on desktop, lines them up
-              horizontally with 24px gaps. */}
-          <div className="flex flex-col gap-3 md:flex-row md:gap-6 md:items-center">
-
-            {/* Copyright notice — static text, no link needed. */}
+          {/* Desktop legal row: copyright + privacy + terms on one line.
+              hidden: invisible on mobile — copyright gets its own row there.
+              md:flex: visible on desktop as a horizontal row. */}
+          <div className="hidden md:flex md:flex-row md:gap-6 md:items-center">
             <span className="font-instrument text-soft-grey text-xs">
               © 2026 Axis | Client Conversion Systems
             </span>
-
-            {/* Privacy Policy: internal link → use next/link, never <a href>.
-                MotionLink = motion(Link) so we can attach whileHover.
-                href="/PrivacyPolicy" maps to pages/PrivacyPolicy.jsx in the router. */}
             <MotionLink
               href="/PrivacyPolicy"
               className="font-instrument text-soft-grey text-xs uppercase tracking-[0.15em]"
@@ -168,9 +155,6 @@ export default function FooterSection() {
             >
               Privacy Policy
             </MotionLink>
-
-            {/* Terms of Service: same pattern as Privacy Policy above.
-                href="/TermsOfService" maps to pages/TermsOfService.jsx. */}
             <MotionLink
               href="/TermsOfService"
               className="font-instrument text-soft-grey text-xs uppercase tracking-[0.15em]"
@@ -180,6 +164,50 @@ export default function FooterSection() {
               Terms of Service
             </MotionLink>
           </div>
+
+          {/* ── MOBILE layout (hidden on desktop) ─────────────────────────────
+              justify-between: pushes Privacy/Terms to the left and Instagram to the right.
+              items-start: aligns both columns to the top so they don't stretch. */}
+          <div className="flex justify-between items-start md:hidden w-full">
+
+            {/* Left column: Privacy Policy and Terms of Service stacked vertically. */}
+            <div className="flex flex-col gap-3">
+              <MotionLink
+                href="/PrivacyPolicy"
+                className="font-instrument text-soft-grey text-xs uppercase tracking-[0.15em]"
+                whileHover={{ opacity: 0.5 }}
+                transition={{ duration: 0.3, ease: "easeOut" as const }}
+              >
+                Privacy Policy
+              </MotionLink>
+              <MotionLink
+                href="/TermsOfService"
+                className="font-instrument text-soft-grey text-xs uppercase tracking-[0.15em]"
+                whileHover={{ opacity: 0.5 }}
+                transition={{ duration: 0.3, ease: "easeOut" as const }}
+              >
+                Terms of Service
+              </MotionLink>
+            </div>
+
+            {/* Right column: Instagram link aligned to the right. */}
+            <motion.a
+              href="https://www.instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-instrument uppercase tracking-[0.2em] text-white-axis text-xs"
+              whileHover={{ opacity: 0.5 }}
+              transition={{ duration: 0.3, ease: "easeOut" as const }}
+            >
+              Instagram
+            </motion.a>
+          </div>
+
+          {/* Copyright — mobile only, sits at the very bottom of the footer.
+              Desktop copyright is inside the legal row above. */}
+          <span className="md:hidden font-instrument text-soft-grey text-xs">
+            © 2026 Axis | Client Conversion Systems
+          </span>
 
         </motion.div>
       </motion.div>
