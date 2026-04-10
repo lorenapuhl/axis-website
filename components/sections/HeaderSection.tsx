@@ -30,6 +30,14 @@ import { motion, AnimatePresence } from "framer-motion"
 // directly to a plain <Link>, so we wrap it first.
 const MotionLink = motion(Link)
 
+// HAMBURGER_BAR_GAP: the pixel gap between each bar in the hamburger icon.
+// Used to calculate how far each bar must travel to meet in the centre and
+// form an ✕. With 1px-tall bars and 5px gaps, the centre is (1 + 5 + 1 + 5 + 1) / 2
+// = 6.5px from the top bar. Translating the top bar down by +6 and the bottom
+// bar up by -6 places both on the vertical midpoint — close enough for a
+// visually clean cross without measuring to sub-pixel precision.
+const BAR_CROSS_OFFSET = 6
+
 // NAV_LINKS is defined outside the component so it isn't recreated on every
 // render. In React, everything inside a function component re-runs when the
 // component updates — constants that never change belong outside.
@@ -79,10 +87,27 @@ export default function HeaderSection() {
   //   - `className` instead of `class` (class is a reserved word in JS)
   //   - Curly braces {} embed any JS expression inline, like f-strings in Python
   //   - Self-closing tags must have a slash: <img /> not <img>
-  // No Fragment wrapper needed — the dropdown lives inside the header itself,
-  // expanding downward from the bar rather than as a separate overlay.
   return (
     <>
+      {/* ── BACKDROP (mobile only) ────────────────────────────────────── */}
+      {/* When the menu is open, this invisible fixed layer sits behind the
+          header (z-40 < header's z-50) and covers the whole viewport.
+          Clicking anywhere outside the header hits this div and closes the menu.
+          AnimatePresence lets it fade in/out smoothly rather than blinking. */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            className="fixed inset-0 z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            onClick={() => setMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
+
       {/* ── FIXED HEADER BAR ─────────────────────────────────────────── */}
       {/* motion.header is a Framer Motion-enhanced <header> element.
           `animate` accepts an object of CSS properties — Framer Motion smoothly
@@ -184,23 +209,49 @@ export default function HeaderSection() {
             ))}
           </nav>
 
-          {/* ── Hamburger Button (mobile only) ──────────────────────────── */}
+          {/* ── Hamburger / Close Button (mobile only) ───────────────────── */}
           {/* md:hidden: visible only below the md breakpoint (< 768px).
-              Three <span> elements form the classic "three-line" hamburger icon.
-              Each span is a thin white horizontal bar (1px tall, 24px wide).
-              gap-[5px]: 5px between each bar for clear visual separation. */}
+              Three motion.span elements form the classic "three-line" hamburger icon.
+              When menuOpen is true they animate into an ✕:
+                - top bar:    rotates +45° and slides down  BAR_CROSS_OFFSET px
+                - middle bar: fades out and collapses (scaleX → 0)
+                - bottom bar: rotates -45° and slides up    BAR_CROSS_OFFSET px
+              Clicking again (✕ state) calls setMenuOpen(false) via the toggle. */}
           <motion.button
-            className="md:hidden flex flex-col gap-[5px] p-2 -mr-2"
-            onClick={() => setMenuOpen(true)}
-            aria-label="Open navigation menu"
+            className="md:hidden flex flex-col items-center justify-center gap-[5px] p-2 -mr-2"
+            onClick={() => setMenuOpen(prev => !prev)}
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={menuOpen}
-            // whileHover: dims the icon slightly to acknowledge the touch target.
             whileHover={{ opacity: 0.7 }}
             transition={{ duration: 0.3, ease: "easeOut" as const }}
           >
-            <span className="block w-6 h-px bg-white-axis" />
-            <span className="block w-6 h-px bg-white-axis" />
-            <span className="block w-6 h-px bg-white-axis" />
+            {/* Top bar — rotates clockwise and translates down to form the
+                top-left-to-bottom-right stroke of the ✕ */}
+            <motion.span
+              className="block w-6 h-px bg-white-axis"
+              animate={menuOpen
+                ? { rotate: 45,  y: BAR_CROSS_OFFSET }
+                : { rotate: 0,   y: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+            />
+            {/* Middle bar — fades out and shrinks horizontally so it doesn't
+                peek through the crossed bars */}
+            <motion.span
+              className="block w-6 h-px bg-white-axis"
+              animate={menuOpen
+                ? { opacity: 0, scaleX: 0 }
+                : { opacity: 1, scaleX: 1 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            />
+            {/* Bottom bar — rotates counter-clockwise and translates up to form
+                the top-right-to-bottom-left stroke of the ✕ */}
+            <motion.span
+              className="block w-6 h-px bg-white-axis"
+              animate={menuOpen
+                ? { rotate: -45, y: -BAR_CROSS_OFFSET }
+                : { rotate: 0,   y: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+            />
           </motion.button>
 
         </div>
@@ -218,12 +269,14 @@ export default function HeaderSection() {
             // border-t border-soft-grey: a thin separator line between the header
             //   bar and the menu list.
             // bg-black-axis: solid black background for the dropdown panel.
+            // shadow-[...]: arbitrary Tailwind box-shadow — the white-tinted blur
+            //   bleeds below the panel against the dark page, giving a lifted 3-D feel.
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" as const }}
-              className="overflow-hidden md:hidden border-t border-soft-grey bg-black-axis"
+              className="overflow-hidden md:hidden border-t border-soft-grey bg-black-axis shadow-[0_12px_32px_4px_rgba(255,255,255,0.06)]"
             >
               {/* px-6 py-4: comfortable padding inside the panel.
                   flex flex-col gap-4: stack links vertically with 16px between them. */}
@@ -236,11 +289,15 @@ export default function HeaderSection() {
                     key={href}
                     href={href}
                     onClick={() => setMenuOpen(false)}
-                    className="font-instrument uppercase tracking-[0.15em] text-white-axis text-base py-2 border-b border-soft-grey last:border-0"
+                    className="font-instrument uppercase tracking-[0.15em] text-white-axis text-sm py-2 border-b border-soft-grey last:border-0"
                   >
                     {label}
                   </Link>
                 ))}
+
+                {/* Closing rule — mirrors the border-t at the top of the dropdown,
+                    visually "sealing" the menu panel at the bottom. */}
+                <div className="border-t border-soft-grey" />
               </nav>
             </motion.div>
           )}
