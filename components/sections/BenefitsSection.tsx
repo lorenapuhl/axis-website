@@ -1,13 +1,12 @@
 "use client"
-// "use client" must be the absolute first line.
-// This component uses useState, useEffect, useRef (interactive state for
-// auto-cycling and hover detection) and Framer Motion browser APIs —
-// all require a Client Component in Next.js App Router.
+// "use client" must be the absolute first line — nothing above this, not even blank lines.
+// This component uses useState, useEffect, useRef (interactive state),
+// Framer Motion drag (browser API) — all require a Client Component in Next.js App Router.
 
 import { useState, useEffect, useRef } from "react"
-// motion         — wraps HTML/SVG elements to make them animatable
+// motion          — wraps HTML/SVG elements to make them animatable
 // AnimatePresence — lets exiting elements play their exit animation before unmounting
-// useInView      — returns true once the referenced element enters the viewport
+// useInView       — returns true once the referenced element enters the viewport
 import { motion, AnimatePresence, useInView } from "framer-motion"
 // Variants: TypeScript type for named animation state objects.
 // Without it, TypeScript widens literal strings (e.g. "easeOut") to `string`,
@@ -187,8 +186,30 @@ const animItem: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
-// "Weightless Dissolve": 2px Y-shift + fade.
-// Applied to every dynamic element in the dashboard whenever activeIndex changes.
+// Carousel slide variants.
+// custom prop carries direction: 1 = forward (next), -1 = backward (prev).
+// Enter: card arrives from the far side (off-screen).
+// Center: card rests in place — this is the active, visible state.
+// Exit: card departs to the near side (off-screen).
+const slideVariants: Variants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? "100%" : "-100%",
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    transition: { duration: 0.45, ease: "easeOut" as const },
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? "-100%" : "100%",
+    opacity: 0,
+    transition: { duration: 0.3, ease: "easeOut" as const },
+  }),
+}
+
+// "Weightless Dissolve": 2px Y-shift + fade for disclaimers.
+// Applied whenever the active benefit changes.
 const dissolve: Variants = {
   hidden: { opacity: 0, y: 2 },
   show:   { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" as const } },
@@ -200,35 +221,56 @@ const dissolve: Variants = {
 // ─────────────────────────────────────────────────────────────────────────────
 export default function BenefitsSection() {
 
-  // activeIndex: which of the 4 benefit blocks is highlighted.
-  // Drives left-column styling and all dashboard content.
+  // activeIndex: which of the 4 benefit cards is currently shown in the carousel.
   const [activeIndex, setActiveIndex] = useState(0)
 
-  // isHovered: pauses auto-cycle while user is over the benefit blocks.
+  // direction: controls which way the slide animation runs.
+  // 1 = next card comes from the right, -1 = prev card comes from the left.
+  const [direction, setDirection] = useState(1)
+
+  // isHovered: pauses auto-cycle while user is hovering over the carousel.
   const [isHovered, setIsHovered] = useState(false)
 
   // sectionRef + isInView: gates the trendline draw animation so it only
-  // plays after the section enters the viewport, not on page load.
+  // plays after the section enters the viewport.
+  // "once: true" means isInView stays permanently true after first trigger.
   const sectionRef = useRef<HTMLElement>(null)
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
 
-  // Auto-cycle: advances every 3 seconds unless hovering.
+  // Navigate forward, wrapping from last back to first.
+  const next = () => {
+    setDirection(1)
+    setActiveIndex(prev => (prev + 1) % benefits.length)
+  }
+
+  // Navigate backward, wrapping from first back to last.
+  const prev = () => {
+    setDirection(-1)
+    setActiveIndex(prev => (prev - 1 + benefits.length) % benefits.length)
+  }
+
+  // Jump to a specific card; infer direction from whether target is ahead or behind.
+  const goTo = (index: number) => {
+    setDirection(index >= activeIndex ? 1 : -1)
+    setActiveIndex(index)
+  }
+
+  // Auto-cycle: advances every 3 seconds unless user is hovering.
   // Cleanup function (clearInterval) runs before the effect re-fires or
   // on component unmount — prevents multiple intervals stacking up.
   useEffect(() => {
     if (isHovered) return
-    const timer = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % benefits.length)
-    }, 3000)
+    const timer = setInterval(next, 3000)
     return () => clearInterval(timer)
   }, [isHovered])
 
+  // Snapshot of the currently visible benefit block.
   const active = benefits[activeIndex]
 
   return (
     <section
       ref={sectionRef}
-      className="bg-grey-axis py-20 px-6 md:py-36 md:px-12 [overflow-anchor:none]"
+      className="bg-grey-axis py-20 px-6 md:py-36 md:px-12"
     >
       <div className="max-w-6xl mx-auto">
 
@@ -250,120 +292,77 @@ export default function BenefitsSection() {
           </motion.h2>
         </motion.div>
 
-        {/* ── TWO-COLUMN LAYOUT ────────────────────────────────────────────── */}
-        {/* md:min-h-[520px]: anchors the layout height at desktop width so the
-            accordion expanding on the left never pushes the section floor down.
-            The right-column card is ~520px tall — both columns always share
-            that reserved space, so content below never shifts. */}
-        <div className="flex flex-col md:flex-row gap-8 md:gap-16 items-start md:min-h-[520px]">
+        {/* ── DESKTOP TAB NAVIGATION ──────────────────────────────────────── */}
+        {/* Hidden on mobile — swipe gesture serves as navigation there.
+            Four tab buttons sit above the carousel card; the active one gets
+            a blue underline border. border-b on the wrapper + border-b-2 -mb-px
+            on each button creates the "connected tab" effect. */}
+        <div className="hidden md:flex gap-0 mb-8 border-b border-white-axis/[0.08]">
+          {benefits.map((benefit, index) => (
+            <motion.button
+              key={benefit.id}
+              onClick={() => goTo(index)}
+              animate={{ opacity: index === activeIndex ? 1 : 0.4 }}
+              transition={{ duration: 0.3, ease: "easeOut" as const }}
+              className={[
+                // -mb-px: pulls the button 1px down so its bottom border
+                // overlaps the container's border-b, creating a flush tab look.
+                "px-6 py-3 font-instrument text-xs uppercase tracking-widest font-semibold border-b-2 -mb-px",
+                index === activeIndex
+                  ? "border-blue-axis text-white-axis"
+                  : "border-transparent text-soft-grey",
+              ].join(" ")}
+            >
+              {benefit.label}
+            </motion.button>
+          ))}
+        </div>
 
-          {/* ── LEFT COLUMN: BENEFIT BLOCKS (40%) ───────────────────────────── */}
-          {/* Hover on the column as a whole pauses the auto-cycle.
-              Moving between blocks doesn't restart the timer. */}
-          {/* justify-start: explicit flex alignment — items stack from the top,
-              both on mobile (where columns are stacked) and desktop. */}
-          <div
-            className="w-full md:w-[40%] flex flex-col gap-1 justify-start"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            {benefits.map((benefit, index) => {
-              const isActive = index === activeIndex
-              return (
-                // motion.button: clickable per component.md rule (no div onClick).
-                // opacity animates between 1 (active) and 0.3 (inactive).
-                <motion.button
-                  key={benefit.id}
-                  onClick={() => setActiveIndex(index)}
-                  animate={{ opacity: isActive ? 1 : 0.3 }}
-                  transition={{ duration: 0.4, ease: "easeOut" as const }}
-                  className={[
-                    "text-left w-full px-6 py-5 border-l-2",
-                    isActive ? "border-blue-axis" : "border-transparent",
-                  ].join(" ")}
-                >
-                  {/* Block label — Instrument Sans, uppercase */}
-                  <p className={[
-                    "font-instrument text-sm uppercase tracking-widest font-semibold",
-                    isActive ? "text-white-axis" : "text-soft-grey",
-                  ].join(" ")}>
-                    {benefit.label}
-                  </p>
-
-                  {/* Bullets — conditionally mounted/unmounted so inactive blocks
-                      take up zero vertical space, eliminating dead air gaps.
-                      AnimatePresence initial={false}: suppresses the enter animation
-                      on first render, preventing a flash when the page loads.
-                      motion.div wrapper animates height 0 → "auto" with overflow:hidden
-                      to create a smooth unfold/collapse without layout jumps. */}
-                  <AnimatePresence initial={false}>
-                    {isActive && (
-                      <motion.div
-                        key="bullets"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.4, ease: "easeOut" as const }}
-                        style={{ overflow: "hidden" }}
-                      >
-                        <ul className="mt-3 flex flex-col gap-2">
-                          {benefit.bullets.map((bullet, bi) => (
-                            // Stagger: each bullet slides in 80ms after the previous.
-                            <motion.li
-                              key={bi}
-                              initial={{ opacity: 0, x: -4 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{
-                                duration: 0.4,
-                                ease: "easeOut" as const,
-                                delay: bi * 0.08,
-                              }}
-                              className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
-                            >
-                              {/* Minimal checkmark — blue accent, fixed width
-                                  so all bullet text aligns regardless of check width */}
-                              <span
-                                className="text-blue-axis text-xs mt-0.5 flex-shrink-0 w-3 text-center"
-                                aria-hidden="true"
-                              >
-                                ✓
-                              </span>
-                              {bullet}
-                            </motion.li>
-                          ))}
-                        </ul>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                </motion.button>
-              )
-            })}
-          </div>
-          {/* END LEFT COLUMN */}
-
-          {/* ── RIGHT COLUMN (60%) ───────────────────────────────────────────── */}
-          {/* Outer wrapper: black card + disclaimers stacked vertically.
-              The disclaimers live outside the black card but inside this column. */}
-          <div className="w-full md:w-[60%] flex flex-col gap-6">
-
-            {/* ── GLASSMORPHISM DASHBOARD CARD ────────────────────────────── */}
-            {/* Glassmorphism: semi-transparent dark surface + backdrop blur +
-                subtle border + rounded corners. Sits on bg-grey-axis (#121212),
-                so the slight transparency creates visible depth and separation. */}
+        {/* ── CAROUSEL ────────────────────────────────────────────────────── */}
+        {/* overflow-hidden: clips entering/exiting cards so they don't appear
+            outside the card boundary during the slide transition.
+            mode="popLayout": the exiting card gets position:absolute
+            (so it no longer affects layout) while the entering card takes its
+            space — both animate simultaneously without any layout jumps. */}
+        <div
+          className="relative overflow-hidden"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="relative overflow-hidden bg-black-axis/70 backdrop-blur-xl border border-white-axis/[0.08] rounded-2xl p-6 md:p-8"
+              // Changing key unmounts the old card and mounts a new one.
+              // AnimatePresence intercepts this to play exit/enter animations.
+              key={activeIndex}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              // drag="x": enables horizontal drag on the card.
+              // On touch screens this becomes the swipe-to-navigate gesture.
+              drag="x"
+              // dragConstraints: the card rubber-bands back to x=0 after drag.
+              // The actual navigation happens in onDragEnd, not via position.
+              dragConstraints={{ left: 0, right: 0 }}
+              // dragElastic: how far beyond the constraints the card can stretch.
+              // 0.08 = subtle rubber-band feedback without flying off screen.
+              dragElastic={0.08}
+              onDragEnd={(_, info) => {
+                // info.offset.x: total distance moved from drag start.
+                // ±50px threshold before committing to a navigation step.
+                if (info.offset.x < -50) next()
+                else if (info.offset.x > 50) prev()
+              }}
+              // select-none: prevents text from being highlighted while dragging.
+              // cursor-grab / active:cursor-grabbing: visual hint on desktop.
+              className="relative overflow-hidden bg-black-axis/70 backdrop-blur-xl border border-white-axis/[0.08] rounded-2xl p-6 md:p-8 cursor-grab active:cursor-grabbing select-none"
             >
 
-              {/* ── DECORATIVE GLOWS ────────────────────────────────────────── */}
-              {/* Two glow circles create an ambient light field across the card.
-                  Top-right: primary glow — brighter, larger.
-                  Bottom-left: secondary glow — same size, slightly dimmer.
-                  Together they give the card a lit surface feel on the dark bg. */}
+              {/* ── DECORATIVE GLOWS ────────────────────────────────────── */}
+              {/* Two ambient glow circles give the card a lit surface feel
+                  on the dark background. pointer-events-none: they don't
+                  block clicks or drag gestures. */}
               <div
                 className="absolute top-0 right-0 -mr-20 -mt-20 h-80 w-80 rounded-full bg-white-axis/[0.08] blur-3xl pointer-events-none"
                 aria-hidden="true"
@@ -373,45 +372,42 @@ export default function BenefitsSection() {
                 aria-hidden="true"
               />
 
-              {/* ── STAT ROW: primary stat (left) + glass card (right) ────── */}
-              {/* flex-col on mobile so the glass card stacks below the stat.
-                  sm:flex-row on wider screens: stat flush-left, card flush-right,
-                  both vertically centred.
-                  mb-8: space before the trendline below. */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`stat-row-${activeIndex}`}
-                  variants={dissolve}
-                  initial="hidden"
-                  animate="show"
-                  exit="exit"
-                  className="flex flex-col sm:flex-row items-start sm:items-center gap-8 mb-8"
-                >
+              {/* ── MOBILE LABEL ────────────────────────────────────────── */}
+              {/* Shown only on mobile — desktop has the tab nav above the card.
+                  Blue color distinguishes it as a section/category label. */}
+              <p className="md:hidden font-instrument text-xs uppercase tracking-widest text-blue-axis mb-6">
+                {active.label}
+              </p>
 
-                  {/* Primary stat — Playfair Display, left side */}
-                  <div>
-                    <div className="font-playfair text-5xl md:text-6xl text-white-axis tracking-tight leading-none">
-                      {active.stat}
-                      {/* <sup>: HTML superscript — slightly raised, smaller text.
-                          Signals the reader to check Source * below the card. */}
-                      <sup className="font-instrument text-sm text-soft-grey ml-1 align-super">
-                        *
-                      </sup>
-                    </div>
-                    <p className="font-instrument text-xs uppercase tracking-widest text-soft-grey mt-3">
-                      {active.statLabel}
-                    </p>
+              {/* ── CARD BODY ───────────────────────────────────────────── */}
+              {/* Mobile: stacked vertically (flex-col).
+                  Desktop: side by side (md:flex-row).
+                  Left side: large stat number + supporting metrics card.
+                  Right side: bullet points. */}
+              <div className="flex flex-col md:flex-row gap-8 md:gap-16">
+
+                {/* Stat + metrics — left / top */}
+                {/* flex-shrink-0: prevents this column from being squeezed
+                    by the bullet list on desktop. */}
+                <div className="flex-shrink-0">
+
+                  {/* Primary stat number — Playfair Display, large */}
+                  <div className="font-playfair text-5xl md:text-6xl text-white-axis tracking-tight leading-none">
+                    {active.stat}
+                    {/* <sup>: HTML superscript — slightly raised, smaller text.
+                        Signals the reader to check Source * below the card. */}
+                    <sup className="font-instrument text-sm text-soft-grey ml-1 align-super">
+                      *
+                    </sup>
                   </div>
+                  <p className="font-instrument text-xs uppercase tracking-widest text-soft-grey mt-3">
+                    {active.statLabel}
+                  </p>
 
-                  {/* Glassmorphism metrics card — right side, next to the primary stat.
-                      relative overflow-hidden: required to contain the inner glow div.
-                      Each metric is laid out as a horizontal row: value left,
-                      label right — aligned on the baseline so they read as one line.
-                      flex-shrink-0 prevents the card from being squeezed by the stat. */}
-                  <div className="relative overflow-hidden bg-white-axis/[0.06] backdrop-blur-md border border-white-axis/[0.10] rounded-xl p-4 flex-shrink-0">
-
-                    {/* Inner glow — top-right corner, smaller than the outer card's
-                        glow to match the card's smaller scale. */}
+                  {/* Glassmorphism metrics card — below the primary stat.
+                      inline-block: shrinks to fit its content width.
+                      min-w: prevents it from being too narrow on mobile. */}
+                  <div className="mt-5 relative overflow-hidden bg-white-axis/[0.06] backdrop-blur-md border border-white-axis/[0.10] rounded-xl p-4 inline-block min-w-[150px]">
                     <div
                       className="absolute top-0 right-0 -mr-6 -mt-6 h-20 w-20 rounded-full bg-white-axis/[0.08] blur-2xl pointer-events-none"
                       aria-hidden="true"
@@ -420,39 +416,63 @@ export default function BenefitsSection() {
                       <div
                         key={mi}
                         className={[
-                          // flex + items-baseline: value and label sit on the same
-                          // text baseline, so numbers and labels align cleanly.
+                          // flex + items-baseline: value and label sit on the
+                          // same text baseline, so numbers and labels align cleanly.
                           "flex items-baseline gap-2 py-1.5",
                           mi < active.sidebarMetrics.length - 1
                             ? "border-b border-white-axis/[0.08]"
                             : "",
                         ].join(" ")}
                       >
-                        {/* Value — compact size to keep the row tight */}
                         <span className="font-playfair text-base text-white-axis leading-none flex-shrink-0">
                           {metric.value}
                           <sup className="font-instrument text-[9px] text-soft-grey ml-0.5 align-super">
                             **
                           </sup>
                         </span>
-                        {/* Label — sits directly to the right on the same line */}
                         <span className="font-instrument text-[11px] text-soft-grey leading-snug">
                           {metric.label}
                         </span>
                       </div>
                     ))}
                   </div>
+                </div>
 
-                </motion.div>
-              </AnimatePresence>
-              {/* END STAT ROW */}
+                {/* Bullets — right / bottom */}
+                {/* md:items-center: vertically centers the bullet list
+                    next to the (taller) stat block on desktop. */}
+                <div className="flex md:items-center">
+                  <ul className="flex flex-col gap-4">
+                    {active.bullets.map((bullet, bi) => (
+                      <li
+                        key={bi}
+                        className="flex items-start gap-3 font-instrument text-sm md:text-base text-soft-grey"
+                      >
+                        {/* Minimal checkmark — blue accent, fixed width
+                            so all bullet text aligns regardless of check width. */}
+                        <span
+                          className="text-blue-axis text-xs mt-1 flex-shrink-0 w-3 text-center"
+                          aria-hidden="true"
+                        >
+                          ✓
+                        </span>
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-              {/* ── TRENDLINE GRAPH ─────────────────────────────────────────── */}
+              </div>
+              {/* END CARD BODY */}
+
+              {/* ── TRENDLINE ───────────────────────────────────────────── */}
               {/* SVG viewBox "0 0 400 100": internal coordinate system.
                   preserveAspectRatio="none": stretches to fill h-20 (80px) container.
-                  key={activeIndex} on the path re-mounts it on every change,
-                  replaying the pathLength 0→1 draw animation from scratch. */}
-              <div className="w-full h-20">
+                  key={`path-${activeIndex}`}: remounts the path on every card change,
+                  replaying the pathLength 0→1 draw animation from scratch.
+                  isInView is "once:true" (stays true permanently after first trigger),
+                  so every card transition after scroll-in animates immediately. */}
+              <div className="w-full h-20 mt-8">
                 <svg
                   viewBox="0 0 400 100"
                   preserveAspectRatio="none"
@@ -470,12 +490,9 @@ export default function BenefitsSection() {
                     />
                   ))}
 
-                  {/* Trend path: draws itself via pathLength 0→1.
-                      isInView gates the animation — won't draw off-screen.
-                      var(--color-blue-axis): CSS variable from globals.css,
-                      avoids hardcoding the hex value directly. */}
+                  {/* Trend path: draws itself via pathLength 0→1 animation. */}
                   <motion.path
-                    key={activeIndex}
+                    key={`path-${activeIndex}`}
                     d={buildPath(active.trendData, 400, 100)}
                     stroke="var(--color-blue-axis)"
                     strokeWidth="2.5"
@@ -512,51 +529,92 @@ export default function BenefitsSection() {
                       />
                     )
                   })()}
-
                 </svg>
               </div>
               {/* END TRENDLINE */}
 
             </motion.div>
-            {/* END BLACK DASHBOARD CARD */}
+          </AnimatePresence>
+        </div>
+        {/* END CAROUSEL */}
 
-            {/* ── DISCLAIMERS — outside the card, below it ─────────────────── */}
-            {/* Two columns side by side on desktop, stacked on mobile.
-                AnimatePresence + Weightless Dissolve: both columns fade+shift
-                together whenever the active benefit changes. */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`disclaimer-${activeIndex}`}
-                variants={dissolve}
-                initial="hidden"
-                animate="show"
-                exit="exit"
-                className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-              >
-                {/* Source * — primary stat footnote */}
-                <p className="font-instrument text-[10px] text-soft-grey leading-relaxed opacity-60">
-                  <span className="text-white-axis opacity-70 not-italic">
-                    Source * —{" "}
-                  </span>
-                  {active.primaryDisclaimer}
-                </p>
+        {/* ── NAVIGATION: DOTS + ARROWS ───────────────────────────────────── */}
+        {/* Prev/next arrows: desktop only (hidden md:flex).
+            Dot indicators: always visible, centered between the arrows.
+            Active dot is wider (20px) and full opacity to show position.
+            Inactive dots are narrow (6px) and faded. */}
+        <div className="flex items-center justify-center gap-4 mt-6">
 
-                {/* Source ** — secondary metrics footnote (same text for all blocks) */}
-                <p className="font-instrument text-[10px] text-soft-grey leading-relaxed opacity-60">
-                  <span className="text-white-axis opacity-70 not-italic">
-                    Source ** —{" "}
-                  </span>
-                  {active.secondaryDisclaimer}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-            {/* END DISCLAIMERS */}
+          {/* Prev arrow — desktop only */}
+          <motion.button
+            onClick={prev}
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.2, ease: "easeOut" as const }}
+            className="hidden md:flex items-center justify-center w-8 h-8 font-instrument text-soft-grey hover:text-white-axis text-xl"
+            aria-label="Previous benefit"
+          >
+            ←
+          </motion.button>
 
+          {/* Dot indicators */}
+          <div className="flex items-center gap-2">
+            {benefits.map((_, i) => (
+              // Framer Motion animates width and opacity smoothly between states.
+              // h-1.5 is fixed; width is controlled entirely by animate below.
+              <motion.button
+                key={i}
+                onClick={() => goTo(i)}
+                animate={{
+                  width:   i === activeIndex ? 20 : 6,
+                  opacity: i === activeIndex ? 1 : 0.35,
+                }}
+                transition={{ duration: 0.3, ease: "easeOut" as const }}
+                className="h-1.5 rounded-full bg-blue-axis"
+                aria-label={`Show ${benefits[i].label}`}
+              />
+            ))}
           </div>
-          {/* END RIGHT COLUMN */}
+
+          {/* Next arrow — desktop only */}
+          <motion.button
+            onClick={next}
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.2, ease: "easeOut" as const }}
+            className="hidden md:flex items-center justify-center w-8 h-8 font-instrument text-soft-grey hover:text-white-axis text-xl"
+            aria-label="Next benefit"
+          >
+            →
+          </motion.button>
 
         </div>
-        {/* END TWO-COLUMN LAYOUT */}
+        {/* END NAVIGATION */}
+
+        {/* ── DISCLAIMERS — outside the card, below navigation ────────────── */}
+        {/* Dissolve transition: fades + shifts 2px whenever active benefit changes. */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`disclaimer-${activeIndex}`}
+            variants={dissolve}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8"
+          >
+            <p className="font-instrument text-[10px] text-soft-grey leading-relaxed opacity-60">
+              <span className="text-white-axis opacity-70 not-italic">
+                Source * —{" "}
+              </span>
+              {active.primaryDisclaimer}
+            </p>
+            <p className="font-instrument text-[10px] text-soft-grey leading-relaxed opacity-60">
+              <span className="text-white-axis opacity-70 not-italic">
+                Source ** —{" "}
+              </span>
+              {active.secondaryDisclaimer}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+        {/* END DISCLAIMERS */}
 
       </div>
     </section>
