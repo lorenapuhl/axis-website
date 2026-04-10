@@ -254,14 +254,24 @@ export default function SystemVisualSection() {
           // once: true → the sequence fires only the first time. No repeat on re-scroll.
 
           className={[
-            "flex flex-col items-center",
-            // flex-col: stacks nodes vertically on mobile.
-            // items-center: centers each node horizontally on mobile.
+            "flex flex-row items-start",
+            // flex-row: always horizontal — nodes flow left to right on all viewports.
+            // items-start: aligns node tops so dots sit on the same baseline regardless
+            //   of how much content sits below each node.
 
-            "md:flex-row md:items-start",
-            // md:flex-row: switches to horizontal layout on desktop (≥768px).
-            // md:items-start: aligns node tops — dots sit on the same baseline,
-            //   content below each node can vary in height independently.
+            "overflow-x-auto md:overflow-visible",
+            // overflow-x-auto: on mobile the three nodes are wider than the screen,
+            //   so the row scrolls horizontally. The user can swipe to reach each node.
+            // md:overflow-visible: on desktop all nodes fit in view — no scroll needed.
+
+            "snap-x snap-mandatory md:snap-none",
+            // snap-x snap-mandatory: when the user lifts their finger the scroll
+            //   always settles on the nearest node's snap point (no half-way stops).
+            // md:snap-none: removes snap on desktop where no scrolling occurs.
+
+            "pb-4 md:pb-0",
+            // pb-4: extra bottom padding on mobile gives the scrollbar breathing room
+            //   so it does not overlap with the node content.
           ].join(" ")}
         >
 
@@ -279,9 +289,13 @@ export default function SystemVisualSection() {
             // delay: 0 → appears immediately when the section enters view.
             // This is the anchor of the sequence — everything else follows it.
 
-            className="flex flex-col items-center text-center shrink-0"
+            className="flex flex-col items-center text-center shrink-0 snap-center min-w-[180px] md:min-w-0"
             // shrink-0: prevents this node from being compressed by the flex layout.
-            //           The connectors (flex-1) absorb all extra space instead.
+            //           The connectors absorb all extra space on desktop instead.
+            // snap-center: on mobile, swiping snaps so this node's centre aligns with
+            //              the scroll container's centre — each node gets its own "page".
+            // min-w-[180px]: on mobile each node needs a guaranteed minimum width so it
+            //              does not collapse; md:min-w-0 lets desktop nodes size naturally.
           >
             {/* Node indicator dot — a hollow circle representing Instagram */}
             <div
@@ -330,27 +344,25 @@ export default function SystemVisualSection() {
 
           {/* ════════════════════════════════════════════════════════════════
               CONNECTOR 1 — Line from Instagram → Websystem
-              Desktop: horizontal SVG line (hidden on mobile)
-              Mobile: vertical SVG line (hidden on desktop)
+              Horizontal SVG line visible on all viewports.
           ════════════════════════════════════════════════════════════════ */}
 
-          {/* Desktop connector — horizontal */}
+          {/* Connector 1 — horizontal, visible on all viewports */}
           <div
             className={[
-              "hidden md:block",
-              // hidden: invisible on mobile. md:block: visible on desktop.
+              "block",
+              // block: visible on both mobile and desktop — layout is always horizontal.
 
-              "flex-1",
-              // flex-1: grows to fill all available horizontal space between the nodes.
-              // This is what pushes the nodes to their correct positions.
+              "flex-shrink-0 w-8 md:flex-1",
+              // mobile: fixed 32px width — compact but visible between the nodes.
+              // md:flex-1: on desktop grows to fill all available space, pushing nodes apart.
 
               "mt-[5px]",
-              // mt-[5px]: arbitrary Tailwind value. 5px of top margin aligns the
-              // SVG line with the visual center of the 12px dot above it
-              // (dot center = 6px, SVG line is at y=1 in a 2px-tall viewBox → ~6px total).
+              // mt-[5px]: aligns the SVG line with the centre of the 12px dot above it.
 
-              "px-6",
-              // px-6: 24px of horizontal padding keeps the line from touching the dots.
+              "px-1 md:px-6",
+              // mobile: 4px padding keeps the line from touching the node dots.
+              // desktop: 24px padding for more generous breathing room.
             ].join(" ")}
           >
             {/* SVG draws a horizontal 1px line that fills the container width.
@@ -389,29 +401,6 @@ export default function SystemVisualSection() {
             </svg>
           </div>
 
-          {/* Mobile connector — vertical */}
-          <div className="md:hidden my-6">
-            {/* my-6: 24px top and bottom margin creates spacing around the vertical connector. */}
-            <svg
-              width="2"
-              height="40"
-              viewBox="0 0 2 40"
-              // Fixed size: 2px wide, 40px tall. The path runs through the center (x=1).
-            >
-              <motion.path
-                d="M 1 0 L 1 40"
-                // Vertical line: starts at top (0) and ends at bottom (40) of the SVG.
-                stroke="currentColor"
-                strokeWidth="0.5"
-                fill="none"
-                className="text-soft-grey"
-                variants={lineVariant}
-                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.4 }}
-                // Same delay as the desktop connector — both are connector 1.
-              />
-            </svg>
-          </div>
-
           {/* ════════════════════════════════════════════════════════════════
               NODE 2 — Websystem
               Appears second (delay: 0.8) — after the first line finishes drawing.
@@ -424,7 +413,9 @@ export default function SystemVisualSection() {
             // 0.8s means Websystem STARTS appearing while the line is still drawing
             // (overlap is intentional — it feels more continuous).
 
-            className="flex flex-col items-center text-center shrink-0"
+            className="flex flex-col items-center text-center shrink-0 snap-center min-w-[180px] md:min-w-0"
+            // snap-center: swiping snaps so this node's centre aligns with the container centre.
+            // min-w-[180px]: guaranteed minimum width on mobile; md:min-w-0 lets desktop size naturally.
           >
             {/* Node indicator dot */}
             <div className="w-3 h-3 rounded-full border border-soft-grey" />
@@ -506,8 +497,9 @@ export default function SystemVisualSection() {
               CONNECTOR 2 — Line from Websystem → Booking
           ════════════════════════════════════════════════════════════════ */}
 
-          {/* Desktop connector — horizontal */}
-          <div className="hidden md:block flex-1 mt-[5px] px-6">
+          {/* Connector 2 — horizontal, visible on all viewports */}
+          <div className="block flex-shrink-0 w-8 mt-[5px] px-1 md:flex-1 md:px-6">
+            {/* mobile: 32px fixed width, 4px padding. desktop: flex-1 + 24px padding. */}
             <svg className="w-full" height="2" viewBox="0 0 100 2" preserveAspectRatio="none">
               <motion.path
                 d="M 0 1 L 100 1"
@@ -518,21 +510,6 @@ export default function SystemVisualSection() {
                 variants={lineVariant}
                 transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.2 }}
                 // delay: 1.2s → draws after Websystem has appeared (delay 0.8 + ~0.4s).
-              />
-            </svg>
-          </div>
-
-          {/* Mobile connector — vertical */}
-          <div className="md:hidden my-6">
-            <svg width="2" height="40" viewBox="0 0 2 40">
-              <motion.path
-                d="M 1 0 L 1 40"
-                stroke="currentColor"
-                strokeWidth="0.5"
-                fill="none"
-                className="text-soft-grey"
-                variants={lineVariant}
-                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.2 }}
               />
             </svg>
           </div>
@@ -548,7 +525,9 @@ export default function SystemVisualSection() {
             // delay: 1.6s → connector 2 begins drawing at 1.2s and takes 0.7s (= 1.9s).
             // Booking starts appearing at 1.6s for a deliberate slight overlap with the line.
 
-            className="flex flex-col items-center text-center shrink-0"
+            className="flex flex-col items-center text-center shrink-0 snap-center min-w-[180px] md:min-w-0"
+            // snap-center: swiping snaps so this node's centre aligns with the container centre.
+            // min-w-[180px]: guaranteed minimum width on mobile; md:min-w-0 lets desktop size naturally.
           >
             {/* Dot wrapper — uses `relative` so the glow ring can be
                 absolutely positioned behind the dot using `absolute`. */}
