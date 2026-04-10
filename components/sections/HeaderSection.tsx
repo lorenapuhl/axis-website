@@ -293,7 +293,7 @@ export default function HeaderSection() {
                     href={href}
                     // Clicking a link navigates AND closes the drawer.
                     onClick={() => setMenuOpen(false)}
-                    className="font-playfair uppercase tracking-tight text-white-axis text-2xl leading-none"
+                    className="font-instrument uppercase tracking-tight text-white-axis text-base leading-none"
                     whileHover={{ opacity: 0.6 }}
                     transition={{ duration: 0.3, ease: "easeOut" as const }}
                   >

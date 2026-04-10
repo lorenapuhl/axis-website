@@ -129,7 +129,7 @@ export default function OutcomeSection() {
               // font-playfair: Playfair Display — the required brand serif for headlines.
               // Per component.md: "Headlines: font-playfair uppercase tracking-tight text-white-axis"
 
-              "text-3xl md:text-2xl",
+              "text-base md:text-2xl",
               // text-3xl: 30px on mobile. md:text-5xl: 48px on desktop.
               // Large enough to feel like a headline, balanced across three lines.
               // → text-4xl / md:text-6xl if you want more visual dominance.
@@ -156,7 +156,7 @@ export default function OutcomeSection() {
 
             className={[
               "font-playfair",
-              "text-3xl md:text-2xl",
+              "text-base md:text-2xl",
               "tracking-tight",
               "text-white-axis",
               "leading-tight",
@@ -175,7 +175,7 @@ export default function OutcomeSection() {
 
             className={[
               "font-playfair",
-              "text-3xl md:text-2xl",
+              "text-base md:text-2xl",
               "text-white-axis",
               // text-blue-axis: Electric Blue (#0033FF) — the single accent colour
               // in this section. Applied only to the final, most consequential line:
