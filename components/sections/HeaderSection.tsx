@@ -75,25 +75,12 @@ export default function HeaderSection() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Lock body scrolling when the mobile menu is open.
-  // This prevents the page from scrolling behind the drawer overlay.
-  // The cleanup function restores scrolling if the component unmounts while open.
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : ""
-    return () => { document.body.style.overflow = "" }
-  }, [menuOpen])
-
   // JSX looks like HTML but it's actually JavaScript. A few key differences:
   //   - `className` instead of `class` (class is a reserved word in JS)
   //   - Curly braces {} embed any JS expression inline, like f-strings in Python
   //   - Self-closing tags must have a slash: <img /> not <img>
-  // JSX looks like HTML but it's actually JavaScript. A few key differences:
-  //   - `className` instead of `class` (class is a reserved word in JS)
-  //   - Curly braces {} embed any JS expression inline, like f-strings in Python
-  //   - Self-closing tags must have a slash: <img /> not <img>
-  // The outer <> … </> is a React Fragment — it groups multiple elements without
-  // adding an extra DOM node (no <div> wrapper). We need it because JSX must
-  // return a single root element, but we have two: the header AND the drawer.
+  // No Fragment wrapper needed — the dropdown lives inside the header itself,
+  // expanding downward from the bar rather than as a separate overlay.
   return (
     <>
       {/* ── FIXED HEADER BAR ─────────────────────────────────────────── */}
@@ -213,99 +200,49 @@ export default function HeaderSection() {
           </motion.button>
 
         </div>
-      </motion.header>
 
-      {/* ── Mobile Drawer + Backdrop ─────────────────────────────────────── */}
-      {/* AnimatePresence: detects when `menuOpen` changes and lets both the
-          backdrop and drawer animate OUT before being removed from the DOM.
-          Without AnimatePresence, removing an element is instant — no exit animation. */}
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            {/* ── BACKDROP ──────────────────────────────────────────────── */}
-            {/* Semi-transparent overlay that dims the page behind the drawer.
-                fixed inset-0: covers the entire viewport.
-                z-40: sits below the drawer (z-50) but above all page content.
-                Clicking the backdrop closes the menu. */}
+        {/* ── MOBILE DROPDOWN MENU ──────────────────────────────────────── */}
+        {/* AnimatePresence: lets the dropdown play its exit animation (collapsing
+            back to height 0) before being removed from the DOM. Without this,
+            the element would disappear instantly on close. */}
+        <AnimatePresence>
+          {menuOpen && (
+            // motion.div animates height from 0 → "auto" on open and back on close.
+            // overflow-hidden: clips content during the height transition so links
+            //   don't visually spill out before the container has expanded.
+            // md:hidden: this dropdown is mobile-only — desktop uses the inline nav.
+            // border-t border-soft-grey: a thin separator line between the header
+            //   bar and the menu list.
+            // bg-black-axis: solid black background for the dropdown panel.
             <motion.div
-              key="backdrop"
-              className="fixed inset-0 bg-black-axis/70 z-40"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" as const }}
-              onClick={() => setMenuOpen(false)}
-              aria-hidden="true"
-            />
-
-            {/* ── SLIDE-IN DRAWER ───────────────────────────────────────── */}
-            {/* The drawer slides in from the right edge of the screen.
-                initial x: "100%" — starts completely off-screen to the right.
-                animate x: 0      — slides into its natural position.
-                exit   x: "100%" — slides back out on close.
-                fixed top-0 right-0 h-screen: pinned to top-right, full height.
-                w-72: 288px wide — wide enough to read links, narrow enough
-                      that the backdrop peek gives context to the page behind.
-                z-50: above the backdrop (z-40) and all page content. */}
-            <motion.nav
-              key="drawer"
-              aria-label="Mobile navigation"
-              className="fixed top-0 right-0 h-screen w-72 bg-grey-axis z-50 flex flex-col px-8 pt-8 pb-12"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" as const }}
+              className="overflow-hidden md:hidden border-t border-soft-grey bg-black-axis"
             >
-
-              {/* ── CLOSE BUTTON ────────────────────────────────────────── */}
-              {/* self-end: pushes the button to the right edge of the drawer.
-                  mb-12: generous space between the X and the first nav link. */}
-              <motion.button
-                onClick={() => setMenuOpen(false)}
-                className="self-end mb-12 text-soft-grey"
-                aria-label="Close navigation menu"
-                whileHover={{ opacity: 0.6 }}
-                transition={{ duration: 0.3, ease: "easeOut" as const }}
-              >
-                {/* Inline SVG X icon — no external library needed for a single icon. */}
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  aria-hidden="true"
-                >
-                  <path d="M4 4l12 12M16 4L4 16" />
-                </svg>
-              </motion.button>
-
-              {/* ── NAV LINKS ───────────────────────────────────────────── */}
-              {/* Stacked vertically with generous gap (32px) for easy tapping.
-                  font-playfair uppercase: large editorial serif links — matches
-                  the brand voice and gives the drawer a clean, high-end feel. */}
-              <div className="flex flex-col gap-8">
+              {/* px-6 py-4: comfortable padding inside the panel.
+                  flex flex-col gap-4: stack links vertically with 16px between them. */}
+              <nav aria-label="Mobile navigation" className="px-6 py-4 flex flex-col gap-4">
                 {NAV_LINKS.map(({ label, href }) => (
-                  <MotionLink
-                    key={label}
+                  // border-b border-soft-grey last:border-0: a subtle divider line
+                  // after every link except the last one.
+                  // py-2: vertical tap target padding for comfortable touch interaction.
+                  <Link
+                    key={href}
                     href={href}
-                    // Clicking a link navigates AND closes the drawer.
                     onClick={() => setMenuOpen(false)}
-                    className="font-instrument uppercase tracking-tight text-white-axis text-base leading-none"
-                    whileHover={{ opacity: 0.6 }}
-                    transition={{ duration: 0.3, ease: "easeOut" as const }}
+                    className="font-instrument uppercase tracking-[0.15em] text-white-axis text-base py-2 border-b border-soft-grey last:border-0"
                   >
                     {label}
-                  </MotionLink>
+                  </Link>
                 ))}
-              </div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-            </motion.nav>
-          </>
-        )}
-      </AnimatePresence>
+      </motion.header>
     </>
   )
 }
