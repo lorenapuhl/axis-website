@@ -394,14 +394,19 @@ export default function LiveSyncSection() {
               <div className="grid gap-6 grid-cols-1 md:grid-cols-[65%_35%]">
 
                 {/* ── LEFT: SECTION ROWS ────────────────────────────────
-                    On mobile: grid-cols-1 stacks all four sections vertically
-                    (schedule → news → promotions → events).
-                    On desktop (md+): grid-cols-[60%_40%] restores the 2×2 layout
-                    with a weighted split. */}
-                <div className="grid grid-cols-1 md:grid-cols-[60%_40%] gap-6">
+                    Mobile layout (grid-cols-[1fr_2fr]):
+                      Row 1 — SCHEDULE (col-span-2, full width)
+                      Row 2 — NEWS (1fr, narrow) | EVENTS (2fr, wide)
+                      Row 3 — PROMOTIONS (col-span-2, full width)
+                    DOM order matches mobile visual order: schedule, news, events, promo.
+                    Desktop (md:grid-cols-[60%_40%]): explicit col-start/row-start
+                    restores the original 2×2 order without touching the DOM. */}
+                <div className="grid grid-cols-[1fr_2fr] md:grid-cols-[60%_40%] gap-6">
 
-                  {/* ── CELL A: SCHEDULE UPDATES (top-left) ────────────── */}
-                  <div className="mb-1">
+                  {/* ── CELL A: SCHEDULE UPDATES ────────────────────────
+                      Mobile: col-span-2 → full-width row above news/events.
+                      Desktop: col-start-1 row-start-1 → top-left cell. */}
+                  <div className="col-span-2 md:col-span-1 md:col-start-1 md:row-start-1 mb-1">
                     <div className="">
                       <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">SCHEDULE UPDATES</p>
                       <p className="font-instrument text-[9px] text-soft-grey">Today, 8:00 AM</p>
@@ -459,8 +464,10 @@ export default function LiveSyncSection() {
                     </div>
                   </div>
 
-                  {/* ── CELL B: NEWS (top-right) ────────────────────────── */}
-                  <div>
+                  {/* ── CELL B: NEWS ────────────────────────────────────
+                      Mobile: 1fr (narrow left cell) next to EVENTS.
+                      Desktop: col-start-2 row-start-1 → top-right cell. */}
+                  <div className="md:col-start-2 md:row-start-1">
                     <div className="mb-1">
                       <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">NEWS</p>
                       <p className="font-instrument text-[9px] text-soft-grey">2 mins ago</p>
@@ -483,52 +490,11 @@ export default function LiveSyncSection() {
                     </div>
                   </div>
 
-                  {/* ── CELL C: PROMOTIONS (bottom-left) ─────────────────── */}
-                  <div>
-                    <div className="mb-1">
-                      <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">PROMOTIONS</p>
-                      <p className="font-instrument text-[9px] text-soft-grey">Today, 11:30 AM</p>
-                    </div>
-                    <div className="flex gap-2 mt-2 flex-wrap">
-
-                      {/* ls3 */}
-                      <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                        <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
-                          <AnimatePresence>
-                            {step >= 2 && (
-                              <motion.div layoutId="ls3" className="absolute inset-0 rounded-lg overflow-hidden" transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}>
-                                <Image src="/livesync_visual/img3.png" alt="Spring Sale Instagram promotion post — promotions row thumbnail" fill className="object-cover" />
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </motion.div>
-
-                      {settledLoopPosts.filter(p => p.targetSection === "promo").map(p => (
-                        <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
-                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" as const }}>
-                              <Image src={p.src} alt={`New promotion: ${p.text}`} fill className="object-cover" />
-                            </motion.div>
-                          </div>
-                        </motion.div>
-                      ))}
-
-                      {loopFlying && activeLoop?.targetSection === "promo" && (
-                        <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
-                            <motion.div layoutId={activeLoop.id} className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 1 }} animate={{ opacity: 0.12 }} transition={{ duration: 0.7, ease: "easeInOut" }}>
-                              <Image src={activeLoop.src} alt={`New Instagram post landing in promotions: ${activeLoop.text}`} fill className="object-cover" />
-                            </motion.div>
-                          </div>
-                        </motion.div>
-                      )}
-
-                    </div>
-                  </div>
-
-                  {/* ── CELL D: EVENTS (bottom-right) ───────────────────── */}
-                  <div>
+                  {/* ── CELL D: EVENTS ──────────────────────────────────
+                      DOM moved before Promotions so on mobile it sits in the
+                      same row as News (2fr = wider right cell).
+                      Desktop: col-start-2 row-start-2 → bottom-right cell. */}
+                  <div className="md:col-start-2 md:row-start-2">
                     <div className="mb-1">
                       <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">EVENTS</p>
                       <p className="font-instrument text-[9px] text-soft-grey">Summer Slam added</p>
@@ -563,6 +529,52 @@ export default function LiveSyncSection() {
                           <div className="w-16 h-16 relative shrink-0">
                             <motion.div layoutId={activeLoop.id} className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 1 }} animate={{ opacity: 0.12 }} transition={{ duration: 0.7, ease: "easeInOut" }}>
                               <Image src={activeLoop.src} alt={`New Instagram post landing in events: ${activeLoop.text}`} fill className="object-cover" />
+                            </motion.div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                    </div>
+                  </div>
+
+                  {/* ── CELL C: PROMOTIONS ──────────────────────────────
+                      Mobile: col-span-2 → full-width row below news/events.
+                      Desktop: col-start-1 row-start-2 → bottom-left cell. */}
+                  <div className="col-span-2 md:col-span-1 md:col-start-1 md:row-start-2">
+                    <div className="mb-1">
+                      <p className="font-instrument text-[11px] font-bold text-black-axis uppercase tracking-wider">PROMOTIONS</p>
+                      <p className="font-instrument text-[9px] text-soft-grey">Today, 11:30 AM</p>
+                    </div>
+                    <div className="flex gap-2 mt-2 flex-wrap">
+
+                      {/* ls3 */}
+                      <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
+                        <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
+                          <AnimatePresence>
+                            {step >= 2 && (
+                              <motion.div layoutId="ls3" className="absolute inset-0 rounded-lg overflow-hidden" transition={{ duration: 1.0, ease: "easeInOut", delay: 0.2 }}>
+                                <Image src="/livesync_visual/img3.png" alt="Spring Sale Instagram promotion post — promotions row thumbnail" fill className="object-cover" />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+
+                      {settledLoopPosts.filter(p => p.targetSection === "promo").map(p => (
+                        <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
+                          <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
+                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" as const }}>
+                              <Image src={p.src} alt={`New promotion: ${p.text}`} fill className="object-cover" />
+                            </motion.div>
+                          </div>
+                        </motion.div>
+                      ))}
+
+                      {loopFlying && activeLoop?.targetSection === "promo" && (
+                        <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
+                          <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
+                            <motion.div layoutId={activeLoop.id} className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 1 }} animate={{ opacity: 0.12 }} transition={{ duration: 0.7, ease: "easeInOut" }}>
+                              <Image src={activeLoop.src} alt={`New Instagram post landing in promotions: ${activeLoop.text}`} fill className="object-cover" />
                             </motion.div>
                           </div>
                         </motion.div>
