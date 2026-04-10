@@ -70,6 +70,14 @@ export type CardStackProps<T extends CardStackItem> = {
    */
   randomOffsets?: boolean;
 
+  /**
+   * Override the Y-jitter values used when randomOffsets is true.
+   * Each value is the Y offset in pixels for the card at that array index.
+   * Wraps if there are more cards than values.
+   * Defaults to CARD_Y_JITTER (large values). Pass smaller values for tighter stacks.
+   */
+  yJitterValues?: number[];
+
   /** Hooks */
   onChangeIndex?: (index: number, item: T) => void;
 
@@ -131,6 +139,7 @@ export function CardStack<T extends CardStackItem>({
   onChangeIndex,
   renderCard,
   randomOffsets = false,
+  yJitterValues = CARD_Y_JITTER,
 }: CardStackProps<T>) {
   const reduceMotion = useReducedMotion();
   const len = items.length;
@@ -265,7 +274,7 @@ export function CardStack<T extends CardStackItem>({
               // so the stack looks hand-placed rather than mechanically aligned.
               // Only active when randomOffsets prop is true.
               const rotJitter = randomOffsets ? (CARD_ROT_JITTER[i % CARD_ROT_JITTER.length] ?? 0) : 0
-              const yJitter   = randomOffsets ? (CARD_Y_JITTER[i % CARD_Y_JITTER.length] ?? 0)   : 0
+              const yJitter   = randomOffsets ? (yJitterValues[i % yJitterValues.length] ?? 0)   : 0
 
               // drag only on the active card
               const dragProps = isActive

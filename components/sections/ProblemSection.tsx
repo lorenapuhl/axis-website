@@ -216,16 +216,17 @@ export default function ProblemSection() {
   // standard size on desktop. Reads window.innerWidth in useEffect because `window`
   // doesn't exist on the server; this component is client-only but the initial render
   // happens server-side. useState default = desktop values to avoid layout shift.
-  const [cardDims, setCardDims] = useState({ width: 360, height: 290, lift: 50 })
+  const [cardDims, setCardDims] = useState({ width: 360, height: 290, lift: 50, yJitter: [100, -30, 50, -70, 80, -50, 90] })
 
   useEffect(() => {
     function update() {
       if (window.innerWidth < 768) {
         // On phone: narrower card (fits within 375px content area), shorter height,
-        // and reduced lift so the lifted card doesn't bleed into the text below.
-        setCardDims({ width: 280, height: 220, lift: 35 })
+        // reduced lift so the lifted card doesn't bleed into the text below,
+        // and tighter Y jitter so cards don't spread too far vertically on small screens.
+        setCardDims({ width: 280, height: 220, lift: 35, yJitter: [20, -8, 14, -18, 22, -12, 18] })
       } else {
-        setCardDims({ width: 360, height: 290, lift: 50 })
+        setCardDims({ width: 360, height: 290, lift: 50, yJitter: [100, -30, 50, -70, 80, -50, 90] })
       }
     }
     update()
@@ -307,7 +308,7 @@ export default function ProblemSection() {
             stack — with no overlap risk.
             mb-10: breathing room between headline and the card stack below. */}
         <motion.div
-          className="block md:hidden mb-10"
+          className="block md:hidden mb-0"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" as const }}
@@ -337,7 +338,7 @@ export default function ProblemSection() {
           {/* pb-16 on mobile: extra space below the card pile so the background
               cards (which extend downward) don't bleed into the text panel below.
               md:pb-0: no bottom padding needed on desktop (side-by-side layout). */}
-          <div className="md:w-[40%] flex justify-center pb-16 md:pb-0">
+          <div className="md:w-[40%] flex justify-center pb-8 md:pb-0">
             {/*
               CardStack props — vertical pile layout:
                 spreadDeg=0        zero Z rotation — pure vertical pile, no horizontal fan
@@ -363,6 +364,7 @@ export default function ProblemSection() {
               loop={true}
               showDots={true}
               randomOffsets={true}
+              yJitterValues={cardDims.yJitter}
               renderCard={renderProblemCard}
               onChangeIndex={(index) => setActiveIndex(index)}
             />
@@ -377,7 +379,7 @@ export default function ProblemSection() {
           */}
           {/* mt-16 on mobile: extra clearance so the lifted card doesn't overlap
               this text column when both are stacked vertically on phone. */}
-          <div className="md:flex-1 mt-16 md:mt-0">
+          <div className="md:flex-1 mt-6 md:mt-0">
 
             {/* ── STATIC HEADLINE ─────────────────────────────────────────── */}
             {/*
