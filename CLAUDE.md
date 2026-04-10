@@ -126,3 +126,5 @@ Every component must be commented as if the reader only knows Python, HTML, and 
 - Comment non-obvious Tailwind classes
 - No such thing as too many comments on this project
 
+### Git
+- Whenever committing changes, keep the commit message short and do not add the "co-authored with claude" line
