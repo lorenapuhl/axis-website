@@ -300,6 +300,25 @@ export default function ProblemSection() {
           max-w-6xl mx-auto: constrains content to 1152px, centered. */}
       <div className="relative z-10 max-w-7xl mx-auto">
 
+        {/* ── MOBILE-ONLY HEADLINE ─────────────────────────────────────────── */}
+        {/* block md:hidden: visible ONLY on mobile (< 768px).
+            On desktop the headline lives inside the right column next to the stack.
+            Placed here so on mobile (flex-col) it renders FIRST — above the card
+            stack — with no overlap risk.
+            mb-10: breathing room between headline and the card stack below. */}
+        <motion.div
+          className="block md:hidden mb-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" as const }}
+          viewport={{ once: true }}
+        >
+          <h2 className="font-playfair uppercase tracking-tight text-white-axis text-4xl leading-tight">
+            Your studio has visibility — but no structure.
+          </h2>
+        </motion.div>
+        {/* END MOBILE-ONLY HEADLINE */}
+
         {/* ── 2-COLUMN LAYOUT ─────────────────────────────────────────────── */}
         {/*
           On mobile (default): flex-col stacks left col above right col.
@@ -315,7 +334,10 @@ export default function ProblemSection() {
             On mobile, this stacks above the right panel.
             The CardStack is centered within this column via flex/justify.
           */}
-          <div className="md:w-[40%] flex justify-center">
+          {/* pb-16 on mobile: extra space below the card pile so the background
+              cards (which extend downward) don't bleed into the text panel below.
+              md:pb-0: no bottom padding needed on desktop (side-by-side layout). */}
+          <div className="md:w-[40%] flex justify-center pb-16 md:pb-0">
             {/*
               CardStack props — vertical pile layout:
                 spreadDeg=0        zero Z rotation — pure vertical pile, no horizontal fan
@@ -363,11 +385,15 @@ export default function ProblemSection() {
               This h2 is static — it does NOT change per card.
               viewport={{ once: true }}: plays the animation only once.
             */}
+            {/* hidden md:block: desktop only — the mobile version of this headline
+                is rendered above the card stack (see MOBILE-ONLY HEADLINE above).
+                Hiding it here on mobile avoids a duplicate h2 being visible. */}
             <motion.div
               variants={container}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true }}
+              className="hidden md:block"
             >
               <motion.h2
                 variants={animItem}

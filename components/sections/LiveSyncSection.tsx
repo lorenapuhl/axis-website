@@ -393,12 +393,12 @@ export default function LiveSyncSection() {
                   md:grid-cols-[65%_35%]: side-by-side 65/35 split on desktop. */}
               <div className="grid gap-6 grid-cols-1 md:grid-cols-[65%_35%]">
 
-                {/* ── LEFT: 2×2 GRID OF ROWS ───────────────────────────
-                    grid-cols-2 turns the four stacked rows into a 2×2 square.
-                    Each cell = row header + horizontal thumbnail strip. */}
-                {/* grid-cols-2: 2-column grid works on mobile too (SCHEDULE|NEWS / PROMO|EVENTS).
-                    md:grid-cols-[60%_40%]: weighted split on desktop where left col is wider. */}
-                <div className="grid grid-cols-2 md:grid-cols-[60%_40%] gap-6">
+                {/* ── LEFT: SECTION ROWS ────────────────────────────────
+                    On mobile: grid-cols-1 stacks all four sections vertically
+                    (schedule → news → promotions → events).
+                    On desktop (md+): grid-cols-[60%_40%] restores the 2×2 layout
+                    with a weighted split. */}
+                <div className="grid grid-cols-1 md:grid-cols-[60%_40%] gap-6">
 
                   {/* ── CELL A: SCHEDULE UPDATES (top-left) ────────────── */}
                   <div className="mb-1">
