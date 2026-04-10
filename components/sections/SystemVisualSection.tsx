@@ -150,7 +150,7 @@ export default function SystemVisualSection() {
     if (!isInView) return // not yet in view — do nothing
 
     // Helper: smoothly scrolls the container so `nodeRef` is horizontally centred.
-    const scrollToNode = (nodeRef: React.RefObject<HTMLDivElement>) => {
+    const scrollToNode = (nodeRef: React.RefObject<HTMLDivElement | null>) => {
       if (!scrollRef.current || !nodeRef.current) return
       const container  = scrollRef.current
       const nodeLeft   = nodeRef.current.offsetLeft   // distance from container left edge

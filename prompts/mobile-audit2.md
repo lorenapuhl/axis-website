@@ -79,7 +79,8 @@ These fixes should ONLY be applied to mobile viewport. Leave the md viewport lay
             </nav>
           </motion.div>
 ```
-- ask me to clarify, if there are any contradictions with rules set in @CLAUDE.md nd @skills/
+- ask me to clarify
+- if there are any contradictions with rules set in @CLAUDE.md nd @skills/ also ask me to clarify
 
 ### 7. `FooterSection.tsx`
 - change the visual layout on phones: copyright should be at the very bottom. privacy and terms of service top left. instagram on the right on the same level as privacy and terms of service. ask me to clarify.
