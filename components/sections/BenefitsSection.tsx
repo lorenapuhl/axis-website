@@ -297,7 +297,7 @@ export default function BenefitsSection() {
             Four tab buttons sit above the carousel card; the active one gets
             a blue underline border. border-b on the wrapper + border-b-2 -mb-px
             on each button creates the "connected tab" effect. */}
-        <div className="hidden md:flex gap-0 mb-8 border-b border-white-axis/[0.08]">
+        <div className="hidden md:flex justify-center gap-0 mb-8 border-b border-white-axis/[0.08]">
           {benefits.map((benefit, index) => (
             <motion.button
               key={benefit.id}
@@ -380,16 +380,13 @@ export default function BenefitsSection() {
               </p>
 
               {/* ── CARD BODY ───────────────────────────────────────────── */}
-              {/* Mobile: stacked vertically (flex-col).
-                  Desktop: side by side (md:flex-row).
-                  Left side: large stat number + supporting metrics card.
-                  Right side: bullet points. */}
-              <div className="flex flex-col md:flex-row gap-8 md:gap-16">
+              {/* Stacked vertically on both mobile and desktop, centered.
+                  items-center: horizontally centers each block.
+                  text-center: centers all text within each block. */}
+              <div className="flex flex-col items-center text-center gap-8 md:flex-row md:justify-center md:gap-16">
 
-                {/* Stat + metrics — left / top */}
-                {/* flex-shrink-0: prevents this column from being squeezed
-                    by the bullet list on desktop. */}
-                <div className="flex-shrink-0">
+                {/* Stat + metrics — top */}
+                <div>
 
                   {/* Primary stat number — Playfair Display, large */}
                   <div className="font-playfair text-5xl md:text-6xl text-white-axis tracking-tight leading-none">
@@ -438,11 +435,9 @@ export default function BenefitsSection() {
                   </div>
                 </div>
 
-                {/* Bullets — right / bottom */}
-                {/* md:items-center: vertically centers the bullet list
-                    next to the (taller) stat block on desktop. */}
-                <div className="flex md:items-center">
-                  <ul className="flex flex-col gap-4">
+                {/* Bullets — below stat */}
+                <div className="flex justify-center md:justify-start">
+                  <ul className="flex flex-col gap-4 text-left">
                     {active.bullets.map((bullet, bi) => (
                       <li
                         key={bi}
@@ -538,54 +533,25 @@ export default function BenefitsSection() {
         </div>
         {/* END CAROUSEL */}
 
-        {/* ── NAVIGATION: DOTS + ARROWS ───────────────────────────────────── */}
-        {/* Prev/next arrows: desktop only (hidden md:flex).
-            Dot indicators: always visible, centered between the arrows.
-            Active dot is wider (20px) and full opacity to show position.
-            Inactive dots are narrow (6px) and faded. */}
-        <div className="flex items-center justify-center gap-4 mt-6">
-
-          {/* Prev arrow — desktop only */}
-          <motion.button
-            onClick={prev}
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.2, ease: "easeOut" as const }}
-            className="hidden md:flex items-center justify-center w-8 h-8 font-instrument text-soft-grey hover:text-white-axis text-xl"
-            aria-label="Previous benefit"
-          >
-            ←
-          </motion.button>
-
-          {/* Dot indicators */}
-          <div className="flex items-center gap-2">
-            {benefits.map((_, i) => (
-              // Framer Motion animates width and opacity smoothly between states.
-              // h-1.5 is fixed; width is controlled entirely by animate below.
-              <motion.button
-                key={i}
-                onClick={() => goTo(i)}
-                animate={{
-                  width:   i === activeIndex ? 20 : 6,
-                  opacity: i === activeIndex ? 1 : 0.35,
-                }}
-                transition={{ duration: 0.3, ease: "easeOut" as const }}
-                className="h-1.5 rounded-full bg-blue-axis"
-                aria-label={`Show ${benefits[i].label}`}
-              />
-            ))}
-          </div>
-
-          {/* Next arrow — desktop only */}
-          <motion.button
-            onClick={next}
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.2, ease: "easeOut" as const }}
-            className="hidden md:flex items-center justify-center w-8 h-8 font-instrument text-soft-grey hover:text-white-axis text-xl"
-            aria-label="Next benefit"
-          >
-            →
-          </motion.button>
-
+        {/* ── NAVIGATION: DOTS ────────────────────────────────────────────── */}
+        {/* Active dot is wider (20px) and full opacity to show position.
+            Inactive dots are narrow (6px) and faded.
+            Framer Motion animates width and opacity smoothly between states. */}
+        <div className="flex items-center justify-center gap-2 mt-6">
+          {benefits.map((_, i) => (
+            // h-1.5 is fixed; width is controlled entirely by animate below.
+            <motion.button
+              key={i}
+              onClick={() => goTo(i)}
+              animate={{
+                width:   i === activeIndex ? 20 : 6,
+                opacity: i === activeIndex ? 1 : 0.35,
+              }}
+              transition={{ duration: 0.3, ease: "easeOut" as const }}
+              className="h-1.5 rounded-full bg-blue-axis"
+              aria-label={`Show ${benefits[i].label}`}
+            />
+          ))}
         </div>
         {/* END NAVIGATION */}
 
