@@ -276,7 +276,7 @@ export default function HeaderSection() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" as const }}
-              className="overflow-hidden md:hidden bg-black-axis shadow-[0_20px_56px_12px_rgba(255,255,255,0.14)]"
+              className="overflow-hidden md:hidden bg-black-axis shadow-[0_20px_56px_12px_rgba(255,255,255,0.14)] [clip-path:inset(0_-200px_-200px_-200px)]"
             >
               {/* px-6 py-4: comfortable padding inside the panel.
                   flex flex-col gap-4: stack links vertically with 16px between them. */}
