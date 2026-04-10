@@ -276,7 +276,7 @@ export default function HeaderSection() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" as const }}
-              className="overflow-hidden md:hidden border-t border-soft-grey bg-black-axis shadow-[0_12px_32px_4px_rgba(255,255,255,0.06)]"
+              className="overflow-hidden md:hidden border-t border-soft-grey bg-black-axis shadow-[0_20px_56px_12px_rgba(255,255,255,0.14)]"
             >
               {/* px-6 py-4: comfortable padding inside the panel.
                   flex flex-col gap-4: stack links vertically with 16px between them. */}
@@ -289,15 +289,12 @@ export default function HeaderSection() {
                     key={href}
                     href={href}
                     onClick={() => setMenuOpen(false)}
-                    className="font-instrument uppercase tracking-[0.15em] text-white-axis text-sm py-2 border-b border-soft-grey last:border-0"
+                    className="font-instrument uppercase tracking-[0.15em] text-white-axis text-sm py-2 border-b border-soft-grey"
                   >
                     {label}
                   </Link>
                 ))}
 
-                {/* Closing rule — mirrors the border-t at the top of the dropdown,
-                    visually "sealing" the menu panel at the bottom. */}
-                <div className="border-t border-soft-grey" />
               </nav>
             </motion.div>
           )}
