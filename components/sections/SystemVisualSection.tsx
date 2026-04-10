@@ -5,17 +5,17 @@
 //   2. Framer Motion animations require a live DOM to run.
 // Without this line, Next.js would try to render this on the server and crash.
 
-import { motion, AnimatePresence } from "framer-motion"
-// motion     → Framer Motion's supercharged version of HTML/SVG elements.
-//              e.g. <motion.div> behaves like <div> but accepts animation props.
-// AnimatePresence → A wrapper that lets elements animate OUT before being removed
-//                   from the DOM. Used here for the rotating attribute text.
+import { motion, AnimatePresence, useInView } from "framer-motion"
+// motion          → Framer Motion's supercharged version of HTML/SVG elements.
+// AnimatePresence → Lets elements animate OUT before being removed from the DOM.
+// useInView       → A hook that returns true once a referenced element scrolls into view.
+//                   Used here to trigger the auto-scroll sequence on section entry.
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 // useState  → Lets a component "remember" a value across re-renders.
-//             Like a class variable that triggers a re-render when it changes.
 // useEffect → Runs a side-effect (e.g. a timer) after the component renders.
-//             Clean equivalent of "run this code once the DOM is ready."
+// useRef    → Stores a mutable reference to a DOM element without triggering re-renders.
+//             Used here to access the scroll container and individual node elements.
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STATIC DATA
@@ -125,6 +125,51 @@ export default function SystemVisualSection() {
 
     return () => clearInterval(interval) // Cleanup: stop the timer on unmount.
   }, []) // [] = run once on mount, never re-run.
+
+  // ── AUTO-SCROLL REFS ──────────────────────────────────────────────────────
+  // scrollRef   → the horizontally-scrollable container on mobile.
+  // diagramRef  → the animation orchestrator div; used by useInView to know
+  //               when the diagram enters the viewport.
+  // node2Ref    → second node (AXIS); scroll target for step 1 of auto-scroll.
+  // node3Ref    → third node (CLIENT CONVERSION); scroll target for step 2.
+  const scrollRef  = useRef<HTMLDivElement>(null)
+  const diagramRef = useRef<HTMLDivElement>(null)
+  const node2Ref   = useRef<HTMLDivElement>(null)
+  const node3Ref   = useRef<HTMLDivElement>(null)
+
+  // useInView watches `diagramRef`. `once: true` means it fires only the first
+  // time the element enters view and never resets — no repeat on re-scroll.
+  const isInView = useInView(diagramRef, { once: true })
+
+  // Auto-scroll effect — triggers when the section enters the viewport.
+  // Scrolls the node row left-to-right to mirror the workflow animation sequence,
+  // then leaves the user in control for manual swiping.
+  useEffect(() => {
+    // Only run on mobile (md = 768px). On desktop all nodes are already visible.
+    if (typeof window === "undefined" || window.innerWidth >= 768) return
+    if (!isInView) return // not yet in view — do nothing
+
+    // Helper: smoothly scrolls the container so `nodeRef` is horizontally centred.
+    const scrollToNode = (nodeRef: React.RefObject<HTMLDivElement>) => {
+      if (!scrollRef.current || !nodeRef.current) return
+      const container  = scrollRef.current
+      const nodeLeft   = nodeRef.current.offsetLeft   // distance from container left edge
+      const nodeWidth  = nodeRef.current.offsetWidth  // node's own width
+      const targetLeft = nodeLeft - container.clientWidth / 2 + nodeWidth / 2
+      container.scrollTo({ left: targetLeft, behavior: "smooth" })
+    }
+
+    // t = 1 000ms: scroll to Node 2 just as the first connector line finishes
+    //              drawing (line delay 0.4s + duration 0.7s ≈ 1.1s).
+    const t1 = setTimeout(() => scrollToNode(node2Ref), 1000)
+
+    // t = 2 100ms: scroll to Node 3 just as the second connector finishes
+    //              (line delay 1.2s + duration 0.7s ≈ 1.9s — give 200ms extra).
+    const t2 = setTimeout(() => scrollToNode(node3Ref), 2100)
+
+    // Cleanup: cancel pending scrolls if the component unmounts early.
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [isInView]) // re-runs only when isInView flips from false → true.
 
   return (
     <section
@@ -243,6 +288,11 @@ export default function SystemVisualSection() {
             automatically inherit this state change — with each child's own
             `transition.delay` controlling WHEN it animates. */}
         <motion.div
+          ref={diagramRef}
+          // ref={diagramRef}: gives useInView a DOM reference to watch.
+          // When this element enters the viewport, isInView flips true and
+          // the auto-scroll sequence begins.
+
           initial="hidden"
           // initial="hidden": all children start in their "hidden" variant state.
 
@@ -252,6 +302,20 @@ export default function SystemVisualSection() {
 
           viewport={{ once: true }}
           // once: true → the sequence fires only the first time. No repeat on re-scroll.
+
+          // On mobile this outer motion.div is NOT the scroll container —
+          // the inner div below is. This keeps the Framer Motion orchestration
+          // separate from the scroll behaviour.
+        >
+        {/* ── SCROLL CONTAINER (mobile only) ──────────────────────────── */}
+        {/* This div is the actual scrollable surface on mobile.
+            Keeping it separate from the Framer Motion orchestrator above
+            avoids conflicts between Framer's transform animations and
+            the browser's native scroll mechanics. */}
+        <div
+          ref={scrollRef}
+          // ref={scrollRef}: direct DOM reference used by the auto-scroll effect
+          // to call scrollRef.current.scrollTo({ left, behavior: "smooth" }).
 
           className={[
             "flex flex-row items-start",
@@ -269,9 +333,11 @@ export default function SystemVisualSection() {
             //   always settles on the nearest node's snap point (no half-way stops).
             // md:snap-none: removes snap on desktop where no scrolling occurs.
 
-            "pb-4 md:pb-0",
-            // pb-4: extra bottom padding on mobile gives the scrollbar breathing room
-            //   so it does not overlap with the node content.
+            "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            // [scrollbar-width:none]: hides the scrollbar in Firefox via CSS property.
+            // [&::-webkit-scrollbar]:hidden: targets the webkit pseudo-element and sets
+            //   display:none — hides the scrollbar in Chrome, Safari, and mobile browsers.
+            // The content remains scrollable; only the scrollbar track is invisible.
           ].join(" ")}
         >
 
@@ -353,15 +419,16 @@ export default function SystemVisualSection() {
               "block",
               // block: visible on both mobile and desktop — layout is always horizontal.
 
-              "flex-shrink-0 w-8 md:flex-1",
-              // mobile: fixed 32px width — compact but visible between the nodes.
+              "flex-shrink-0 w-20 md:flex-1",
+              // mobile: 80px fixed width — long enough to visually bridge the nodes
+              //   and make the line clearly connect both dots.
               // md:flex-1: on desktop grows to fill all available space, pushing nodes apart.
 
               "mt-[5px]",
               // mt-[5px]: aligns the SVG line with the centre of the 12px dot above it.
 
-              "px-1 md:px-6",
-              // mobile: 4px padding keeps the line from touching the node dots.
+              "px-0 md:px-6",
+              // mobile: no padding — the line runs flush to the node edges, touching each dot.
               // desktop: 24px padding for more generous breathing room.
             ].join(" ")}
           >
@@ -407,6 +474,10 @@ export default function SystemVisualSection() {
               Contains the "Powered by Instagram" label and a rotating attribute.
           ════════════════════════════════════════════════════════════════ */}
           <motion.div
+            ref={node2Ref}
+            // ref={node2Ref}: lets the auto-scroll effect read this node's offsetLeft
+            // and offsetWidth to calculate the exact scroll position that centres it.
+
             variants={nodeVariant}
             transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.8 }}
             // delay: 0.8s → connector 1 finishes drawing at ~1.1s.
@@ -498,8 +569,9 @@ export default function SystemVisualSection() {
           ════════════════════════════════════════════════════════════════ */}
 
           {/* Connector 2 — horizontal, visible on all viewports */}
-          <div className="block flex-shrink-0 w-8 mt-[5px] px-1 md:flex-1 md:px-6">
-            {/* mobile: 32px fixed width, 4px padding. desktop: flex-1 + 24px padding. */}
+          <div className="block flex-shrink-0 w-20 mt-[5px] px-0 md:flex-1 md:px-6">
+            {/* mobile: 80px fixed width, no padding — line runs flush to both node edges.
+                desktop: flex-1 + 24px padding for breathing room. */}
             <svg className="w-full" height="2" viewBox="0 0 100 2" preserveAspectRatio="none">
               <motion.path
                 d="M 0 1 L 100 1"
@@ -520,6 +592,10 @@ export default function SystemVisualSection() {
               Features a one-shot glow halo and a static capability list.
           ════════════════════════════════════════════════════════════════ */}
           <motion.div
+            ref={node3Ref}
+            // ref={node3Ref}: lets the auto-scroll effect calculate the position
+            // needed to centre this final node in the scroll container.
+
             variants={nodeVariant}
             transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.6 }}
             // delay: 1.6s → connector 2 begins drawing at 1.2s and takes 0.7s (= 1.9s).
@@ -640,6 +716,7 @@ export default function SystemVisualSection() {
             </div>
           </motion.div>
 
+        </div>{/* end scroll container */}
         </motion.div>
       </div>
     </section>
