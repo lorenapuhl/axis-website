@@ -399,7 +399,7 @@ export default function ProblemSection() {
             >
               <motion.h2
                 variants={animItem}
-                className="font-playfair uppercase tracking-tight text-white-axis text-4xl leading-tight mb-6 md:mb-8"
+                className="font-playfair uppercase text-center tracking-tight text-white-axis text-4xl leading-tight mb-6 md:mb-8"
               >
                 Your studio has visibility — but no structure.
               </motion.h2>
