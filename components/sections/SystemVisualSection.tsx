@@ -419,17 +419,22 @@ export default function SystemVisualSection() {
               "block",
               // block: visible on both mobile and desktop — layout is always horizontal.
 
-              "flex-shrink-0 w-20 md:flex-1",
-              // mobile: 80px fixed width — long enough to visually bridge the nodes
-              //   and make the line clearly connect both dots.
-              // md:flex-1: on desktop grows to fill all available space, pushing nodes apart.
+              "flex-shrink-0 w-[260px] -mx-[90px] md:w-auto md:flex-1 md:mx-0",
+              // mobile:
+              //   w-[260px]: 80px (gap between nodes) + 90px into Node1 + 90px into Node2.
+              //              The line now spans exactly from dot-centre to dot-centre.
+              //   -mx-[90px]: negative margin pulls the connector 90px into each adjacent
+              //               node so both ends align with the dot circles.
+              // desktop:
+              //   md:w-auto md:mx-0: reset fixed width and negative margins — the desktop
+              //   layout is unaffected; md:flex-1 grows the connector to fill available space.
 
               "mt-[5px]",
-              // mt-[5px]: aligns the SVG line with the centre of the 12px dot above it.
+              // mt-[5px]: aligns the SVG line with the visual centre of the 12px dot above.
 
               "px-0 md:px-6",
-              // mobile: no padding — the line runs flush to the node edges, touching each dot.
-              // desktop: 24px padding for more generous breathing room.
+              // mobile: no padding — line runs edge-to-edge of the (now extended) connector.
+              // desktop: 24px padding for breathing room.
             ].join(" ")}
           >
             {/* SVG draws a horizontal 1px line that fills the container width.
@@ -569,9 +574,10 @@ export default function SystemVisualSection() {
           ════════════════════════════════════════════════════════════════ */}
 
           {/* Connector 2 — horizontal, visible on all viewports */}
-          <div className="block flex-shrink-0 w-20 mt-[5px] px-0 md:flex-1 md:px-6">
-            {/* mobile: 80px fixed width, no padding — line runs flush to both node edges.
-                desktop: flex-1 + 24px padding for breathing room. */}
+          <div className="block flex-shrink-0 w-[260px] -mx-[90px] mt-[5px] px-0 md:w-auto md:flex-1 md:mx-0 md:px-6">
+            {/* mobile: w-[260px] with -mx-[90px] extends the line into each adjacent node
+                so both ends meet exactly at the dot centres — zero gap.
+                desktop: w-auto mx-0 resets to flex-1 layout. */}
             <svg className="w-full" height="2" viewBox="0 0 100 2" preserveAspectRatio="none">
               <motion.path
                 d="M 0 1 L 100 1"
