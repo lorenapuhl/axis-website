@@ -12,7 +12,7 @@ export default function IntroSection() {
   return (
     <section
       id="intro"
-      className="bg-black-axis min-h-svh flex items-center px-6 md:min-h-0 md:block md:py-36 md:px-12"
+      className="bg-black-axis py-48 px-6 md:py-36 md:px-12"
     >
       <div className="max-w-6xl mx-auto flex flex-col gap-26 md:gap-70">
 
