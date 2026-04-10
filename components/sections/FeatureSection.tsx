@@ -6,7 +6,7 @@
 
 import { motion } from "framer-motion"
 import type { Variants } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SCROLL ANIMATION VARIANTS
@@ -168,6 +168,48 @@ export default function FeatureSection() {
     return () => clearInterval(instaId)
   }, [])
 
+  // activeCard: which card index is currently visible in the mobile carousel (0–5).
+  // Used to highlight the matching dot indicator below the carousel.
+  const [activeCard, setActiveCard] = useState<number>(0)
+
+  // carouselRef: a direct reference to the scrollable carousel DOM element.
+  // Allows us to call .scrollTo() and read .offsetWidth / .scrollLeft imperatively.
+  const carouselRef = useRef<HTMLDivElement>(null)
+
+  // userInteractedRef: once the user manually swipes, auto-advance stops permanently.
+  // A ref (not state) is used so reading/writing it never triggers a re-render.
+  const userInteractedRef = useRef<boolean>(false)
+
+  // Auto-advance effect: every 3 seconds, scrolls the carousel to the next card.
+  // On desktop the container is a CSS grid (not scrollable), so scrollTo does nothing.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (userInteractedRef.current) return   // user took over — do nothing
+      if (!carouselRef.current) return
+      const cardWidth = carouselRef.current.offsetWidth
+      setActiveCard((prev) => {
+        const next = (prev + 1) % 6
+        // Imperatively scroll to the next card's left edge
+        carouselRef.current!.scrollTo({ left: next * cardWidth, behavior: "smooth" })
+        return next
+      })
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Called on the first touch — disables auto-advance for the rest of the session.
+  const handleCarouselTouchStart = () => {
+    userInteractedRef.current = true
+  }
+
+  // Keeps activeCard in sync with the scroll position during manual swipes.
+  // Math.round(scrollLeft / cardWidth) maps the continuous offset to the nearest index.
+  const handleCarouselScroll = () => {
+    if (!carouselRef.current) return
+    const { scrollLeft, offsetWidth } = carouselRef.current
+    setActiveCard(Math.round(scrollLeft / offsetWidth))
+  }
+
   return (
     <section
       id="features"
@@ -223,12 +265,20 @@ export default function FeatureSection() {
           Cards 1 and 2 are "large": explicit min-h makes them taller than the others.
           Card 3 has self-start so it does not stretch to match the large card height.
         */}
+        {/* On mobile: a horizontally scrollable snap container (carousel).
+            On md+: reverts to the 3-column CSS grid — no carousel behaviour.
+            ref={carouselRef}: gives us imperative access to scroll position and width.
+            onTouchStart: fires when a finger touches the carousel → disables auto-advance.
+            onScroll: fires as the user drags → keeps dot indicators in sync. */}
         <motion.div
+          ref={carouselRef}
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          onTouchStart={handleCarouselTouchStart}
+          onScroll={handleCarouselScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none] md:grid md:grid-cols-3 md:overflow-visible gap-4"
         >
 
           {/* ── CARD 1 (LARGE): Online Bookings ─────────────────────────── */}
@@ -238,7 +288,7 @@ export default function FeatureSection() {
             transition={{ duration: 0.35, ease: "easeOut" as const }}
             // transition: applies to the whileHover y-lift only.
             // The scroll-in animation uses the transition inside cardItem.show.
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
             // bg-white-axis: white card on black background — strong contrast.
             // rounded-2xl: soft, modern card corners.
             // flex flex-col gap-5: stacks card sections vertically.
@@ -336,7 +386,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -451,7 +501,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -522,7 +572,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -587,7 +637,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
           >
             <div className="flex items-start">
               <span className="text-grey-axis">
@@ -646,7 +696,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm"
+            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -711,6 +761,36 @@ export default function FeatureSection() {
 
         </motion.div>
         {/* END FEATURE GRID */}
+
+        {/* ── CAROUSEL DOTS (mobile only) ─────────────────────────────────── */}
+        {/* md:hidden: dots are purely a mobile affordance — desktop uses the grid. */}
+        <div className="flex justify-center gap-2.5 mt-6 md:hidden">
+          {Array.from({ length: 6 }).map((_, i) => (
+            // Each dot is a <button> — keyboard and screen-reader accessible.
+            // Framer Motion smoothly animates opacity and scale between active/inactive.
+            <motion.button
+              key={i}
+              onClick={() => {
+                // Tapping a dot counts as user interaction — stop auto-advance
+                userInteractedRef.current = true
+                setActiveCard(i)
+                if (carouselRef.current) {
+                  carouselRef.current.scrollTo({
+                    left: i * carouselRef.current.offsetWidth,
+                    behavior: "smooth",
+                  })
+                }
+              }}
+              animate={{
+                opacity: activeCard === i ? 1 : 0.3,
+                scale: activeCard === i ? 1 : 0.7,
+              }}
+              transition={{ duration: 0.3, ease: "easeOut" as const }}
+              className="w-2 h-2 rounded-full bg-white-axis"
+              aria-label={`Go to feature ${i + 1}`}
+            />
+          ))}
+        </div>
 
         {/* ── TECH FEATURES STRIP ─────────────────────────────────────────── */}
         {/*
