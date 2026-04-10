@@ -338,7 +338,7 @@ export default function ProblemSection() {
           {/* pb-16 on mobile: extra space below the card pile so the background
               cards (which extend downward) don't bleed into the text panel below.
               md:pb-0: no bottom padding needed on desktop (side-by-side layout). */}
-          <div className="md:w-[40%] flex justify-center pb-8 md:pb-0">
+          <div className="md:w-[40%] -mt-15 flex justify-center pb-8 md:pb-0">
             {/*
               CardStack props — vertical pile layout:
                 spreadDeg=0        zero Z rotation — pure vertical pile, no horizontal fan
