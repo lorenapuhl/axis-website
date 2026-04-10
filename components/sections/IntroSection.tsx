@@ -30,7 +30,7 @@ export default function IntroSection() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" as const }}
             viewport={{ once: true }}
-            className="flex flex-col items-center gap-3 font-playfair text-base md:text-4xl text-soft-grey tracking-tight leading-tight"
+            className="flex flex-col items-center gap-3 font-playfair text-lg md:text-4xl text-soft-grey tracking-tight leading-tight"
           >
             {/* Instagram logo sits above the headline text */}
             <SiInstagram className="text-soft-grey" size={28} />
@@ -57,7 +57,7 @@ export default function IntroSection() {
 
             {/* WORD 1 */}
             <motion.span
-              className="font-playfair text-base md:text-4xl text-soft-grey tracking-wide"
+              className="font-playfair text-lg md:text-4xl text-soft-grey tracking-wide"
               initial={{ x: -100, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.3 }}
@@ -69,7 +69,7 @@ export default function IntroSection() {
 
             {/* WORD 2 — 0.3s after word 1 */}
             <motion.span
-              className="font-playfair text-base md:text-4xl text-soft-grey tracking-wide"
+              className="font-playfair text-lg md:text-4xl text-soft-grey tracking-wide"
               initial={{ x: -100, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.6 }}
@@ -80,7 +80,7 @@ export default function IntroSection() {
 
             {/* WORD 3 — 0.3s after word 2 */}
             <motion.span
-              className="font-playfair text-base md:text-4xl text-soft-grey tracking-wide"
+              className="font-playfair text-lg md:text-4xl text-soft-grey tracking-wide"
               initial={{ x: -100, opacity: 0 }}
               whileInView={{ x: 0, opacity: 1 }}
               transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.9 }}
@@ -140,7 +140,7 @@ export default function IntroSection() {
               // time to settle before the tragedy drops.
             }}
             viewport={{ once: true }}
-            className="font-playfair font-thin text-base md:text-4xl tracking-tight text-white-axis leading-tight"
+            className="font-playfair font-thin text-lg md:text-4xl tracking-tight text-white-axis leading-tight"
           >
             But they don't book.
           </motion.p>
