@@ -288,11 +288,14 @@ export default function FeatureSection() {
             transition={{ duration: 0.35, ease: "easeOut" as const }}
             // transition: applies to the whileHover y-lift only.
             // The scroll-in animation uses the transition inside cardItem.show.
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
+            className="bg-white-axis rounded-2xl px-6 pt-6 pb-3 md:p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[370px] md:h-auto overflow-hidden md:overflow-visible md:w-auto"
             // bg-white-axis: white card on black background — strong contrast.
             // rounded-2xl: soft, modern card corners.
             // flex flex-col gap-5: stacks card sections vertically.
             // shadow-sm: static base shadow (Framer Motion handles the hover lift).
+            // px-6 pt-6 pb-3: on mobile, reduces bottom padding (12px vs 24px) to close
+            // the gap between last element and card edge. md:p-6 restores full padding on desktop.
+            // h-[370px]: shorter fixed height on mobile to match the reduced bottom padding.
           >
             {/* Card top row: icon (left) + tag label (right) */}
             <div className="flex items-start justify-between">
@@ -322,7 +325,7 @@ export default function FeatureSection() {
                 The "selected" slot is highlighted in blue-axis via an animated overlay.
                 selectedSlot state cycles automatically every 2 seconds (see useEffect above).
             */}
-            <div className="flex flex-col gap-1.5 mt-auto">
+            <div className="flex flex-col gap-1.5">
               {/* border-soft-grey wraps the slot list to frame it as a widget */}
               <div className="border border-soft-grey rounded-xl p-2 flex flex-col gap-1.5">
               {["6:00 PM", "7:00 PM", "8:00 PM"].map((slot, i) => (
@@ -386,7 +389,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
+            className="bg-white-axis rounded-2xl px-6 pt-6 pb-3 md:p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[370px] md:h-auto overflow-hidden md:overflow-visible md:w-auto"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -501,7 +504,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
+            className="bg-white-axis rounded-2xl px-6 pt-6 pb-3 md:p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[370px] md:h-auto overflow-hidden md:overflow-visible md:w-auto"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -524,7 +527,7 @@ export default function FeatureSection() {
             {/* ── UI FRAGMENT: Class roster ──────────────────────────────── */}
             {/* border-soft-grey wraps the roster to frame it as a widget,
                 matching the same treatment used on the Bookings card above. */}
-            <div className="my-auto border border-soft-grey rounded-xl p-2 flex flex-col">
+            <div className="border border-soft-grey rounded-xl p-2 flex flex-col">
               {[
                 { time: "7:00 AM", name: "Pilates Flow", full: false },
                 { time: "9:00 AM", name: "Yoga Basics",  full: false },
@@ -572,7 +575,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
+            className="bg-white-axis rounded-2xl px-6 pt-6 pb-3 md:p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[370px] md:h-auto overflow-hidden md:overflow-visible md:w-auto"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -595,7 +598,7 @@ export default function FeatureSection() {
                 how the studio appears when someone searches on Google.
                 This is purely illustrative — no real Google API is used.
             */}
-            <div className="mt-auto flex flex-col gap-1.5 rounded-xl border border-soft-grey p-3">
+            <div className="flex flex-col gap-1.5 rounded-xl border border-soft-grey p-3">
               {/* Fake search bar */}
               <div className="flex items-center gap-2 border border-soft-grey rounded-full px-3 py-1.5 mb-2">
                 <span className="text-soft-grey shrink-0">
@@ -637,7 +640,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
+            className="bg-white-axis rounded-2xl px-6 pt-6 pb-3 md:p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[370px] md:h-auto overflow-hidden md:overflow-visible md:w-auto"
           >
             <div className="flex items-start">
               <span className="text-grey-axis">
@@ -655,7 +658,7 @@ export default function FeatureSection() {
             </div>
 
             {/* ── UI FRAGMENT: Client list ───────────────────────────────── */}
-            <div className="mt-auto border border-soft-grey rounded-xl p-3 flex flex-col gap-3">
+            <div className="border border-soft-grey rounded-xl p-3 flex flex-col gap-3">
               {[
                 { name: "Ana García",     status: "new"    },
                 { name: "Diego Ruiz",     status: "active" },
@@ -696,7 +699,7 @@ export default function FeatureSection() {
             variants={cardItem}
             whileHover={{ y: -6 }}
             transition={{ duration: 0.35, ease: "easeOut" as const }}
-            className="bg-white-axis rounded-2xl p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[400px] overflow-hidden md:h-auto md:overflow-visible md:w-auto"
+            className="bg-white-axis rounded-2xl px-6 pt-6 pb-3 md:p-6 flex flex-col gap-5 shadow-sm shrink-0 w-full snap-start h-[370px] md:h-auto overflow-hidden md:overflow-visible md:w-auto"
           >
             <div className="flex items-start justify-between">
               <span className="text-grey-axis">
@@ -722,7 +725,7 @@ export default function FeatureSection() {
                 Right panel: a website content block that fades in and out.
                 instaVisible state alternates every 3 seconds (see useEffect above).
             */}
-            <div className="flex items-center gap-3 mt-auto">
+            <div className="flex items-center gap-3">
               {/* Instagram post panel */}
               <div className="flex-1 rounded-xl border border-soft-grey aspect-square flex flex-col items-center justify-center gap-1.5">
                 <span className="text-grey-axis">
