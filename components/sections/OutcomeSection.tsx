@@ -143,6 +143,7 @@ export default function OutcomeSection() {
               // text-white-axis: full brightness — maximum contrast on grey-axis background.
 
               "leading-tight",
+              "tracking-wider",
               // leading-tight: line-height ≈ 1.25×. Keeps any line wraps compact.
             ].join(" ")}
           >
@@ -160,6 +161,7 @@ export default function OutcomeSection() {
               "tracking-tight",
               "text-white-axis",
               "leading-tight",
+              "tracking-wider",
               // Identical styling to line 1 — the three lines are parallel in
               // both meaning and visual weight. No hierarchy between them.
             ].join(" ")}
@@ -177,6 +179,7 @@ export default function OutcomeSection() {
               "font-playfair",
               "text-lg md:text-2xl",
               "text-white-axis",
+              "tracking-wider",
               // text-blue-axis: Electric Blue (#0033FF) — the single accent colour
               // in this section. Applied only to the final, most consequential line:
               // "Your audience becomes clients" is the entire value proposition.

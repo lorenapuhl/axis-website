@@ -31,8 +31,15 @@ These fixes should ONLY be applied to mobile viewport. Leave the md viewport lay
 - put the sections "schedule-updates", "news", "promotions", and "events" along with their respective content/images in rows one beneath each other. ask me to clarify.
 
 ### 3. `BenefitsSection.tsx`
-
 - I have the following problem (solve it for mobile AND md viewport): due to the extra space created every time the content/bullet points of a specific section unfold, the viewport scrolls back and forth by itself. how would you solve this ? give me some ideas and possibilies and explain how this would influence the viual layout. 
 - on mobile: how can i make sure that the subsection title + content/bullet points are visible with the according chart at the same time on the screen ? how would you change the design and layout of this section to ensure this ? give me some ideas and possibilities.
+
+### 4. `FeatureSection.tsx`
+- On mobile, create a swipting card carousel that swipes through all cards horizontally. ask me to clarify.
+
+### 5. `SystemVisualSection.tsx`
+- how would you create a horizontal layout ? could you create an effect that begins with the outer left nodes and dynamically lets come into view the right nodes one by one (like a swiping of flowing effect) ? after the effect, the user should be able to horizontally swipe to view each node again
+
+
 
 

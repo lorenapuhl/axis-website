@@ -60,21 +60,21 @@ export default function FinalCTA() {
 
           <motion.h2
             variants={item}
-            className="font-instrument tracking-tight text-white-axis text-4xl md:text-2xl lg:text-2xl"
+            className="font-instrument tracking-tight text-white-axis text-lg md:text-2xl lg:text-2xl"
           >
             Free prototype.
           </motion.h2>
 
           <motion.p
             variants={item}
-            className="font-instrument tracking-tight text-white-axis text-2xl md:text-2xl lg:text-2xl"
+            className="font-instrument tracking-tight text-white-axis text-lg md:text-2xl lg:text-2xl"
           >
             Free walkthrough.
           </motion.p>
 
           <motion.p
             variants={item}
-            className="font-instrument tracking-tight text-white-axis text-2xl md:text-2xl lg:text-2xl"
+            className="font-instrument tracking-tight text-white-axis text-lg md:text-2xl lg:text-2xl"
           >
             If it fits, we build.
           </motion.p>
@@ -106,7 +106,7 @@ export default function FinalCTA() {
           {/* Small print below the button — text-sm is consistently small across all breakpoints */}
           <motion.p
             variants={item}
-            className="font-instrument tracking-tight text-white-axis text-sm"
+            className="font-instrument tracking-tight text-white-axis text-sm md:text-sm"
           >
             Get one of the first 5 spots ! <br />
             No setup fee. Cancel anytime.

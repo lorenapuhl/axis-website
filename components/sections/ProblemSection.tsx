@@ -352,7 +352,7 @@ export default function ProblemSection() {
               cardWidth={cardDims.width}
               cardHeight={cardDims.height}
               overlap={0.94}
-              spreadDeg={0}
+              spreadDeg={3}
               activeScale={1.06}
               inactiveScale={0.93}
               activeLiftPx={cardDims.lift}

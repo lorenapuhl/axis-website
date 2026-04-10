@@ -106,7 +106,7 @@ export function CardStack<T extends CardStackItem>({
   cardWidth = 520,
   cardHeight = 320,
 
-  overlap = 0.48,
+  overlap = 0.94,
   spreadDeg = 48,
 
   perspectivePx = 1100,
