@@ -136,7 +136,7 @@ export default function HeaderSection() {
           {/* ── Logo lockup ─────────────────────────────────────────────── */}
           {/* flex items-center gap-3: places the SVG mark and text side-by-side
               with 12px of space between them. */}
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
 
             {/* next/image is required for all images in this project — never use
                 a raw <img> tag. next/image automatically optimises the file
@@ -176,7 +176,7 @@ export default function HeaderSection() {
                 Client Conversion Systems
               </span>
             </div>
-          </div>
+          </Link>
 
           {/* ── Desktop Navigation ──────────────────────────────────────── */}
           {/* hidden md:flex: the nav is display:none on mobile (< 768px) and
