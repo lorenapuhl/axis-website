@@ -306,6 +306,41 @@ const timelineLineVariant: Variants = {
   show: { pathLength: 1, opacity: 1 },
 }
 
+// mobileVerticalLineVariant: the single track line that draws itself top-to-bottom on mobile,
+// behind all nodes and cards. transformOrigin "top" (set via style prop) makes scaleY grow
+// downward. Duration 2.5s covers the full sequence so the line leads the eye throughout.
+const mobileVerticalLineVariant: Variants = {
+  hidden: { scaleY: 0, opacity: 0 },
+  show: { scaleY: 1, opacity: 1, transition: { duration: 2.5, ease: "easeOut" as const, delay: 0 } },
+}
+
+// mobileNodeStampVariant: the entire node row (dot + label) stamps into place.
+// scale: 0.5 → 1 feels like a system checkpoint locking onto its position.
+// custom (d): absolute delay so each node appears in strict sequence after the line passes it.
+const mobileNodeStampVariant: Variants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  show: (d: number) => ({ opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" as const, delay: d } }),
+}
+
+// mobileNodeGlowVariant: one-shot glow that expands and fades as the node stamps in.
+// opacity/scale arrays are Framer Motion keyframes: 0 → peak → 0 gives a single pulse.
+// Signals the checkpoint has activated — like a node lighting up in the system diagram.
+const mobileNodeGlowVariant: Variants = {
+  hidden: { opacity: 0, scale: 1 },
+  show: (d: number) => ({
+    opacity: [0, 0.6, 0],
+    scale: [1, 2.5, 3.5],
+    transition: { duration: 0.8, ease: "easeOut" as const, delay: d },
+  }),
+}
+
+// mobileStepCardVariant: each card slides down (y: 20 → 0) after its node appears.
+// Top-to-bottom motion reinforces the downward reading direction of the timeline.
+const mobileStepCardVariant: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: (d: number) => ({ opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const, delay: d } }),
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
@@ -460,7 +495,7 @@ export default function PricingSection() {
               wrapping row on desktop. Updated copy matches the card guarantees. */}
           <motion.div
             variants={item}
-            className="flex flex-col gap-3 md:flex-row md:flex-wrap md:justify-center md:gap-10"
+            className="flex flex-col ml-20 gap-3 md:flex-row md:flex-wrap md:justify-center md:gap-10"
           >
             {["No setup fee", "No hidden costs", "3-month minimum", "Cancel anytime after", "Live in 7 days"].map((trust) => (
               <div key={trust} className="flex items-center gap-2">
@@ -903,11 +938,11 @@ export default function PricingSection() {
             From Instagram to bookings in 3 simple steps
           </motion.h2>
 
-          {/* Steps row:
-              flex-col: stacked vertically on mobile.
-              md:flex-row: side-by-side on desktop.
+          {/* Steps row — DESKTOP ONLY.
+              hidden: hides on mobile (the merged layout below takes over).
+              md:flex md:flex-row: side-by-side grid on desktop.
               items-stretch: all step cards share the same height on desktop. */}
-          <div className="flex flex-col md:flex-row items-stretch">
+          <div className="hidden md:flex md:flex-row items-stretch">
 
             {PROCESS_STEPS.map((step, index) => (
               // Fragment with key: lets us render the card and its connector
@@ -973,6 +1008,113 @@ export default function PricingSection() {
               </Fragment>
             ))}
           </div>
+
+          {/* ── MOBILE MERGED LAYOUT — nodes interleaved with cards ──────────
+              Visible on mobile only (md:hidden). Replaces both the desktop
+              step-card row and the old separate mobile timeline.
+              A single vertical line (A) draws top-to-bottom behind all elements.
+              Each node stamps in (B) then its card slides down (C).
+              The line is absolutely positioned at left-[5px] — the centre of the
+              10px-wide dot — so it always passes precisely through each node. */}
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="flex md:hidden flex-col relative"
+          >
+
+            {/* Vertical line — z-0 keeps it behind nodes (z-10) and cards (z-10).
+                bg-black-axis on each dot and bg-grey-axis on each card cover the
+                line as it passes through them, creating the "line behind" effect.
+                transformOrigin top (via style): scaleY grows downward from the first node. */}
+            <motion.div
+              className="absolute left-[5px] top-0 bottom-0 w-px bg-soft-grey/40 z-0 pointer-events-none"
+              style={{ transformOrigin: "top" }}
+              variants={mobileVerticalLineVariant}
+              aria-hidden="true"
+            />
+
+            {PROCESS_STEPS.map((step, index) => {
+              // Sequential delays: node 1 at 0.3s, card 1 at 0.5s,
+              // node 2 at 0.9s, card 2 at 1.1s, node 3 at 1.5s, card 3 at 1.7s.
+              // Each 0.9s gap matches the natural reading pace between checkpoints.
+              const nodeDelay = 0.3 + index * 0.9
+              const cardDelay = nodeDelay + 0.2
+              const nodeLabel = (["Day 1", "Days 2–7", "Days 7–8"] as const)[index]
+
+              return (
+                <div key={step.number} className="flex flex-col">
+
+                  {/* NODE ROW: ● Day X ──────────────────────────────────────────
+                      The whole row (dot + label) stamps in via mobileNodeStampVariant.
+                      z-10: floats above the absolutely-positioned vertical line. */}
+                  <motion.div
+                    variants={mobileNodeStampVariant}
+                    custom={nodeDelay}
+                    className="flex items-center gap-3 relative z-10 mb-4"
+                  >
+                    {/* Dot container: relative so the glow div can be abs-positioned inside */}
+                    <div
+                      className="relative flex items-center justify-center flex-shrink-0"
+                      style={{ width: "10px", height: "10px" }}
+                    >
+                      {/* One-shot glow: expands and fades once as the node stamps in.
+                          custom fires 0.1s after the node so the glow trails the stamp. */}
+                      <motion.div
+                        className="absolute rounded-full bg-blue-axis/40 pointer-events-none"
+                        style={{ width: "10px", height: "10px" }}
+                        aria-hidden="true"
+                        variants={mobileNodeGlowVariant}
+                        custom={nodeDelay + 0.1}
+                      />
+                      {/* bg-black-axis fills the dot so the vertical line doesn't bleed through */}
+                      <div className="w-2.5 h-2.5 rounded-full border border-soft-grey bg-black-axis relative z-10" />
+                    </div>
+
+                    {/* Day label — same style as the desktop timeline labels */}
+                    <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis">
+                      {nodeLabel}
+                    </p>
+                  </motion.div>
+
+                  {/* CARD ────────────────────────────────────────────────────────
+                      Slides down (y: 20 → 0) after its node — reinforces top-to-bottom
+                      reading direction (animation C).
+                      z-10: sits above the vertical line; bg-grey-axis covers the line
+                      so the "line passes behind card" effect is automatic. */}
+                  <motion.div
+                    variants={mobileStepCardVariant}
+                    custom={cardDelay}
+                    className="bg-grey-axis border border-white-axis/[0.06] rounded-2xl p-8 flex flex-col gap-4 relative z-10 mb-8"
+                  >
+                    {/* Large muted step number — decorative, signals position in sequence */}
+                    <span className="font-playfair text-4xl text-white-axis/20 leading-none">
+                      {step.number}
+                    </span>
+                    {/* h3: sub-item within the "3 simple steps" h2 section */}
+                    <h3 className="font-playfair uppercase tracking-tight text-white-axis text-lg leading-snug">
+                      {step.title}
+                    </h3>
+                    <ul className="flex flex-col gap-2">
+                      {step.bullets.map((bullet) => (
+                        <li key={bullet} className="flex items-start gap-3 font-instrument text-sm text-soft-grey">
+                          <span className="text-blue-axis text-xs mt-0.5 flex-shrink-0 w-3 text-center" aria-hidden="true">✓</span>
+                          {bullet}
+                        </li>
+                      ))}
+                    </ul>
+                    {/* Micro reassurance — italic blue, same as desktop cards */}
+                    <p className="font-instrument text-xs text-blue-axis uppercase tracking-widest mt-auto">
+                      {step.microLine}
+                    </p>
+                  </motion.div>
+
+                </div>
+              )
+            })}
+
+          </motion.div>
+          {/* END MOBILE MERGED LAYOUT */}
 
           {/* ── TIMELINE — SystemVisual-style circles + animated lines ────────
               On desktop: node wrappers use flex-1 (matching the step cards' flex-1)
@@ -1079,94 +1221,6 @@ export default function PricingSection() {
             </div>
             {/* END DESKTOP TIMELINE */}
 
-            {/* ── MOBILE TIMELINE — stacked vertically ─────────────────────── */}
-            <div className="flex md:hidden flex-col items-center">
-
-              {/* Node 1 */}
-              <motion.div
-                variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.1 }}
-                className="flex flex-col items-center text-center shrink-0"
-              >
-                <div className="w-3 h-3 rounded-full border border-soft-grey" />
-                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
-                  Day 1
-                </p>
-                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
-                  Call
-                </p>
-              </motion.div>
-
-              <div className="flex my-5" aria-hidden="true">
-                <svg width="2" height="32" viewBox="0 0 2 32">
-                  <motion.path
-                    d="M 1 0 L 1 32"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    fill="none"
-                    className="text-soft-grey"
-                    variants={timelineLineVariant}
-                    transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.4 }}
-                  />
-                </svg>
-              </div>
-
-              {/* Node 2 */}
-              <motion.div
-                variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.8 }}
-                className="flex flex-col items-center text-center shrink-0"
-              >
-                <div className="w-3 h-3 rounded-full border border-soft-grey" />
-                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
-                  Days 2–7
-                </p>
-                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
-                  Setup
-                </p>
-              </motion.div>
-
-              <div className="flex my-5" aria-hidden="true">
-                <svg width="2" height="32" viewBox="0 0 2 32">
-                  <motion.path
-                    d="M 1 0 L 1 32"
-                    stroke="currentColor"
-                    strokeWidth="0.5"
-                    fill="none"
-                    className="text-soft-grey"
-                    variants={timelineLineVariant}
-                    transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.1 }}
-                  />
-                </svg>
-              </div>
-
-              {/* Node 3 */}
-              <motion.div
-                variants={timelineNodeVariant}
-                transition={{ duration: 0.7, ease: "easeOut" as const, delay: 1.5 }}
-                className="flex flex-col items-center text-center shrink-0"
-              >
-                <div className="relative flex items-center justify-center">
-                  <motion.div
-                    className="absolute w-3 h-3 rounded-full bg-blue-axis/[0.40] pointer-events-none"
-                    aria-hidden="true"
-                    initial={{ opacity: 0, scale: 1 }}
-                    whileInView={{ opacity: [0, 0.5, 0], scale: [1, 3, 4.5] }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 2.0, duration: 1.2, ease: "easeOut" as const }}
-                  />
-                  <div className="w-3 h-3 rounded-full border border-white-axis relative z-10" />
-                </div>
-                <p className="font-instrument text-[10px] uppercase tracking-[0.2em] text-blue-axis mt-3 mb-1">
-                  Days 7-8
-                </p>
-                <p className="font-playfair uppercase tracking-tight text-white-axis text-sm">
-                  Launch
-                </p>
-              </motion.div>
-
-            </div>
-            {/* END MOBILE TIMELINE */}
 
           </motion.div>
           {/* END TIMELINE */}
