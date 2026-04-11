@@ -271,14 +271,14 @@ export default function AboutmeSection() {
                 rotateX/rotateY on the frame create a true depth illusion.
                 relative: required so the glow div can use absolute positioning outside
                 the overflow-hidden frame. */}
-            <div className="relative [perspective:1000px] w-[60%] max-w-[220px] md:w-full md:max-w-none mb-5 mx-auto">
+            <div className="relative [perspective:1000px] w-[80%] max-w-[300px] md:w-full md:max-w-none mb-5 mx-auto">
 
               {/* White glow beneath the frame — sits outside overflow-hidden so it bleeds
                   below the portrait edge and lifts it off the black background.
                   bg-white-axis/[0.10] + blur-xl: soft diffused glow using only brand tokens.
                   aria-hidden: purely decorative, invisible to screen readers. */}
               <div
-                className="absolute inset-x-2 -bottom-3 h-6 bg-white-axis/[0.10] blur-xl rounded-full"
+                className="absolute -top-4 -right-4 w-20 h-20 bg-white-axis/[0.30] blur-xl rounded-full"
                 aria-hidden="true"
               />
 
