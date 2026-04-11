@@ -196,7 +196,7 @@ export default function Step1({ initialData, onContinue }: Step1Props) {
           })}
         </div>
 
-        {/* Dynamic "We'll fix this by:" reveal — appears after 1+ selection */}
+        {/* Dynamic "We'll fix this by:" reveal — hidden on mobile, visible md+ */}
         <AnimatePresence>
           {fixLines.length > 0 && (
             <motion.div
@@ -205,7 +205,7 @@ export default function Step1({ initialData, onContinue }: Step1Props) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="mt-4 px-4 py-3 bg-zinc-900/60 border border-zinc-700 rounded-lg"
+              className="hidden md:block mt-4 px-4 py-3 bg-zinc-900/60 border border-zinc-700 rounded-lg"
             >
               {/* Small muted label */}
               <p className="font-instrument text-xs text-zinc-500 uppercase tracking-widest mb-2">
