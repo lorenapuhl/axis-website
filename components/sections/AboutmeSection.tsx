@@ -274,7 +274,7 @@ export default function AboutmeSection() {
                 aspect-square: 1:1 crop on both breakpoints.
                 overflow-hidden: clips the image and any absolute children to this box.
                 border border-white-axis/[0.08]: very subtle frame at 8% white opacity. */}
-            <div className="relative w-[60%] max-w-[220px] mx-auto md:w-full md:max-w-none aspect-square overflow-hidden border border-white-axis/[0.08] rounded-xl mb-5">
+            <div className="relative w-[60%] max-w-[220px] md:w-full md:max-w-none aspect-square overflow-hidden border border-white-axis/[0.08] rounded-xl mb-5">
 
               {/* motion.div wraps the image to animate a cinematic zoom-out:
                   scale 1.06 → 1.0 while fading in. This "settling" effect makes the
@@ -343,8 +343,8 @@ export default function AboutmeSection() {
                   transition={{ duration: 0.35, ease: "easeOut" as const }}
                   className="bg-white-axis/[0.04] border border-white-axis/[0.08] rounded-sm px-4 py-3 cursor-default"
                 >
-                  {/* Stat number — Playfair Display, magenta accent */}
-                  <div className="font-playfair text-xl text-white-axis leading-none mb-1">
+                  {/* Stat number — Playfair Display, blue accent */}
+                  <div className="font-playfair text-xl text-blue-axis leading-none mb-1">
                     {stat.num}
                   </div>
                   {/* Stat description — soft-grey base, bold keywords in white */}
