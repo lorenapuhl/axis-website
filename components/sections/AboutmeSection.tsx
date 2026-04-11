@@ -278,7 +278,7 @@ export default function AboutmeSection() {
                   bg-white-axis/[0.10] + blur-xl: soft diffused glow using only brand tokens.
                   aria-hidden: purely decorative, invisible to screen readers. */}
               <div
-                className="absolute -top-4 -right-4 w-20 h-20 bg-white-axis/[0.30] blur-xl rounded-full"
+                className="absolute -top-4 -right-4 w-20 h-20 bg-white-axis/[0.20] blur-xl rounded-full"
                 aria-hidden="true"
               />
 
