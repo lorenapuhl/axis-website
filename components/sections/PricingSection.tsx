@@ -716,7 +716,7 @@ export default function PricingSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="mb-24 md:mb-36 text-center"
+          className="mb-24 md:mb-36"
         >
 
           {/* h2: section-level headline per SEO rules — one per section.
@@ -724,7 +724,7 @@ export default function PricingSection() {
           <motion.h2
             variants={seqStep}
             custom={0}
-            className="font-playfair uppercase tracking-tight text-white-axis text-2xl md:text-3xl text-center mb-16"
+            className="font-playfair uppercase tracking-tight text-white-axis text-2xl md:text-3xl mb-16"
           >
             You don&apos;t have to figure this out
           </motion.h2>
@@ -732,7 +732,7 @@ export default function PricingSection() {
           {/* 3-column grid on desktop, stacked on mobile.
               Plain <div> — Framer Motion propagates "show" state through it to all
               motion descendants below without this needing to be a motion element. */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
 
             {/* ── COLUMNS 1 & 2 — Setup and Risk ───────────────────────────
                 Each column is a plain div — no stagger orchestration needed here
@@ -757,7 +757,7 @@ export default function PricingSection() {
                   {col.points.map((point, bulletIndex) => (
                     <li
                       key={point}
-                      className="flex items-start gap-3 font-instrument text-sm text-soft-grey justify-center md:justify-start"
+                      className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
                     >
                       {/* ✓ — on mobile: stamps into place (scale). On desktop: slides from left.
                           custom passes the absolute delay; the variant function reads it as `d`. */}
@@ -856,7 +856,7 @@ export default function PricingSection() {
 
                 {/* Dot indicator — shows which quote is active (same pattern as BenefitsSection).
                     3 small circles; active dot is full-white, inactive are muted. */}
-                <div className="flex justify-center gap-2 mt-5">
+                <div className="flex justify-start gap-2 mt-5">
                   {TRUST_QUOTES.map((_, i) => (
                     <motion.button
                       key={i}
