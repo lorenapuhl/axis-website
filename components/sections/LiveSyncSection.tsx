@@ -641,7 +641,7 @@ export default function LiveSyncSection() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5 }}
-                      className="font-instrument text-xs font-normal md:font-bold text-black-axis md:text-magenta-axis bg-black-axis/10 md:bg-magenta-axis/10 rounded-lg px-2 py-1 text-center uppercase tracking-wider"
+                      className="font-instrument text-xs font-normal md:font-bold text-black-axis md:text-magenta-axis text-center uppercase tracking-wider"
                     >
                       {urgencyLabel}
                     </motion.p>
