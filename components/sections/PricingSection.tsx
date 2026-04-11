@@ -460,7 +460,7 @@ export default function PricingSection() {
               wrapping row on desktop. Updated copy matches the card guarantees. */}
           <motion.div
             variants={item}
-            className="flex flex-col items-center gap-3 md:flex-row md:flex-wrap md:justify-center md:gap-10"
+            className="flex flex-col gap-3 md:flex-row md:flex-wrap md:justify-center md:gap-10"
           >
             {["No setup fee", "No hidden costs", "3-month minimum", "Cancel anytime after", "Live in 7 days"].map((trust) => (
               <div key={trust} className="flex items-center gap-2">
