@@ -266,49 +266,66 @@ export default function AboutmeSection() {
             viewport={{ once: true }}
           >
 
-            {/* PORTRAIT FRAME
-                Mobile: w-[60%] max-w-[220px] centers a compact portrait — prevents it
-                from filling the entire phone screen before content loads below it.
-                mx-auto: centers the portrait when it's narrower than the column.
-                Desktop (md:): drops the max-width cap and fills the column naturally.
-                aspect-square: 1:1 crop on both breakpoints.
-                overflow-hidden: clips the image and any absolute children to this box.
-                border border-white-axis/[0.08]: very subtle frame at 8% white opacity. */}
-            <div className="relative w-[60%] max-w-[220px] md:w-full md:max-w-none aspect-square overflow-hidden border border-white-axis/[0.08] rounded-xl mb-5">
+            {/* PORTRAIT WRAPPER
+                [perspective:1000px]: establishes a 3D perspective context so that
+                rotateX/rotateY on the frame create a true depth illusion.
+                relative: required so the glow div can use absolute positioning outside
+                the overflow-hidden frame. */}
+            <div className="relative [perspective:1000px] w-[60%] max-w-[220px] md:w-full md:max-w-none mb-5 mx-auto">
 
-              {/* motion.div wraps the image to animate a cinematic zoom-out:
-                  scale 1.06 → 1.0 while fading in. This "settling" effect makes the
-                  portrait feel like it's landing into place rather than just appearing.
-                  The image itself stays fill/object-cover; only its wrapper scales. */}
+              {/* White glow beneath the frame — sits outside overflow-hidden so it bleeds
+                  below the portrait edge and lifts it off the black background.
+                  bg-white-axis/[0.10] + blur-xl: soft diffused glow using only brand tokens.
+                  aria-hidden: purely decorative, invisible to screen readers. */}
+              <div
+                className="absolute inset-x-2 -bottom-3 h-6 bg-white-axis/[0.10] blur-xl rounded-full"
+                aria-hidden="true"
+              />
+
+              {/* PORTRAIT FRAME — converted to motion.div for 3D tilt on hover.
+                  [transform-style:preserve-3d]: renders children in 3D space,
+                  required for the tilt to look volumetric rather than flat.
+                  whileHover rotateY/rotateX: fixed-angle lean — confident, not gimmicky.
+                  overflow-hidden: clips the image and overlay tag to the frame boundary. */}
               <motion.div
-                className="absolute inset-0"
-                initial={{ scale: 1.06, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" as const }}
-                viewport={{ once: true }}
+                className="relative aspect-square overflow-hidden border border-white-axis/[0.08] rounded-xl [transform-style:preserve-3d]"
+                whileHover={{ rotateY: 6, rotateX: -3, scale: 1.02 }}
+                transition={{ duration: 0.5, ease: "easeOut" as const }}
               >
-                <Image
-                  src="/profile.png"
-                  alt="Lorena Puhl, Physicist and Tech Founder, creator of AXIS"
-                  fill
-                  className="object-cover object-top"
-                  priority
-                />
-              </motion.div>
 
-              {/* PORTRAIT OVERLAY TAG
-                  Pinned to the bottom-left corner of the portrait frame.
-                  bg-grey-axis/90: semi-transparent dark surface (#121212 at 90% opacity)
-                  so the name remains readable against any photo background.
-                  backdrop-blur-sm: soft blur blends the tag with the photo beneath. */}
-              <div className="absolute bottom-4 left-4 bg-grey-axis/90 backdrop-blur-sm border border-white-axis/[0.08] rounded-sm px-3 py-2">
-                <p className="font-instrument text-[13px] font-medium text-white-axis mb-[3px] leading-none">
-                  Lorena Puhl
-                </p>
-                <p className="font-instrument text-[11px] text-soft-grey leading-none">
-                  Physicist &amp; Tech Founder
-                </p>
-              </div>
+                {/* Zoom-out entrance + grayscale filter.
+                    grayscale: Tailwind CSS filter class — converts photo to black & white.
+                    scale 1.06 → 1.0 while fading in gives a cinematic "settling" feel. */}
+                <motion.div
+                  className="absolute inset-0 grayscale"
+                  initial={{ scale: 1.06, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.8, ease: "easeOut" as const }}
+                  viewport={{ once: true }}
+                >
+                  <Image
+                    src="/profile.png"
+                    alt="Lorena Puhl, Physicist and Tech Founder, creator of AXIS"
+                    fill
+                    className="object-cover object-top"
+                    priority
+                  />
+                </motion.div>
+
+                {/* PORTRAIT OVERLAY TAG
+                    Pinned to the bottom-left corner of the portrait frame.
+                    bg-grey-axis/90: semi-transparent dark surface at 90% opacity
+                    so the name stays readable against any photo background. */}
+                <div className="absolute bottom-4 left-4 bg-grey-axis/90 backdrop-blur-sm border border-white-axis/[0.08] rounded-sm px-3 py-2">
+                  <p className="font-instrument text-[13px] font-medium text-white-axis mb-[3px] leading-none">
+                    Lorena Puhl
+                  </p>
+                  <p className="font-instrument text-[11px] text-soft-grey leading-none">
+                    Physicist &amp; Tech Founder
+                  </p>
+                </div>
+
+              </motion.div>
 
             </div>
             {/* END PORTRAIT FRAME */}

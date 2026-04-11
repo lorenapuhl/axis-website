@@ -426,7 +426,7 @@ export default function Step2({ initialData, onBack, onBuild }: Step2Props) {
             hover:border-zinc-500 transition-colors
           "
         >
-          ← Back
+          Back
         </button>
 
         {/* "Build my preview" — primary CTA */}
@@ -440,7 +440,7 @@ export default function Step2({ initialData, onBack, onBuild }: Step2Props) {
             font-instrument text-sm font-semibold uppercase tracking-[0.15em]
           "
         >
-          Build my preview →
+          Build my preview
         </motion.button>
       </div>
 
