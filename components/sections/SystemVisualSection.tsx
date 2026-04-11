@@ -323,6 +323,11 @@ export default function SystemVisualSection() {
             // items-start: aligns node tops so dots sit on the same baseline regardless
             //   of how much content sits below each node.
 
+            "pt-6",
+            // pt-6: 24px top padding so the magenta glow halo on the last node
+            // has room to expand upward. overflow-x-auto implicitly clips overflow-y,
+            // so without this the top of the glow ring is cut off.
+
             "overflow-x-auto md:overflow-visible",
             // overflow-x-auto: on mobile the three nodes are wider than the screen,
             //   so the row scrolls horizontally. The user can swipe to reach each node.

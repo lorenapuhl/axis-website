@@ -81,6 +81,7 @@ export default function OutcomeSection() {
         // Generous whitespace makes the section feel editorial, not crowded.
 
         "text-center",
+        "py-70",
         // Centers all inline/inline-block content (text, motion elements)
         // within their containing block. Combined with mx-auto on the inner
         // wrapper, this makes everything appear centred on the page.
