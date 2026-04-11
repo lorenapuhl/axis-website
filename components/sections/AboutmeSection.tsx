@@ -248,7 +248,7 @@ export default function AboutmeSection() {
           viewport={{ once: true }}
         >
           Built by a scientist,{" "}<br />
-          <em className="text-blue-axis">designed for the studio floor.</em>
+          <em className="text-white-axis">designed for the studio floor.</em>
         </motion.h2>
 
         {/* ── TWO-COLUMN GRID ────────────────────────────────────────────────── */}
