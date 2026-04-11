@@ -852,9 +852,9 @@ export default function PricingSection() {
                 <div
                   onMouseEnter={() => setQuoteHovered(true)}
                   onMouseLeave={() => setQuoteHovered(false)}
-                  // min-h-[160px]: reserves enough vertical space for the longest quote
-                  // so the section height never jumps when quotes switch.
-                  className="relative min-h-[160px]"
+                  // h-[210px] overflow-hidden: fixed height sized to the longest quote (quote 2,
+                  // 3 lines of body + attribution) so the section height never shifts when quotes switch.
+                  className="relative h-[210px] overflow-hidden"
                 >
                   {/* AnimatePresence: the exiting quote fades + slides up before
                       the entering quote fades + slides up from below.
@@ -862,6 +862,9 @@ export default function PricingSection() {
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={quoteIndex}
+                      // absolute inset-0: layers all quotes in the same fixed space so entering/exiting
+                      // quotes don't affect document flow or push surrounding content.
+                      className="absolute inset-0"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -1323,7 +1326,7 @@ export default function PricingSection() {
               "Direct contact with us",
               "Launch in 7 days",
             ].map((point) => (
-              <div key={point} className="flex items-center ml-15 gap-2">
+              <div key={point} className="flex items-center ml-5 gap-2">
                 <span className="text-blue-axis text-xs" aria-hidden="true">✓</span>
                 <span className="font-instrument text-soft-grey text-xs uppercase tracking-widest">
                   {point}
