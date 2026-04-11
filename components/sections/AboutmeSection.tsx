@@ -106,10 +106,11 @@ const containerVariants: Variants = {
   show: { transition: { staggerChildren: 0.12 } },
 }
 
-// itemVariants: each staggered child fades in and rises 20px from below.
+// itemVariants: each staggered child fades in, rises 20px, AND grows from 95% scale.
+// The scale-up reinforces that elements are "assembling" into place.
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: "easeOut" as const } },
 }
 
 // formContainer: stagger the three form fields in on entry, then stagger them
@@ -198,8 +199,9 @@ export default function AboutmeSection() {
 
   return (
     // bg-black-axis: primary surface (#000000)
-    // Mobile-first padding: py-20 px-6 | Desktop override: md:py-36 md:px-12
-    <section className="bg-black-axis py-20 px-6 md:py-36 md:px-12">
+    // Mobile-first: pt-28 gives generous space beneath the fixed header.
+    // pb-20 keeps bottom breathing room. Desktop overrides both via md:py-36.
+    <section className="bg-black-axis pt-28 pb-20 px-6 md:py-36 md:px-12">
       <div className="max-w-6xl mx-auto">
 
         {/* ── SECTION LABEL ──────────────────────────────────────────────────── */}
@@ -220,45 +222,79 @@ export default function AboutmeSection() {
             <span className="font-instrument text-[11px] uppercase tracking-[0.14em] text-blue-axis font-medium">
               Founding Story
             </span>
-            {/* Decorative line — visual punctuation after the label.
+            {/* Decorative line — animates its width from 0 to w-8 on scroll entry.
+                This gives the label a "drawing itself" reveal.
                 aria-hidden: invisible to screen readers, purely decorative. */}
-            <span className="block w-8 h-px bg-blue-axis opacity-50" aria-hidden="true" />
+            <motion.span
+              className="block h-px bg-blue-axis opacity-50"
+              initial={{ width: 0 }}
+              whileInView={{ width: 32 }}
+              transition={{ duration: 0.6, ease: "easeOut" as const, delay: 0.3 }}
+              viewport={{ once: true }}
+              aria-hidden="true"
+            />
           </div>
         </motion.div>
+
+        {/* ── MOBILE-ONLY HEADLINE ───────────────────────────────────────────── */}
+        {/* On mobile the grid stacks portrait first, so the headline would appear
+            below the photo. Instead we render it here — between the label and the
+            grid — and hide it at md: breakpoint where the right column owns it. */}
+        <motion.h2
+          className="md:hidden font-playfair uppercase tracking-tight text-white-axis text-3xl leading-tight mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.1 }}
+          viewport={{ once: true }}
+        >
+          Built by a scientist,{" "}<br />
+          <em className="text-blue-axis">designed for the studio floor.</em>
+        </motion.h2>
 
         {/* ── TWO-COLUMN GRID ────────────────────────────────────────────────── */}
         {/* Mobile: single column stacked | Desktop: left 1fr, right 1.4fr
             The fractional columns match the HTML template's grid proportions.
             items-start: columns align to their top edges, not stretched. */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-10 md:gap-14 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] gap-6 md:gap-14 items-start">
 
           {/* ── LEFT COLUMN: PORTRAIT + STATS ────────────────────────────────── */}
           {/* Left column fades in slightly after the label (delay 0.1s). */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" as const, delay: 0.1 }}
+            transition={{ duration: 0.8, ease: "easeOut" as const, delay: 0.1 }}
             viewport={{ once: true }}
           >
 
             {/* PORTRAIT FRAME
-                relative: required so the overlay tag can use absolute positioning.
-                aspect-[3/4]: portrait crop ratio — taller than wide.
+                Mobile: w-[60%] max-w-[220px] centers a compact portrait — prevents it
+                from filling the entire phone screen before content loads below it.
+                mx-auto: centers the portrait when it's narrower than the column.
+                Desktop (md:): drops the max-width cap and fills the column naturally.
+                aspect-square: 1:1 crop on both breakpoints.
                 overflow-hidden: clips the image and any absolute children to this box.
                 border border-white-axis/[0.08]: very subtle frame at 8% white opacity. */}
-            <div className="relative w-100 aspect-square overflow-hidden border border-white-axis/[0.08] rounded-xl mb-5">
+            <div className="relative w-[60%] max-w-[220px] mx-auto md:w-full md:max-w-none aspect-square overflow-hidden border border-white-axis/[0.08] rounded-xl mb-5">
 
-              {/* next/image with fill prop: stretches to fill the relative parent.
-                  object-cover: scales and crops the photo to cover the container
-                  without distortion — same as CSS background-size: cover.
-                  Priority: loads eagerly since it's visible near the top of the page. */}
-              <Image
-                src="/profile.png"
-                alt="Lorena Puhl, Physicist and Tech Founder, creator of AXIS"
-                fill
-                className="object-cover object-top"
-                priority
-              />
+              {/* motion.div wraps the image to animate a cinematic zoom-out:
+                  scale 1.06 → 1.0 while fading in. This "settling" effect makes the
+                  portrait feel like it's landing into place rather than just appearing.
+                  The image itself stays fill/object-cover; only its wrapper scales. */}
+              <motion.div
+                className="absolute inset-0"
+                initial={{ scale: 1.06, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" as const }}
+                viewport={{ once: true }}
+              >
+                <Image
+                  src="/profile.png"
+                  alt="Lorena Puhl, Physicist and Tech Founder, creator of AXIS"
+                  fill
+                  className="object-cover object-top"
+                  priority
+                />
+              </motion.div>
 
               {/* PORTRAIT OVERLAY TAG
                   Pinned to the bottom-left corner of the portrait frame.
@@ -300,7 +336,10 @@ export default function AboutmeSection() {
                 <motion.div
                   key={index}
                   variants={itemVariants}
-                  whileHover={{ scale: 1.02 }}
+                  // On hover: gentle scale + border brightens from 8% → 20% white opacity.
+                  // The border animation uses a Framer Motion style prop since Tailwind
+                  // opacity modifiers can't be transitioned directly at runtime.
+                  whileHover={{ scale: 1.02, borderColor: "rgba(255,255,255,0.20)" }}
                   transition={{ duration: 0.35, ease: "easeOut" as const }}
                   className="bg-white-axis/[0.04] border border-white-axis/[0.08] rounded-sm px-4 py-3 cursor-default"
                 >
@@ -334,7 +373,9 @@ export default function AboutmeSection() {
                 font-playfair uppercase tracking-tight: AXIS headline convention.
                 <em>: the italicised phrase uses UV accent to mark the key message.
                 Playfair italic + uppercase creates a deliberate typographic contrast. */}
-            <h2 className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight mb-7">
+            {/* hidden on mobile — the headline is rendered above the grid instead.
+                Shown again at md: where it belongs inside the right column. */}
+            <h2 className="hidden md:block font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-4xl leading-tight mb-7">
               Built by a scientist,{" "} <br />
               <em className="text-blue-axis">designed for the studio floor.</em>
             </h2>
@@ -407,7 +448,13 @@ export default function AboutmeSection() {
                 <motion.span
                   key={index}
                   variants={itemVariants}
-                  whileHover={{ scale: 1.05 }}
+                  // On hover: scale + border brightens + faint background fills in.
+                  // backgroundColor uses a rgba string that Framer Motion can interpolate.
+                  whileHover={{
+                    scale: 1.05,
+                    borderColor: "rgba(255,255,255,0.28)",
+                    backgroundColor: "rgba(255,255,255,0.06)",
+                  }}
                   transition={{ duration: 0.35, ease: "easeOut" as const }}
                   className="font-instrument text-[12px] text-white-axis border border-white-axis/10 rounded-full px-[14px] py-[6px] tracking-[0.02em] cursor-default"
                 >
