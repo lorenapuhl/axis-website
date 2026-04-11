@@ -38,6 +38,7 @@ type PricingCard = {
   tagline: string
   features: string[]
   missing?: string[]   // features shown as greyed-out with × (Starter card only)
+  roi: string          // pre-formatted ROI text shown in the blue "This pays for itself" box
   painLine: string
   cta: string
   isHero: boolean      // true only for Growth — drives all the special styling
@@ -70,9 +71,9 @@ const PRICING_CARDS: PricingCard[] = [
     ],
     missing: [
       "Online booking",
-      "Payments",
-      "Memberships",
+      "Online payments",
     ],
+    roi: "Just 2 extra bookings / month → $160",
     painLine: "For studios that just need an online presence",
     cta: "Get started",
     isHero: false,
@@ -83,12 +84,14 @@ const PRICING_CARDS: PricingCard[] = [
     price: "$249",
     tagline: "Everything you need to get booked and paid automatically",
     features: [
+      "Everything from Starter",
       "Accept bookings 24/7",
       "Sell memberships & packages",
-      "Get paid automatically",
-      "No more DM back-and-forth",
-      "Clear client overview",
+      "Manage class booking-status",
+      "Client list and overview dashboard",
+      "SEO Google Search optimization",
     ],
+    roi: "Just 3 extra bookings / month → $240",
     painLine: "Stop answering the same messages every day.",
     cta: "Start accepting bookings",
     isHero: true,
@@ -99,11 +102,14 @@ const PRICING_CARDS: PricingCard[] = [
     price: "$399",
     tagline: "For scaling studios",
     features: [
-      "Advanced analytics",
-      "Custom landing pages",
-      "SEO optimization",
-      "Priority support",
+      "All features from Growth",
+      "All-in-One Studio Command Dashboard",
+      "Weekly Performance Reports (auto-generated)",
+      "Revenue Dashboard (bookings, memberships, LTV)",
+      "Offer Performance Tracking & Demand Insights (optimize schedule and offers for max bookings)",
+      "Automated Client Segmentation (new, active, inactive clients)",
     ],
+    roi: "Just 5 extra bookings / month → $400",
     painLine: "For studios running ads or multiple locations",
     cta: "Scale your studio",
     isHero: false,
@@ -253,6 +259,30 @@ export default function PricingSection() {
   // All three card CTAs and the repeat CTA use this to open the funnel modal.
   const { openModal } = useCTAModal()
 
+  // carouselRef: attached to the pricing card scroll container so we can read
+  // scrollLeft on each scroll event and update the dot indicators accordingly.
+  const carouselRef = useRef<HTMLDivElement>(null)
+
+  // activeCard: index (0, 1, or 2) of the card currently snapped into view
+  // in the mobile carousel. Drives which dot appears full-white.
+  const [activeCard, setActiveCard] = useState(0)
+
+  // Updates activeCard as the user swipes the mobile carousel.
+  // scrollLeft / (scrollWidth - offsetWidth) gives a 0→1 scroll fraction.
+  // Multiplying by (cardCount - 1) and rounding gives the snapped card index.
+  // passive: true — tells the browser we won't call preventDefault(), so it
+  // can handle scroll immediately without waiting for this listener to finish.
+  useEffect(() => {
+    const el = carouselRef.current
+    if (!el) return
+    const handleScroll = () => {
+      const fraction = el.scrollLeft / Math.max(el.scrollWidth - el.offsetWidth, 1)
+      setActiveCard(Math.round(fraction * (PRICING_CARDS.length - 1)))
+    }
+    el.addEventListener("scroll", handleScroll, { passive: true })
+    return () => el.removeEventListener("scroll", handleScroll)
+  }, [])
+
   // quoteIndex: which of the 3 testimonial quotes is currently visible.
   // Cycles 0 → 1 → 2 → 0 every 3 seconds unless the user is hovering.
   const [quoteIndex, setQuoteIndex] = useState(0)
@@ -301,7 +331,10 @@ export default function PricingSection() {
     // md:py-36 md:px-12: desktop padding (≥768px viewport).
     // Tailwind is mobile-first: unprefixed classes apply to all sizes;
     // md: prefix overrides at the medium breakpoint and above.
-    <section className="bg-black-axis py-20 px-6 md:py-36 md:px-12">
+    // pt-32: extra top padding on mobile gives breathing room between the page
+    // header and the "Pricing" accent label. pb-20 keeps the bottom balanced.
+    // md:py-36: restores the standard symmetric section padding on desktop.
+    <section className="bg-black-axis pt-32 pb-20 px-6 md:py-36 md:px-12">
 
       {/* max-w-6xl mx-auto: caps content width at 72rem and centres it.
           All section content must live inside this wrapper per component.md. */}
@@ -353,13 +386,15 @@ export default function PricingSection() {
           {/* ── MICRO TRUST BAR ────────────────────────────────────────────
               4 short trust signals in a horizontal row.
               flex-wrap: naturally wraps to a second row on narrow screens. */}
+          {/* flex-col items-center: stacks trust signals vertically on mobile.
+              md:flex-row md:flex-wrap md:justify-center: switches to a horizontal
+              wrapping row on desktop. Updated copy matches the card guarantees. */}
           <motion.div
             variants={item}
-            className="flex flex-wrap justify-center gap-6 md:gap-10"
+            className="flex flex-col items-center gap-3 md:flex-row md:flex-wrap md:justify-center md:gap-10"
           >
-            {["Live in 7 days", "We set everything up", "No tech skills needed", "No hidden costs"].map((trust) => (
+            {["No setup fee", "No hidden costs", "3-month minimum", "Cancel anytime after", "Live in 7 days"].map((trust) => (
               <div key={trust} className="flex items-center gap-2">
-                {/* Checkmark: serves a clear trust-signal purpose, not decorative */}
                 <span className="text-blue-axis text-xs" aria-hidden="true">✓</span>
                 <span className="font-instrument text-soft-grey text-xs uppercase tracking-widest">
                   {trust}
@@ -378,15 +413,21 @@ export default function PricingSection() {
             Growth (hero) card: slightly larger, lifted, highlighted border.
         ══════════════════════════════════════════════════════════════════ */}
 
+        {/* PRICING CARDS
+            Mobile: horizontal snap-scroll carousel. Each card is 75vw wide so the
+            next card peeks in from the right, signalling the user can swipe.
+            overflow-x-auto snap-x snap-mandatory: browser handles snapping per card.
+            [scrollbar-width:none]: hides scrollbar in Firefox.
+            [&::-webkit-scrollbar]:hidden: hides scrollbar in Chrome / Safari.
+            Desktop (md+): switches to a standard 3-column grid.
+            md:overflow-visible: resets overflow so the hero card's scale-up isn't clipped. */}
         <motion.div
+          ref={carouselRef}
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          // grid-cols-1: single column on mobile (< 768px).
-          // md:grid-cols-3: three equal-width columns on desktop.
-          // items-start: cards align to their top edge (not stretched to match height).
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 items-start mb-24 md:mb-36"
+          className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden gap-4 md:grid md:grid-cols-3 md:overflow-visible md:items-stretch mb-0 md:mb-36"
         >
 
           {PRICING_CARDS.map((card) => (
@@ -394,10 +435,13 @@ export default function PricingSection() {
               key={card.id}
               variants={item}
               className={[
+                // snap-start: card snaps to the left edge of the carousel on mobile.
+                // shrink-0 w-[75vw]: fixed width at 75% of viewport so the next card
+                //   peeks in from the right (~30px on a 375px phone).
+                // md:w-auto: inside the desktop grid, card width is grid-controlled.
+                "snap-start shrink-0 w-[75vw] md:w-auto",
                 // All cards share: dark surface, rounded corners, flex column layout.
                 "relative overflow-hidden rounded-2xl p-8 flex flex-col",
-                // Growth card gets: blue border, 5% scale-up, negative top margin for visual lift.
-                // Other cards get: very faint white border.
                 card.isHero
                   ? "bg-grey-axis border border-blue-axis md:scale-105 md:-mt-4"
                   : "bg-grey-axis border border-white-axis/[0.08]",
@@ -472,62 +516,46 @@ export default function PricingSection() {
                 <span className="font-instrument text-soft-grey text-sm ml-2">/ month</span>
               </div>
 
-              {/* ── VALUE BLOCK (Growth card only) ───────────────────────────
-                  A highlighted container showing the ROI calculation.
-                  bg-blue-axis/[0.08]: very subtle blue background tint.
-                  border-blue-axis/[0.20]: faint accent border for emphasis. */}
-              {card.isHero && (
-                <div className="bg-blue-axis/[0.08] border border-blue-axis/[0.20] rounded-xl p-4 mb-6">
-                  <p className="font-instrument text-soft-grey text-xs leading-relaxed text-center">
-                  <span className="text-white-axis font-semibold">This pays for itself:</span> <br />
-                    If 1 client = $80<br />
-                    Just 3 extra bookings / month → $240<br />
-                    
-                  </p>
-                </div>
-              )}
+              {/* ── VALUE BLOCK — shown on every card ────────────────────────
+                  card.roi holds the plan-specific ROI line (e.g. "Just 2 extra
+                  bookings / month → $160"). Rendered on all three cards now. */}
+              <div className="bg-blue-axis/[0.08] border border-blue-axis/[0.20] rounded-xl p-4 mb-6">
+                <p className="font-instrument text-soft-grey text-xs leading-relaxed text-center">
+                  <span className="text-white-axis font-semibold">This pays for itself:</span><br />
+                  If 1 client = $80<br />
+                  {card.roi}
+                </p>
+              </div>
 
               {/* ── FEATURES LIST ─────────────────────────────────────────── */}
               <ul className="flex flex-col gap-3 my-6">
-                {/* Included features */}
-                {card.features.map((feature) => (
+                {/* Included features.
+                    featureIndex 0 on Growth → "Everything from <em>Starter</em>"
+                    featureIndex 0 on Pro   → "All features from <em>Growth</em>"
+                    The <em> tag renders the plan name in italics to show inheritance.
+                    All other bullets render as plain text strings. */}
+                {card.features.map((feature, featureIndex) => (
                   <li key={feature} className="flex items-start gap-3 font-instrument text-sm text-soft-grey">
-                    {/* Checkmark: meaningful indicator that the feature is included */}
                     <span className="text-blue-axis text-xs mt-0.5 flex-shrink-0" aria-hidden="true">✓</span>
-                    {feature}
+                    {featureIndex === 0 && card.id === "growth" ? (
+                      <>Everything from <em>Starter</em></>
+                    ) : featureIndex === 0 && card.id === "pro" ? (
+                      <>All features from <em>Growth</em></>
+                    ) : (
+                      feature
+                    )}
                   </li>
                 ))}
 
-                {/* Missing features (Starter only) — greyed out with × symbol.
-                    Purpose: contrast that steers users toward the Growth plan. */}
+                {/* Missing features (Starter only) — greyed out with × symbol. */}
                 {card.missing && card.missing.map((feature) => (
                   <li key={feature} className="flex items-start gap-3 font-instrument text-sm text-white-axis/25">
-                    {/* × symbol: signals "not included" — serves a clear UX purpose */}
                     <span className="text-xs mt-0.5 flex-shrink-0" aria-hidden="true">×</span>
                     {feature}
                   </li>
                 ))}
               </ul>
 
-              {/* ── RISK REVERSAL (Growth card only) ─────────────────────────
-                  Five guarantee statements that reduce perceived risk. */}
-              {card.isHero && (
-                <ul className="flex flex-col gap-2 mb-6">
-                  {[
-                    "No setup fee",
-                    "No hidden costs",
-                    "No revenue cuts",
-                    "3-month minimum",
-                    "Cancel anytime after",
-                  ].map((point) => (
-                    <li key={point} className="flex items-center gap-2 font-instrument text-sm text-soft-grey">
-                      {/* Centre dot: minimal, purposeful separator */}
-                      <span className="text-blue-axis text-[10px]" aria-hidden="true">·</span>
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              )}
 
               {/* ── PAIN LINE ─────────────────────────────────────────────── */}
               <p className={[
@@ -555,25 +583,51 @@ export default function PricingSection() {
                 {card.cta}
               </motion.button>
 
-              {/* ── SUBTEXT UNDER BUTTON (Growth card only) ───────────────── */}
-              {card.isHero && (
-                <div className="mt-4 flex flex-col gap-1 text-center">
-                  {[
-                    "Takes less than 2 minutes to start",
-                    "No credit card required",
-                    "Setup begins within 24h",
-                  ].map((line) => (
-                    <p key={line} className="font-instrument text-xs text-soft-grey">
-                      {line}
-                    </p>
-                  ))}
-                </div>
-              )}
+              {/* ── SUBTEXT UNDER BUTTON — shown on all cards ─────────────── */}
+              <div className="mt-4 flex flex-col gap-1 text-center">
+                {[
+                  "Takes less than 2 minutes to start",
+                  "No credit card required",
+                ].map((line) => (
+                  <p key={line} className="font-instrument text-xs text-soft-grey">
+                    {line}
+                  </p>
+                ))}
+              </div>
 
             </motion.div>
           ))}
 
         </motion.div>
+
+        {/* ── CAROUSEL DOT INDICATORS — mobile only ──────────────────────
+            Three dots below the carousel show which card is currently snapped.
+            activeCard (updated by the scroll listener above) drives which dot
+            is full-white vs muted.
+            Clicking a dot calls scrollIntoView on the matching card element,
+            which the browser animates smoothly into the snap position.
+            md:hidden: dots are hidden on desktop where all three cards are visible. */}
+        <div className="flex justify-center gap-3 mt-4 mb-24 md:hidden">
+          {PRICING_CARDS.map((card, i) => (
+            <motion.button
+              key={card.id}
+              onClick={() => {
+                if (!carouselRef.current) return
+                // .children gives the list of card motion.div elements.
+                // scrollIntoView with inline: "start" matches the snap-start alignment.
+                const children = carouselRef.current.children
+                children[i]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" })
+              }}
+              className={[
+                "w-1.5 h-1.5 rounded-full transition-colors",
+                i === activeCard ? "bg-white-axis" : "bg-white-axis/20",
+              ].join(" ")}
+              whileHover={{ scale: 1.4 }}
+              transition={{ duration: 0.2, ease: "easeOut" as const }}
+              aria-label={`Show ${card.title} card`}
+            />
+          ))}
+        </div>
         {/* END BLOCK 2 */}
 
 
