@@ -751,7 +751,7 @@ export default function PricingSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="mb-24 md:mb-36"
+          className="ml-5 mb-24 md:mb-36"
         >
 
           {/* h2: section-level headline per SEO rules — one per section.
@@ -1316,14 +1316,14 @@ export default function PricingSection() {
           {/* ── HUMAN CONNECTION ──────────────────────────────────────────── */}
           <motion.div
             variants={item}
-            className="flex flex-col md:flex-row justify-center gap-6 md:gap-12 mb-12"
+            className="flex flex-col md:flex-row gap-6 md:gap-12 mb-12"
           >
             {[
               "Free setup",
               "Direct contact with us",
               "Launch in 7 days",
             ].map((point) => (
-              <div key={point} className="flex items-center justify-center gap-2">
+              <div key={point} className="flex items-center ml-15 gap-2">
                 <span className="text-blue-axis text-xs" aria-hidden="true">✓</span>
                 <span className="font-instrument text-soft-grey text-xs uppercase tracking-widest">
                   {point}
@@ -1343,7 +1343,7 @@ export default function PricingSection() {
               get your axis
             </motion.button>
             <motion.p
-            className="font-instrument tracking-tight text-white-axis text-sm md:text-sm"
+            className="font-instrument tracking-tight text-soft-grey text-sm md:text-sm mt-3"
           >
             Start in less than 2 minutes <br />
             No credit card required
