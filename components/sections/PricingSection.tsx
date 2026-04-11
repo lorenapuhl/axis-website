@@ -311,7 +311,7 @@ const timelineLineVariant: Variants = {
 // downward. Duration 2.5s covers the full sequence so the line leads the eye throughout.
 const mobileVerticalLineVariant: Variants = {
   hidden: { scaleY: 0, opacity: 0 },
-  show: { scaleY: 1, opacity: 1, transition: { duration: 2.5, ease: "easeOut" as const, delay: 0 } },
+  show: { scaleY: 1, opacity: 1, transition: { duration: 5.5, ease: "easeOut" as const, delay: 0 } },
 }
 
 // mobileNodeStampVariant: the entire node row (dot + label) stamps into place.
@@ -1035,11 +1035,15 @@ export default function PricingSection() {
             />
 
             {PROCESS_STEPS.map((step, index) => {
-              // Sequential delays: node 1 at 0.3s, card 1 at 0.5s,
-              // node 2 at 0.9s, card 2 at 1.1s, node 3 at 1.5s, card 3 at 1.7s.
-              // Each 0.9s gap matches the natural reading pace between checkpoints.
-              const nodeDelay = 0.3 + index * 0.9
-              const cardDelay = nodeDelay + 0.2
+              // Delays timed so each node appears just as the line reaches it,
+              // and each card follows 0.4s later — giving the feeling of the line
+              // "leading" the eye to each checkpoint before the content reveals.
+              // node 1: 0.5s, card 1: 0.9s
+              // node 2: 2.5s, card 2: 2.9s
+              // node 3: 4.5s, card 3: 4.9s
+              const NODE_DELAYS = [0.5, 2.5, 4.5] as const
+              const nodeDelay = NODE_DELAYS[index]
+              const cardDelay = nodeDelay + 0.4
               const nodeLabel = (["Day 1", "Days 2–7", "Days 7–8"] as const)[index]
 
               return (
