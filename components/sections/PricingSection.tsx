@@ -73,7 +73,7 @@ const PRICING_CARDS: PricingCard[] = [
       "Online booking",
       "Online payments",
     ],
-    roi: "Just 2 extra bookings / month → $160",
+    roi: "→ Just 2 extra bookings / month",
     painLine: "For studios that just need an online presence",
     cta: "Get started",
     isHero: false,
@@ -82,7 +82,7 @@ const PRICING_CARDS: PricingCard[] = [
     id: "growth",
     title: "Growth",
     price: "$249",
-    tagline: "Everything you need to get booked and paid automatically",
+    tagline: "Get booked and paid automatically",
     features: [
       "Everything from Starter",
       "Accept bookings 24/7",
@@ -91,7 +91,7 @@ const PRICING_CARDS: PricingCard[] = [
       "Client list and overview dashboard",
       "SEO Google Search optimization",
     ],
-    roi: "Just 3 extra bookings / month → $240",
+    roi: "→ Just 3 extra bookings / month",
     painLine: "Stop answering the same messages every day.",
     cta: "Start accepting bookings",
     isHero: true,
@@ -104,13 +104,13 @@ const PRICING_CARDS: PricingCard[] = [
     features: [
       "All features from Growth",
       "All-in-One Studio Command Dashboard",
-      "Weekly Performance Reports (auto-generated)",
+      "Weekly Performance Reports",
       "Revenue Dashboard (bookings, memberships, LTV)",
       "Offer Performance Tracking & Demand Insights (optimize schedule and offers for max bookings)",
       "Automated Client Segmentation (new, active, inactive clients)",
     ],
-    roi: "Just 5 extra bookings / month → $400",
-    painLine: "For studios running ads or multiple locations",
+    roi: "→ Just 5 extra bookings / month",
+    painLine: "For studios with high demand",
     cta: "Scale your studio",
     isHero: false,
   },
@@ -235,6 +235,20 @@ const labelVariant: Variants = {
   show: { opacity: 1, transition: { duration: 0.5, ease: "easeOut" as const } },
 }
 
+// mobileCheckmarkVariant: on mobile the ✓ "stamps" into place (scale 0.4 → 1)
+// rather than sliding from the left. Feels like a quality seal confirming each point.
+const mobileCheckmarkVariant: Variants = {
+  hidden: { opacity: 0, scale: 0.4 },
+  show: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" as const } },
+}
+
+// mobileLabelVariant: on mobile the text slides in from the left after the stamp.
+// x: -6 → 0 reinforces reading direction and connects to the stamp animation.
+const mobileLabelVariant: Variants = {
+  hidden: { opacity: 0, x: -6 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+}
+
 // timelineNodeVariant: each timeline node (circle + label) fades up into place.
 // Mirrors the nodeVariant pattern from SystemVisualSection.tsx.
 const timelineNodeVariant: Variants = {
@@ -310,6 +324,18 @@ export default function PricingSection() {
   // once: true — the countdown triggers exactly once, never restarts on re-scroll.
   const scarcityRef = useRef(null)
   const scarcityInView = useInView(scarcityRef, { once: true })
+
+  // isMobile: true when the viewport is narrower than the md breakpoint (768px).
+  // Switches bullet animations between the stamp (mobile) and slide (desktop) variants.
+  // Recalculates if the window is resized (e.g. rotating a phone to landscape).
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)")
+    setIsMobile(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
+  }, [])
 
   // Countdown 5 → 2, triggered only after the scarcity block scrolls into view.
   // Each step has a different delay to feel organic, not mechanical:
@@ -485,7 +511,7 @@ export default function PricingSection() {
               {card.isHero && (
                 <div className="text-center mb-6">
                   <span className="font-instrument text-[10px] uppercase tracking-[0.25em] text-blue-axis border border-blue-axis/40 px-4 py-1.5 rounded-full">
-                    ★ Most studios choose this
+                    ★ Most popular
                   </span>
                 </div>
               )}
@@ -559,8 +585,7 @@ export default function PricingSection() {
 
               {/* ── PAIN LINE ─────────────────────────────────────────────── */}
               <p className={[
-                "font-instrument text-sm leading-relaxed mb-8",
-                card.isHero ? "text-white-axis font-semibold" : "text-soft-grey",
+                "font-instrument text-sm leading-relaxed mb-8", "text-white-axis font-semibold","text-center",
               ].join(" ")}>
                 {card.painLine}
               </p>
@@ -641,7 +666,7 @@ export default function PricingSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="mb-24 md:mb-36"
+          className="mb-24 md:mb-36 text-center"
         >
 
           {/* h2: section-level headline per SEO rules — one per section. */}
@@ -653,7 +678,7 @@ export default function PricingSection() {
           </motion.h2>
 
           {/* 3-column grid on desktop, stacked on mobile */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 text-center">
 
             {/* ── COLUMNS 1 & 2 — Setup and Risk ───────────────────────────
                 Each column uses bulletContainer to stagger its heading + bullets
@@ -678,19 +703,19 @@ export default function PricingSection() {
                     <motion.li
                       key={point}
                       variants={bulletItemContainer}
-                      className="flex items-start gap-3 font-instrument text-sm text-soft-grey"
+                      className="flex items-start gap-3 font-instrument text-sm text-soft-grey justify-center md:justify-start"
                     >
-                      {/* ✓ — slides in from the left first */}
+                      {/* ✓ — on mobile: stamps into place (scale). On desktop: slides from left. */}
                       <motion.span
-                        variants={checkmarkVariant}
+                        variants={isMobile ? mobileCheckmarkVariant : checkmarkVariant}
                         className="text-blue-axis text-xs mt-0.5 flex-shrink-0 w-3 text-center"
                         aria-hidden="true"
                       >
                         ✓
                       </motion.span>
 
-                      {/* Text — fades in 80ms after the checkmark has landed */}
-                      <motion.span variants={labelVariant}>
+                      {/* Text — on mobile: slides in from left. On desktop: fades in only. */}
+                      <motion.span variants={isMobile ? mobileLabelVariant : labelVariant}>
                         {point}
                       </motion.span>
                     </motion.li>
@@ -733,7 +758,7 @@ export default function PricingSection() {
                     {/* Large opening " — Playfair Display, blue accent, decorative but purposeful:
                         it visually anchors the quote and signals "this is a testimonial". */}
                     <span
-                      className="font-playfair text-5xl text-blue-axis leading-none block mb-1"
+                      className="font-playfair text-5xl text-blue-axis leading-none block mb-1 text-left"
                       aria-hidden="true"
                     >
                       &ldquo;
@@ -754,7 +779,7 @@ export default function PricingSection() {
 
               {/* Dot indicator — shows which quote is active (same pattern as BenefitsSection).
                   3 small circles; active dot is full-white, inactive are muted. */}
-              <div className="flex gap-2 mt-5">
+              <div className="flex justify-center gap-2 mt-5">
                 {TRUST_QUOTES.map((_, i) => (
                   <motion.button
                     key={i}
@@ -1180,6 +1205,13 @@ export default function PricingSection() {
             >
               get your axis
             </motion.button>
+            <motion.p
+            className="font-instrument tracking-tight text-white-axis text-sm md:text-sm"
+          >
+            Start in less than 2 minutes <br />
+            No credit card required
+            
+          </motion.p>
           </motion.div>
 
         </motion.div>
