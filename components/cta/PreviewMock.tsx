@@ -30,6 +30,7 @@
 // This mock is rendered inside a modal card on the same page, so using
 // h1 here would create a duplicate, harming search ranking.
 
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { PreviewData } from '@/lib/previewBuilder';
 import type { VibeTheme } from '@/lib/previewConfig';
@@ -53,6 +54,29 @@ function accentButtonStyle(
 ): React.CSSProperties {
   if (override) return { backgroundColor: override };
   return {}; // falls back to the Tailwind class in className
+}
+
+/**
+ * Returns '#ffffff' (white) or '#000000' (black) depending on the perceived
+ * brightness of a hex background color.
+ * Used for badge text on placeholder tiles: text stays legible on any palette.
+ * Defaults to white if the color string can't be parsed.
+ */
+function getTextColorForBg(bgColor: string | null): string {
+  if (!bgColor) return '#ffffff';
+  const hex = bgColor.replace('#', '').trim();
+  // Expand 3-digit shorthand: #RGB → #RRGGBB
+  const full = hex.length === 3
+    ? hex.split('').map(c => c + c).join('')
+    : hex;
+  if (full.length !== 6) return '#ffffff';
+  const r = parseInt(full.slice(0, 2), 16);
+  const g = parseInt(full.slice(2, 4), 16);
+  const b = parseInt(full.slice(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return '#ffffff';
+  // W3C perceived-luminance formula
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance < 0.5 ? '#ffffff' : '#000000';
 }
 
 export default function PreviewMock({ data }: PreviewMockProps) {
@@ -218,55 +242,7 @@ export default function PreviewMock({ data }: PreviewMockProps) {
             (index 2 "Sell packages" was removed — pricing now tied to index 1 only)
             ═══════════════════════════════════════════════════════════════ */}
         {data.activeFeatures.includes(1) && (
-          <div className={`px-6 py-8 ${theme.surface}`}>
-            <h3 className={`font-playfair text-xl uppercase tracking-tight mb-6 ${theme.text}`}>
-              Memberships & Packages
-            </h3>
-            <div className="grid grid-cols-3 gap-3">
-              {data.profile.pricingTiers.map((tier, i) => (
-                // Hover effect: pricing card scales up slightly on hover
-                <motion.div
-                  key={i}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
-                  className={`rounded-xl p-4 border flex flex-col ${
-                    tier.highlighted
-                      ? `${theme.accent} ${theme.accentText} border-transparent`
-                      : `${theme.surface} ${theme.text} ${theme.border}`
-                  }`}
-                  style={
-                    tier.highlighted && accentColorOverride
-                      ? { backgroundColor: accentColorOverride, color: '#fff', borderColor: 'transparent' }
-                      : !tier.highlighted && surfaceColorOverride
-                      ? { backgroundColor: surfaceColorOverride }
-                      : {}
-                  }
-                >
-                  <p className="text-xs font-semibold uppercase tracking-widest mb-1 opacity-70">
-                    {tier.name}
-                  </p>
-                  <p className="text-2xl font-bold mb-2">{tier.price}</p>
-                  <p className="text-xs leading-relaxed opacity-70 flex-1 mb-4">
-                    {tier.description}
-                  </p>
-                  <button className={`text-xs font-semibold py-2 rounded-lg border ${
-                    tier.highlighted
-                      ? 'border-current opacity-90'
-                      : `${theme.accent} ${theme.accentText} border-transparent`
-                  }`}
-                  style={
-                    !tier.highlighted && accentColorOverride
-                      ? { backgroundColor: accentColorOverride, color: '#fff' }
-                      : {}
-                  }
-                  >
-                    Get started
-                  </button>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          <PricingSection data={data} />
         )}
 
         {/* ═══════════════════════════════════════════════════════════════
@@ -386,6 +362,220 @@ export default function PreviewMock({ data }: PreviewMockProps) {
   );
 }
 
+// ─── Pricing Section ──────────────────────────────────────────────────────────
+// Extracted so it can own carousel state without cluttering PreviewMock.
+//
+// MOBILE  — horizontal swipe carousel with peek + pagination dots.
+//   - Cards are 80% of the container width so the next card peeks through.
+//   - Framer Motion drag="x" handles the swipe gesture.
+//   - activeIndex state drives both the x animation and the active dot.
+//
+// DESKTOP — unchanged 3-column grid.
+
+interface PricingSectionProps {
+  data: PreviewData;
+}
+
+function PricingSection({ data }: PricingSectionProps) {
+  const { theme, accentColorOverride, surfaceColorOverride } = data;
+  const tiers = data.profile.pricingTiers;
+
+  // ── Carousel state ──────────────────────────────────────────────────────
+  // activeIndex: which card is currently centred in the mobile carousel.
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // cardWidth: pixel width of one card. We start with 256px (a safe default
+  // for any mobile screen) and update it once the DOM has rendered.
+  const [cardWidth, setCardWidth] = useState(256);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // After mount, measure the carousel container and derive the card width.
+  // Cards occupy 80% of the container; the remaining 20% reveals the peek.
+  // ResizeObserver re-runs the measurement if the container ever resizes.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => setCardWidth(el.offsetWidth * 0.8);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // gap-3 in Tailwind = 12px. One "step" is the distance the strip moves per card.
+  const step = cardWidth + 12;
+
+  // Called when the user lifts their finger after a drag.
+  // If the drag exceeded 50px we advance or retreat one card.
+  function handleDragEnd(_: unknown, info: { offset: { x: number } }) {
+    const threshold = 50;
+    if (info.offset.x < -threshold && activeIndex < tiers.length - 1) {
+      setActiveIndex(i => i + 1);
+    } else if (info.offset.x > threshold && activeIndex > 0) {
+      setActiveIndex(i => i - 1);
+    }
+  }
+
+  return (
+    <div className={`py-8 ${theme.surface}`}>
+      {/* Section heading — px-6 matches the body padding */}
+      <h3 className={`font-playfair text-xl uppercase tracking-tight mb-6 px-6 ${theme.text}`}>
+        Memberships & Packages
+      </h3>
+
+      {/* ── Mobile carousel ─────────────────────────────────────────────── */}
+      {/* md:hidden — only shown below the md (768px) breakpoint.           */}
+      <div className="md:hidden" ref={containerRef}>
+        {/* overflow-hidden clips the strip; pl-6 aligns the first card     */}
+        {/* with the page margin while still allowing peek on the right.    */}
+        <div className="overflow-hidden pl-6">
+          {/*
+            Draggable strip — all cards sit side-by-side in this div.
+            `drag="x"` lets Framer Motion handle the swipe gesture.
+            `animate` snaps the strip to the active card position.
+            `dragConstraints` prevents dragging past the first / last card.
+            `dragDirectionLock` commits to horizontal once direction is clear.
+          */}
+          <motion.div
+            className="flex gap-3"
+            drag="x"
+            dragConstraints={{ right: 0, left: -(tiers.length - 1) * step }}
+            animate={{ x: -activeIndex * step }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            onDragEnd={handleDragEnd}
+            dragDirectionLock
+          >
+            {tiers.map((tier, i) => {
+              const isHighlighted = tier.highlighted;
+              return (
+                // flex-shrink-0 prevents the card from collapsing inside the flex strip.
+                // Width is set in pixels (from the measured container) so the strip
+                // translates by exact amounts when navigating between cards.
+                <div
+                  key={i}
+                  className="flex-shrink-0"
+                  style={{ width: cardWidth }}
+                >
+                  <div
+                    className={`rounded-xl p-4 border flex flex-col h-full ${
+                      isHighlighted
+                        ? `${theme.accent} ${theme.accentText} border-transparent`
+                        : `${theme.surface} ${theme.text} ${theme.border}`
+                    }`}
+                    style={
+                      isHighlighted && accentColorOverride
+                        ? { backgroundColor: accentColorOverride, color: '#fff', borderColor: 'transparent' }
+                        : !isHighlighted && surfaceColorOverride
+                        ? { backgroundColor: surfaceColorOverride }
+                        : {}
+                    }
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-widest mb-1 opacity-70">
+                      {tier.name}
+                    </p>
+                    <p className="text-2xl font-bold mb-2">{tier.price}</p>
+                    <p className="text-xs leading-relaxed opacity-70 flex-1 mb-4">
+                      {tier.description}
+                    </p>
+                    <button
+                      className={`text-xs font-semibold py-2 rounded-lg border ${
+                        isHighlighted
+                          ? 'border-current opacity-90'
+                          : `${theme.accent} ${theme.accentText} border-transparent`
+                      }`}
+                      style={
+                        !isHighlighted && accentColorOverride
+                          ? { backgroundColor: accentColorOverride, color: '#fff' }
+                          : {}
+                      }
+                    >
+                      Get started
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </motion.div>
+        </div>
+
+        {/* ── Pagination dots ──────────────────────────────────────────── */}
+        {/* One dot per card. Active dot is a wider pill; tapping jumps to that card. */}
+        <div className="flex justify-center gap-2 mt-5">
+          {tiers.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveIndex(i)}
+              aria-label={`Go to card ${i + 1}`}
+              // Active: wide pill in the accent color. Inactive: small circle with a border.
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === activeIndex
+                  ? `w-5 ${theme.accent}`
+                  : `w-2 ${theme.border} border`
+              }`}
+              style={
+                i === activeIndex && accentColorOverride
+                  ? { backgroundColor: accentColorOverride }
+                  : {}
+              }
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Desktop grid ─────────────────────────────────────────────────── */}
+      {/* hidden md:grid — only shown at md breakpoint and above.            */}
+      {/* This is the original 3-column layout, unchanged.                   */}
+      <div className="hidden md:grid grid-cols-3 gap-3 px-6">
+        {tiers.map((tier, i) => {
+          const isHighlighted = tier.highlighted;
+          return (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className={`rounded-xl p-4 border flex flex-col ${
+                isHighlighted
+                  ? `${theme.accent} ${theme.accentText} border-transparent`
+                  : `${theme.surface} ${theme.text} ${theme.border}`
+              }`}
+              style={
+                isHighlighted && accentColorOverride
+                  ? { backgroundColor: accentColorOverride, color: '#fff', borderColor: 'transparent' }
+                  : !isHighlighted && surfaceColorOverride
+                  ? { backgroundColor: surfaceColorOverride }
+                  : {}
+              }
+            >
+              <p className="text-xs font-semibold uppercase tracking-widest mb-1 opacity-70">
+                {tier.name}
+              </p>
+              <p className="text-2xl font-bold mb-2">{tier.price}</p>
+              <p className="text-xs leading-relaxed opacity-70 flex-1 mb-4">
+                {tier.description}
+              </p>
+              <button
+                className={`text-xs font-semibold py-2 rounded-lg border ${
+                  isHighlighted
+                    ? 'border-current opacity-90'
+                    : `${theme.accent} ${theme.accentText} border-transparent`
+                }`}
+                style={
+                  !isHighlighted && accentColorOverride
+                    ? { backgroundColor: accentColorOverride, color: '#fff' }
+                    : {}
+                }
+              >
+                Get started
+              </button>
+            </motion.div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ─── Instagram Gallery Section ────────────────────────────────────────────────
 // Extracted as a sub-component to keep PreviewMock readable.
 // Uses uploaded images + placeholder tiles to simulate a live Instagram feed.
@@ -495,11 +685,32 @@ function InstagramGallerySection({ data }: InstagramGallerySectionProps) {
                     />
                   )}
 
-                  {/* Per-tile badge overlay — every tile gets its own specific text */}
+                  {/* Per-tile badge overlay — text adapts to the tile content */}
                   <div className="absolute bottom-2 left-2 right-2">
-                    <span className="bg-black/70 text-white text-xs px-2 py-1 rounded-md font-instrument">
-                      {row.badges[tileIdx]}
-                    </span>
+                    {tile.src ? (
+                      // Real photo: always show the dark stripe so text is readable over any photo
+                      <span className="bg-black/70 text-white text-xs px-2 py-1 rounded-md font-instrument">
+                        {row.badges[tileIdx]}
+                      </span>
+                    ) : (
+                      <>
+                        {/*
+                          Placeholder tile on mobile: no stripe background.
+                          Text color is calculated from the tile's background color
+                          so it remains legible on both light and dark palettes.
+                        */}
+                        <span
+                          className="md:hidden text-xs px-2 py-1 rounded-md font-instrument font-medium"
+                          style={{ color: getTextColorForBg(tile.color) }}
+                        >
+                          {row.badges[tileIdx]}
+                        </span>
+                        {/* Placeholder tile on desktop: keep the dark stripe */}
+                        <span className="hidden md:inline bg-black/70 text-white text-xs px-2 py-1 rounded-md font-instrument">
+                          {row.badges[tileIdx]}
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   {/* Hover tooltip overlay */}
