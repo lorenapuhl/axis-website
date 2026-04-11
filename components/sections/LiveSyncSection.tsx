@@ -592,7 +592,7 @@ export default function LiveSyncSection() {
                     On mobile the card takes full width below the 4-cell grid. */}
                 <div className="md:mr-7 p-4 bg-neutral-100 rounded-xl flex flex-col gap-3">
 
-                  <p className="font-instrument text-[10px] font-bold text-black-axis/60 uppercase tracking-widest">
+                  <p className="font-instrument text-[10px] font-normal md:font-bold text-black-axis/60 uppercase tracking-widest">
                     NEXT UP: JIU-JITSU OPEN MAT (8:00 AM)
                   </p>
 
@@ -607,7 +607,7 @@ export default function LiveSyncSection() {
                   <div className="flex flex-col gap-1.5">
 
                     {/* Countdown — key re-triggers enter animation each decrement */}
-                    <p className="font-instrument text-sm font-bold text-black-axis">
+                    <p className="font-instrument text-sm font-normal md:font-bold text-black-axis">
                       Starts in:{" "}
                       <motion.span
                         key={minutesLeft}
@@ -641,31 +641,36 @@ export default function LiveSyncSection() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.5 }}
-                      className="font-instrument text-xs font-bold text-magenta-axis bg-magenta-axis/10 rounded-lg px-2 py-1 text-center uppercase tracking-wider"
+                      className="font-instrument text-xs font-normal md:font-bold text-black-axis md:text-magenta-axis bg-black-axis/10 md:bg-magenta-axis/10 rounded-lg px-2 py-1 text-center uppercase tracking-wider"
                     >
                       {urgencyLabel}
                     </motion.p>
 
                     {/* BOOK NOW — disabled and greyed when class is full.
                         When classFull: no whileHover, no whileTap, muted colours.
-                        When open: hover animates bg to blue-axis with white text. */}
-                    {classFull ? (
-                      <button
-                        disabled
-                        className="w-full bg-black-axis/10 text-black-axis/30 font-instrument font-bold text-xs py-2 rounded-lg tracking-wider uppercase mt-1 cursor-not-allowed"
-                      >
-                        CLASS FULL
-                      </button>
-                    ) : (
-                      <motion.button
-                        whileHover={{ scale: 1.03, backgroundColor: "var(--color-blue-axis)", color: "var(--color-white-axis)" }}
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-full bg-black-axis text-white-axis font-instrument font-bold text-xs py-2 rounded-lg tracking-wider uppercase mt-1"
-                      >
-                        BOOK NOW
-                      </motion.button>
-                    )}
+                        When open: hover animates bg to blue-axis with white text.
+                        Both buttons share a min-w so they stay the same width
+                        regardless of which one is shown. flex + justify-center
+                        keeps the button centred in the card. */}
+                    <div className="flex justify-center mt-1">
+                      {classFull ? (
+                        <button
+                          disabled
+                          className="bg-black-axis/10 text-black-axis/30 font-instrument font-normal md:font-bold text-xs py-2 px-6 rounded-lg tracking-wider uppercase cursor-not-allowed min-w-[9rem]"
+                        >
+                          CLASS FULL
+                        </button>
+                      ) : (
+                        <motion.button
+                          whileHover={{ scale: 1.03, backgroundColor: "var(--color-blue-axis)", color: "var(--color-white-axis)" }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={{ duration: 0.2 }}
+                          className="bg-black-axis text-white-axis font-instrument font-normal md:font-bold text-xs py-2 px-6 rounded-lg tracking-wider uppercase min-w-[9rem]"
+                        >
+                          BOOK NOW
+                        </motion.button>
+                      )}
+                    </div>
 
                   </div>
                 </div>
