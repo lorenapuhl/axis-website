@@ -26,7 +26,7 @@ export default function TrustHeroSection() {
       relative overflow-hidden: contains the absolute-positioned background glow
         so it doesn't bleed into adjacent sections
     */
-    <section className="bg-black-axis min-h-screen flex items-center py-20 px-6 md:py-32 md:px-12 relative overflow-hidden">
+    <section className="bg-black-axis min-h-screen flex items-center py-2 px-6 md:py-32 md:px-12 relative overflow-hidden">
 
       {/*
         Decorative background glow — creates the subtle radial "mesh" effect
