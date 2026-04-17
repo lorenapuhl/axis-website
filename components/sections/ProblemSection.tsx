@@ -3,7 +3,7 @@
 // This component uses useState (active card tracking) and Framer Motion's
 // whileInView / AnimatePresence — all browser-only APIs that require a Client Component.
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 // next/image: Next.js optimized image component. Required for all images.
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
@@ -338,7 +338,16 @@ export default function ProblemSection() {
           {/* pb-16 on mobile: extra space below the card pile so the background
               cards (which extend downward) don't bleed into the text panel below.
               md:pb-0: no bottom padding needed on desktop (side-by-side layout). */}
-          <div className="md:w-[40%] -mt-15 flex justify-center pb-8 md:pb-0">
+          {/* --color-foreground override: CardStack's dot buttons use Tailwind's
+              `bg-foreground` class, which reads the CSS variable --color-foreground.
+              That variable is not defined in this project's globals.css @theme,
+              so the dots render invisible. Setting it here on the wrapper div
+              causes it to cascade down to the dots, making them white — matching
+              the dark-background context of this section. */}
+          <div
+            className="md:w-[40%] -mt-15 flex justify-center pb-8 md:pb-0"
+            style={{ "--color-foreground": "#FFFFFF" } as React.CSSProperties}
+          >
             {/*
               CardStack props — vertical pile layout:
                 spreadDeg=0        zero Z rotation — pure vertical pile, no horizontal fan
