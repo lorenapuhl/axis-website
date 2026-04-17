@@ -1,20 +1,19 @@
 "use client"
 // OverhandzFeaturesSection — pill-based feature showcase for the Overhandz case study.
-// This is "The solution" — it replaces the static solution section from CaseStudyClient.tsx
-// with an interactive demo where each pill shows a real section of the Overhandz website.
 //
 // Layout:
-//   Desktop: horizontal pill nav → two-column (left: text, right: browser frame + panel)
+//   Desktop: horizontal pill nav → two-column (left: text, right: floating search bar + full-width panel)
 //   Mobile:  horizontal scrolling chips → stacked (text above, panel below)
 //
-// Panels are imported from components/overhandz/FeaturePanels.tsx.
-// Each panel is a self-contained simulation of an Overhandz website section.
+// The browser frame box is intentionally removed — only a floating rounded search bar
+// sits above the panel. The panel itself renders full-width with no constraining box.
 
 import { useState, type ComponentType } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   MobileExperiencePanel,
   SchedulePanel,
+  ClassSchedulePanel,
   MembershipsPanel,
   OnlinePaymentsPanel,
   LiveInstagramPanel,
@@ -23,16 +22,11 @@ import {
   TrustBrandingPanel,
 } from "@/components/overhandz/FeaturePanels"
 
-// ─── PILL DEFINITIONS ─────────────────────────────────────────────────────────
-// Each pill has: a label (tab text), headline + text (shown left on desktop),
-// and a Panel component (shown right on desktop / below on mobile).
-
 interface Pill {
   id: string
   label: string
   headline: string
   text: string
-  // ComponentType: a React component with no required props
   Panel: ComponentType
 }
 
@@ -56,7 +50,7 @@ const PILLS: Pill[] = [
     label: "Class Schedule",
     headline: "Clear, filterable class schedule",
     text: "Users instantly find the right class by day or training type.",
-    Panel: SchedulePanel,
+    Panel: ClassSchedulePanel,
   },
   {
     id: "memberships",
@@ -103,16 +97,12 @@ const PILLS: Pill[] = [
 ]
 
 export default function OverhandzFeaturesSection() {
-  // activeId tracks which pill is selected — defaults to the first
   const [activeId, setActiveId] = useState(PILLS[0].id)
-
-  // Find the active pill object so we can render its headline, text, and Panel
   const activePill = PILLS.find((p) => p.id === activeId)!
-
-  // Panel is the component function — must start with uppercase to use as JSX
   const ActivePanel = activePill.Panel
 
   return (
+    // bg-grey-axis (#121212) provides a visible contrast against the pure-black panels
     <section className="py-20 px-6 md:py-36 md:px-12 bg-grey-axis">
       <div className="max-w-6xl mx-auto">
 
@@ -124,7 +114,6 @@ export default function OverhandzFeaturesSection() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="mb-12"
         >
-          {/* "The solution" label continues the narrative from the problem section above */}
           <p className="font-instrument text-blue-axis text-xs uppercase tracking-widest mb-4">
             The solution
           </p>
@@ -133,10 +122,7 @@ export default function OverhandzFeaturesSection() {
           </h2>
         </motion.div>
 
-        {/* ── PILL NAVIGATION ──
-            Desktop: all pills visible in a single scrollable row.
-            Mobile:  scrollable chips with snap — partial overflow hints there are more.
-            Active pill: slightly brighter background + white border. */}
+        {/* ── PILL NAVIGATION ── */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -162,14 +148,10 @@ export default function OverhandzFeaturesSection() {
           ))}
         </motion.div>
 
-        {/* ── CONTENT AREA ──
-            Desktop: two-column grid — left text (fixed) + right browser frame (fluid).
-            Mobile:  single column — text stacks above the preview frame. */}
+        {/* ── CONTENT AREA ── */}
         <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-12 items-start">
 
-          {/* LEFT — headline + description for the active pill.
-              AnimatePresence with mode="wait" fades out the old text before fading in new.
-              key includes "-text" suffix to be distinct from the right panel key. */}
+          {/* LEFT — headline + description (font-instrument, not playfair) */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeId + "-text"}
@@ -177,7 +159,8 @@ export default function OverhandzFeaturesSection() {
               animate={{ opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } }}
               exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeOut" } }}
             >
-              <h3 className="font-playfair text-white-axis uppercase tracking-tight text-2xl md:text-3xl mb-4">
+              {/* Instrument Sans for the subsection headline, not Playfair */}
+              <h3 className="font-instrument text-white-axis font-semibold text-xl md:text-2xl mb-4 leading-snug">
                 {activePill.headline}
               </h3>
               <p className="font-instrument text-soft-grey text-base leading-relaxed">
@@ -186,73 +169,50 @@ export default function OverhandzFeaturesSection() {
             </motion.div>
           </AnimatePresence>
 
-          {/* RIGHT — browser frame wrapping the active overhandz panel.
-              The frame has a URL bar + macOS-style window dots (desktop)
-              or a simple green live dot (mobile), matching OverhandzSection.tsx.
-              overflow-hidden ensures modals (absolute inset-0) stay inside the frame. */}
-          <div
-            className="rounded-2xl overflow-hidden bg-zinc-950"
-            style={{
-              border: "1px solid rgba(255,255,255,0.08)",
-              boxShadow: "0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
-            }}
-          >
-            {/* Browser bar */}
-            <div
-              className="flex items-center gap-2 px-4 py-3 bg-zinc-900"
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-            >
-              {/* macOS window controls — visible only on desktop */}
-              <div className="hidden md:flex items-center gap-1.5 mr-2">
-                <span className="w-3 h-3 rounded-full bg-red-500/70" />
-                <span className="w-3 h-3 rounded-full bg-yellow-500/70" />
-                <span className="w-3 h-3 rounded-full bg-green-500/70" />
+          {/* RIGHT — floating search bar + full-width panel (no outer frame box) */}
+          <div>
+            {/* Floating search bar — pill shaped, sits above the panel like a browser tab.
+                No containing box; the panel renders full-width below it. */}
+            <div className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-zinc-900 border border-white/[0.06] mb-4 shadow-2xl">
+              {/* macOS window dots — desktop only */}
+              <div className="hidden md:flex items-center gap-1.5 shrink-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
               </div>
-
-              {/* Mobile: single green live dot */}
+              {/* Mobile: green live dot */}
               <span className="md:hidden w-2 h-2 rounded-full shrink-0 bg-green-500" />
-
-              {/* URL bar */}
-              <div className="flex-1 text-center rounded-md px-2 py-1 bg-zinc-800">
-                <span className="text-xs text-zinc-400">overhandz-website.vercel.app</span>
-              </div>
-
-              {/* Live badge — links directly to the actual site */}
+              {/* URL */}
+              <span className="text-xs text-zinc-400 flex-1 text-center">overhandz-boxing.com</span>
+              {/* Live link */}
               <a
                 href="https://overhandz-website.vercel.app/en"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs px-2 py-0.5 rounded font-medium shrink-0 text-green-400"
-                style={{ background: "rgba(34,197,94,0.12)" }}
+                className="text-xs px-2.5 py-0.5 rounded-full font-medium shrink-0 text-green-400 bg-green-500/10"
               >
                 Live
               </a>
             </div>
 
-            {/* Panel content — AnimatePresence fades + scales between pills.
-                key={activeId} causes React to unmount/remount the panel on pill change,
-                resetting all internal state (e.g. selected day, open modal). */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeId}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{
-                  opacity: 1,
-                  scale: 1,
-                  transition: { duration: 0.25, ease: "easeOut" },
-                }}
-                exit={{
-                  opacity: 0,
-                  transition: { duration: 0.15, ease: "easeOut" },
-                }}
-              >
-                <ActivePanel />
-              </motion.div>
-            </AnimatePresence>
+            {/* Panel — full width, rounded corners, overflow-hidden contains the booking modal.
+                relative is the positioning parent for any absolute-positioned modal overlays. */}
+            <div className="relative overflow-hidden rounded-2xl">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeId}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1, transition: { duration: 0.25, ease: "easeOut" } }}
+                  exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeOut" } }}
+                >
+                  <ActivePanel />
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
-        {/* ── VIEW WEBSITE BUTTON ── */}
+        {/* ── VIEW WEBSITE BUTTON (no arrow) ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -266,7 +226,7 @@ export default function OverhandzFeaturesSection() {
             rel="noopener noreferrer"
             className="inline-block font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4 border border-white-axis/20 text-white-axis hover:bg-white-axis/5 transition-colors duration-200"
           >
-            View website →
+            View website
           </a>
         </motion.div>
 
