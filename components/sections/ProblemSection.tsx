@@ -358,8 +358,7 @@ export default function ProblemSection() {
               inactiveScale={0.93}
               activeLiftPx={cardDims.lift}
               maxVisible={5}
-              autoAdvance={true}
-              intervalMs={2400}
+              autoAdvance={false}
               pauseOnHover={true}
               loop={true}
               showDots={true}
