@@ -357,6 +357,18 @@ export default function LiveSyncSection() {
 
                   return (
                     <div key={post.id} className="w-24 h-24 relative shrink-0">
+
+                      {/* Permanent greyed-out layer — always present behind the flying copy.
+                          After the image flies away, the grid slot shows this greyed version
+                          instead of a blank/dark placeholder, so the viewer can still see
+                          which image left from which position.
+                          grayscale removes colour; opacity-50 makes it read as dim. */}
+                      <div className="absolute inset-0 overflow-hidden rounded-sm opacity-50">
+                        <Image src={post.src} alt={post.text || "Fitness studio Instagram post"} fill className="object-cover grayscale" />
+                      </div>
+
+                      {/* Flying copy — covers the greyed layer at step < 2.
+                          Unmounts at step 2 so Framer Motion can fly it via layoutId. */}
                       <AnimatePresence>
                         {step < 2 && (
                           <motion.div
@@ -371,7 +383,7 @@ export default function LiveSyncSection() {
                           </motion.div>
                         )}
                       </AnimatePresence>
-                      {step >= 2 && <div className="absolute inset-0 rounded-sm bg-white-axis/5" />}
+
                     </div>
                   )
                 })}
