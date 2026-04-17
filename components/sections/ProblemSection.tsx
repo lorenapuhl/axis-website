@@ -382,7 +382,10 @@ export default function ProblemSection() {
                 Clicking a dot updates activeIndex, which syncs back to CardStack
                 via the `value` prop. On mobile the user swipes the card; on
                 desktop they can also click here. */}
-            <div className="flex items-center justify-center gap-2 mt-4">
+            {/* mt-16 on mobile: cards overflow the stage by up to ~42px (yJitter max 22 +
+                abs*10). mt-32 on desktop: yJitter goes up to +100 and abs*10 up to +20,
+                meaning cards can extend 120px below the stage — the dots need to clear that. */}
+            <div className="flex items-center justify-center gap-2 mt-16 md:mt-32">
               {items.map((item, idx) => (
                 <button
                   key={item.id}
