@@ -228,9 +228,6 @@ export default function BenefitsSection() {
   // 1 = next card comes from the right, -1 = prev card comes from the left.
   const [direction, setDirection] = useState(1)
 
-  // isHovered: pauses auto-cycle while user is hovering over the carousel.
-  const [isHovered, setIsHovered] = useState(false)
-
   // sectionRef + isInView: gates the trendline draw animation so it only
   // plays after the section enters the viewport.
   // "once: true" means isInView stays permanently true after first trigger.
@@ -254,15 +251,6 @@ export default function BenefitsSection() {
     setDirection(index >= activeIndex ? 1 : -1)
     setActiveIndex(index)
   }
-
-  // Auto-cycle: advances every 3 seconds unless user is hovering.
-  // Cleanup function (clearInterval) runs before the effect re-fires or
-  // on component unmount — prevents multiple intervals stacking up.
-  useEffect(() => {
-    if (isHovered) return
-    const timer = setInterval(next, 3000)
-    return () => clearInterval(timer)
-  }, [isHovered])
 
   // Snapshot of the currently visible benefit block.
   const active = benefits[activeIndex]
@@ -326,8 +314,6 @@ export default function BenefitsSection() {
             space — both animate simultaneously without any layout jumps. */}
         <div
           className="relative overflow-hidden"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
         >
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <motion.div

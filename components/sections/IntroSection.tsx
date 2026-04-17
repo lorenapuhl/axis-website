@@ -116,28 +116,20 @@ export default function IntroSection() {
             times: [0, 0.2, 0.45, 1] maps to the four keyframe values above.
           */}
           <motion.p
-            initial={{ opacity: 0, filter: "blur(0px)", scale: 1 }}
+            initial={{ opacity: 0 }}
             whileInView={{
-              opacity: [0,          1,          1,          0         ],
-              filter:  ["blur(0px)","blur(0px)","blur(0px)","blur(12px)"],
-              scale:   [1,          1,          1,          1.15      ],
+              // Phase 1 (0→0.2 of 4s = 0–0.8s): fades in sharply.
+              // Phase 2 (0.2→0.45 of 4s = 0.8–1.8s): holds fully visible.
+              // Phase 3 (0.45→1 of 4s = 1.8–4s): stays fully visible — does NOT disappear.
+              opacity: [0, 1, 1, 1],
             }}
             transition={{
-              duration: 7,
-              // 7s total — the evaporation phase alone is ~3.85s (> 2.5s requirement).
-              // Feels slow and ethereal, not snappy.
-
+              duration: 4,
               times: [0, 0.2, 0.45, 1],
-              // times: maps each keyframe value to a position in the 0→1 timeline.
-              // 0    → opacity 0  (invisible on entry)
-              // 0.2  → opacity 1  (fully appeared)
-              // 0.45 → opacity 1  (still fully visible — the "beat of silence")
-              // 1    → opacity 0  (fully evaporated)
-
               ease: "easeOut" as const,
               delay: 1.5,
               // delay: 1.5s after section enters view — gives the spring words
-              // time to settle before the tragedy drops.
+              // time to settle before this line arrives.
             }}
             viewport={{ once: true }}
             className="font-playfair font-thin text-xl md:text-4xl tracking-tight text-white-axis leading-tight tracking-wider"

@@ -543,7 +543,9 @@ export default function PricingSection() {
                 // shrink-0 w-[75vw]: fixed width at 75% of viewport so the next card
                 //   peeks in from the right (~30px on a 375px phone).
                 // md:w-auto: inside the desktop grid, card width is grid-controlled.
-                "snap-start shrink-0 w-[75vw] md:w-auto",
+                // snap-center for Growth: centers it in the viewport on mobile swipe.
+                // snap-start for the others: aligns left edge to viewport edge.
+                card.isHero ? "snap-center shrink-0 w-[75vw] md:w-auto" : "snap-start shrink-0 w-[75vw] md:w-auto",
                 // All cards share: dark surface, rounded corners, flex column layout.
                 "relative overflow-hidden rounded-2xl p-8 flex flex-col",
                 card.isHero

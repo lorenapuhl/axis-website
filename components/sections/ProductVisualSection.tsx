@@ -81,20 +81,31 @@ export default function ProductVisualSection() {
   // sectionRef is attached to the <section> element so useInView can watch it.
   const sectionRef = useRef<HTMLElement>(null)
 
-  // Fires once when 30% of the section is visible in the viewport.
-  const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
+  // isInView fires when 60% of the section is visible — ensures the user is
+  // actually watching before the animation begins. once:false so it can retrigger.
+  const isInView = useInView(sectionRef, { once: false, amount: 0.6 })
+
+  // hasLeft fires when <1% is visible — used to reset the animation only once
+  // the section is fully out of the viewport (avoids visible reverse-flight artifacts).
+  const hasLeft = useInView(sectionRef, { once: false, amount: 0.01 })
 
   // `step` tracks the current animation phase (0–3).
   const [step, setStep] = useState(0)
 
-  // Chain of setTimeouts that advance `step` after the section enters view.
-  // The cleanup function (returned from useEffect) cancels pending timers if
-  // the component unmounts before they fire — prevents memory leaks.
+  // Reset to step 0 once the section has fully scrolled out of view.
+  // By the time the user scrolls back, the section starts fresh.
+  useEffect(() => {
+    if (!hasLeft) setStep(0)
+  }, [hasLeft])
+
+  // When the section reaches 60% visibility, advance through animation phases.
+  // Timings are slower than the original to give viewers time to catch the motion.
+  // Cleanup cancels pending timers if the component unmounts mid-animation.
   useEffect(() => {
     if (!isInView) return
-    const t1 = setTimeout(() => setStep(1), 500)   // highlight
-    const t2 = setTimeout(() => setStep(2), 1400)  // flight
-    const t3 = setTimeout(() => setStep(3), 3000)  // UI builds in
+    const t1 = setTimeout(() => setStep(s => s < 1 ? 1 : s), 700)    // highlight
+    const t2 = setTimeout(() => setStep(s => s < 2 ? 2 : s), 2000)   // flight
+    const t3 = setTimeout(() => setStep(s => s < 3 ? 3 : s), 4500)   // UI builds in
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [isInView])
 
@@ -207,13 +218,22 @@ export default function ProductVisualSection() {
                   //     Very faint so the grid still reads as "posts, but extracted."
                   return (
                     <div key={img.id} className={`${img.aspect} relative`}>
-                      {/*
-                        AnimatePresence must directly wrap the conditional child.
-                        When step goes from 1 → 2, the motion.div below unmounts.
-                        Framer Motion records its screen position at that moment.
-                        When the matching layoutId appears in a destination, it
-                        animates FROM the recorded position TO the destination.
-                      */}
+
+                      {/* ── PERMANENT BACKGROUND LAYER ──────────────────────
+                          Always visible at 50% opacity. Before step 2 it is
+                          covered by the flying copy on top. After the flying copy
+                          departs, this remains so the grid never shows a hole —
+                          the viewer can still read which images "came from" Instagram.
+                          overflow-hidden clips the Image to the rounded cell. */}
+                      <div className="absolute inset-0 overflow-hidden rounded-sm opacity-50">
+                        <Image src={img.src} alt={img.alt} fill className="object-cover" />
+                      </div>
+
+                      {/* ── FLYING COPY ──────────────────────────────────────
+                          Present only at step < 2. At step 2 it unmounts so
+                          Framer Motion can fly it (via layoutId) to its destination
+                          in the website preview panel. The permanent layer behind
+                          it is already in place — no grey gap appears. */}
                       <AnimatePresence>
                         {step < 2 && (
                           <motion.div
@@ -223,18 +243,11 @@ export default function ProductVisualSection() {
                             transition={{ duration: 0.6, ease: "easeInOut" }}
                             whileHover={{ scale: 1.03 }}
                             className="absolute inset-0 overflow-hidden rounded-sm"
-                            // overflow-hidden is on THIS element, not on a parent.
-                            // See the OVERFLOW CLIPPING RULE note at the top.
                           >
                             <Image src={img.src} alt={img.alt} fill className="object-cover" />
                           </motion.div>
                         )}
                       </AnimatePresence>
-
-                      {/* Placeholder — replaces the image after it flies away */}
-                      {step >= 2 && (
-                        <div className="absolute inset-0 rounded-sm bg-white-axis/5" />
-                      )}
                     </div>
                   )
                 })}
@@ -275,7 +288,7 @@ export default function ProductVisualSection() {
                       // When the grid version unmounts and this mounts,
                       // Framer Motion flies the element between the two positions.
                       className="absolute inset-0 rounded-xl overflow-hidden"
-                      transition={{ duration: 1.0, ease: "easeInOut" }}
+                      transition={{ duration: 1.4, ease: "easeInOut" }}
                     >
                       <Image
                         src="/product_visual/img1.png"
@@ -327,11 +340,11 @@ export default function ProductVisualSection() {
                             // Matches the layoutId on the grid cells above.
                             className="absolute inset-0 rounded-lg overflow-hidden"
                             transition={{
-                              duration: 1.0,
+                              duration: 1.4,
                               ease: "easeInOut",
-                              delay: i * 0.15,
-                              // 150ms stagger: each thumbnail departs visibly after the previous,
-                              // so the three flights feel sequential rather than simultaneous.
+                              delay: i * 0.2,
+                              // 200ms stagger (was 150ms): slightly more separation
+                              // between each thumbnail's flight so each is distinct.
                             }}
                           >
                             <Image
@@ -402,7 +415,7 @@ export default function ProductVisualSection() {
                             animate={{ opacity: 0.2 }}
                             // Fades from full opacity (during flight) to 20% (settled).
                             // Full opacity during flight makes the movement clearly visible.
-                            transition={{ duration: 1.0, ease: "easeInOut", delay: 0.3 }}
+                            transition={{ duration: 1.4, ease: "easeInOut", delay: 0.4 }}
                           >
                             <Image
                               src="/product_visual/img5.png"

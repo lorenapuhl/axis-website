@@ -108,7 +108,11 @@ export default function LiveSyncSection() {
   // ── LOOP STATE ────────────────────────────────────────────────────────────
   const [loopIndex, setLoopIndex] = useState(-1)
   const [loopPhase, setLoopPhase] = useState<"none" | "ingrid" | "flying">("none")
-  const [settledLoopPosts, setSettledLoopPosts] = useState<LoopPost[]>([])
+  // Each settled post gets a unique `uid` (id + cycle counter) so React sees
+  // it as a new element every cycle, re-triggering enter/exit animations.
+  const [settledLoopPosts, setSettledLoopPosts] = useState<(LoopPost & { uid: string })[]>([])
+  // cycleRef counts how many full cycles have completed — used to generate unique UIDs.
+  const cycleRef = useRef(0)
 
   // ── DASHBOARD LIVE STATE ──────────────────────────────────────────────────
   const [capacity, setCapacity] = useState(75)
@@ -129,23 +133,41 @@ export default function LiveSyncSection() {
   }, [isInView])
 
   // ── CONTINUOUS LOOP ───────────────────────────────────────────────────────
+  // Cycles indefinitely through LOOP_POSTS. After all 3 posts have settled:
+  //   1. Clears settledLoopPosts — AnimatePresence plays their exit fade-out (0.5s).
+  //   2. Waits 0.9s for the fade to finish.
+  //   3. Increments cycleRef so the next cycle gets new UIDs (fresh enter animations).
+  //   4. Restarts from iteration 0 after a brief pause.
   useEffect(() => {
     if (step < 3) return
     const timers: ReturnType<typeof setTimeout>[] = []
     let iteration = 0
 
     function runIteration() {
-      if (iteration >= LOOP_POSTS.length) return
+      if (iteration >= LOOP_POSTS.length) {
+        // End of cycle — fade out settled posts and restart.
+        iteration = 0
+        cycleRef.current += 1
+        // Clearing the array triggers AnimatePresence exit animations (0.5s fade).
+        setSettledLoopPosts([])
+        setLoopPhase("none")
+        // Wait for exit animation + brief pause before next cycle begins.
+        timers.push(setTimeout(runIteration, 2000))
+        return
+      }
+
+      const post = LOOP_POSTS[iteration]
+      // Unique ID per cycle so React treats each appearance as a fresh element.
+      const uid = `${post.id}-c${cycleRef.current}`
+
       setLoopIndex(iteration)
       setLoopPhase("ingrid")
+
       const flyTimer = setTimeout(() => {
         setLoopPhase("flying")
         const settleTimer = setTimeout(() => {
-          // Capture post BEFORE the state update — the functional updater is
-          // called by React asynchronously, so reading `iteration` inside it
-          // could see the already-incremented value and push undefined.
-          const post = LOOP_POSTS[iteration]
-          setSettledLoopPosts(prev => [...prev, post])
+          // Add settled post with uid — AnimatePresence enter animation fades it in.
+          setSettledLoopPosts(prev => [...prev, { ...post, uid }])
           iteration++
           timers.push(setTimeout(runIteration, 5000))
         }, 1200)
@@ -439,16 +461,26 @@ export default function LiveSyncSection() {
                         </div>
                       </motion.div>
 
-                      {/* Settled loop posts for schedule */}
-                      {settledLoopPosts.filter(p => p.targetSection === "schedule").map(p => (
-                        <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
-                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" as const }}>
-                              <Image src={p.src} alt={`New schedule post: ${p.text}`} fill className="object-cover" />
-                            </motion.div>
-                          </div>
-                        </motion.div>
-                      ))}
+                      {/* Settled loop posts for schedule.
+                          AnimatePresence detects when items are removed from the array
+                          (at cycle reset) and plays their exit animation before unmounting. */}
+                      <AnimatePresence mode="sync">
+                        {settledLoopPosts.filter(p => p.targetSection === "schedule").map(p => (
+                          <motion.div key={p.uid} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
+                            <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
+                              <motion.div
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5, ease: "easeOut" as const }}
+                              >
+                                <Image src={p.src} alt={`New schedule post: ${p.text}`} fill className="object-cover" />
+                              </motion.div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
 
                       {/* Flying destination for loop → schedule */}
                       {loopFlying && activeLoop?.targetSection === "schedule" && (
@@ -514,15 +546,23 @@ export default function LiveSyncSection() {
                         </div>
                       </motion.div>
 
-                      {settledLoopPosts.filter(p => p.targetSection === "events").map(p => (
-                        <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
-                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" as const }}>
-                              <Image src={p.src} alt={`New event post: ${p.text}`} fill className="object-cover" />
-                            </motion.div>
-                          </div>
-                        </motion.div>
-                      ))}
+                      <AnimatePresence mode="sync">
+                        {settledLoopPosts.filter(p => p.targetSection === "events").map(p => (
+                          <motion.div key={p.uid} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
+                            <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
+                              <motion.div
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5, ease: "easeOut" as const }}
+                              >
+                                <Image src={p.src} alt={`New event post: ${p.text}`} fill className="object-cover" />
+                              </motion.div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
 
                       {loopFlying && activeLoop?.targetSection === "events" && (
                         <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
@@ -560,15 +600,23 @@ export default function LiveSyncSection() {
                         </div>
                       </motion.div>
 
-                      {settledLoopPosts.filter(p => p.targetSection === "promo").map(p => (
-                        <motion.div key={p.id} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
-                          <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
-                            <motion.div className="absolute inset-0 rounded-lg overflow-hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, ease: "easeOut" as const }}>
-                              <Image src={p.src} alt={`New promotion: ${p.text}`} fill className="object-cover" />
-                            </motion.div>
-                          </div>
-                        </motion.div>
-                      ))}
+                      <AnimatePresence mode="sync">
+                        {settledLoopPosts.filter(p => p.targetSection === "promo").map(p => (
+                          <motion.div key={p.uid} className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
+                            <div className="w-16 h-16 md:w-30 md:h-30 relative shrink-0">
+                              <motion.div
+                                className="absolute inset-0 rounded-lg overflow-hidden"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5, ease: "easeOut" as const }}
+                              >
+                                <Image src={p.src} alt={`New promotion: ${p.text}`} fill className="object-cover" />
+                              </motion.div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
 
                       {loopFlying && activeLoop?.targetSection === "promo" && (
                         <motion.div className="relative z-[1]" whileHover={{ scale: 2.5, zIndex: 10 }} transition={{ duration: 0.2 }}>
