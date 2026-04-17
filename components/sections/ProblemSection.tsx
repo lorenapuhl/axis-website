@@ -3,7 +3,7 @@
 // This component uses useState (active card tracking) and Framer Motion's
 // whileInView / AnimatePresence — all browser-only APIs that require a Client Component.
 
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 // next/image: Next.js optimized image component. Required for all images.
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
@@ -338,24 +338,22 @@ export default function ProblemSection() {
           {/* pb-16 on mobile: extra space below the card pile so the background
               cards (which extend downward) don't bleed into the text panel below.
               md:pb-0: no bottom padding needed on desktop (side-by-side layout). */}
-          {/* --color-foreground override: CardStack's dot buttons use Tailwind's
-              `bg-foreground` class, which reads the CSS variable --color-foreground.
-              That variable is not defined in this project's globals.css @theme,
-              so the dots render invisible. Setting it here on the wrapper div
-              causes it to cascade down to the dots, making them white — matching
-              the dark-background context of this section. */}
-          <div
-            className="md:w-[40%] -mt-15 flex justify-center pb-8 md:pb-0"
-            style={{ "--color-foreground": "#FFFFFF" } as React.CSSProperties}
-          >
+          {/* flex-col so the custom dots render directly below the card stack.
+              showDots={false} disables CardStack's built-in dots — they use
+              `bg-foreground` which is not in this project's Tailwind @theme
+              and therefore never gets a colour. We render our own dots instead,
+              using the project's palette tokens so they're always visible. */}
+          <div className="md:w-[40%] -mt-15 flex flex-col items-center pb-8 md:pb-0">
+
             {/*
               CardStack props — vertical pile layout:
-                spreadDeg=0        zero Z rotation — pure vertical pile, no horizontal fan
-                overlap=0.94       260×0.06 ≈ 16px spacing — near-full card overlap
-                maxVisible=5       5 cards visible — richer pile with more background depth
-                activeLiftPx=50    front card lifts dramatically above the pile
-                cardHeight=280     taller cards = more vertical presence
-                randomOffsets=true Y-jitter ±5–9px per card creates an organic pile feel
+                spreadDeg=3        slight Z rotation — organic pile feel
+                overlap=0.94       near-full card overlap
+                maxVisible=5       5 cards visible — richer depth
+                activeLiftPx=lift  front card lifts above the pile
+                randomOffsets=true Y-jitter per card creates a hand-placed look
+                value=activeIndex  syncs CardStack's internal active to our state
+                                   so dot clicks can drive navigation
             */}
             <CardStack
               items={items}
@@ -370,12 +368,37 @@ export default function ProblemSection() {
               autoAdvance={false}
               pauseOnHover={true}
               loop={true}
-              showDots={true}
+              showDots={false}
               randomOffsets={true}
               yJitterValues={cardDims.yJitter}
               renderCard={renderProblemCard}
+              value={activeIndex}
               onChangeIndex={(index) => setActiveIndex(index)}
             />
+
+            {/* ── CUSTOM DOTS ───────────────────────────────────────────── */}
+            {/* Rendered below the card stage.
+                One dot per card. Active dot = full white. Others = white at 30%.
+                Clicking a dot updates activeIndex, which syncs back to CardStack
+                via the `value` prop. On mobile the user swipes the card; on
+                desktop they can also click here. */}
+            <div className="flex items-center justify-center gap-2 mt-4">
+              {items.map((item, idx) => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveIndex(idx)}
+                  aria-label={`Go to card ${idx + 1}: ${item.title}`}
+                  className={[
+                    "h-2 w-2 rounded-full transition-all duration-300",
+                    idx === activeIndex
+                      ? "bg-white-axis"
+                      : "bg-white-axis/30 hover:bg-white-axis/60",
+                  ].join(" ")}
+                />
+              ))}
+            </div>
+            {/* END CUSTOM DOTS */}
+
           </div>
           {/* END LEFT COLUMN */}
 

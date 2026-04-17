@@ -25,6 +25,9 @@ export type CardStackProps<T extends CardStackItem> = {
   /** Selected index on mount */
   initialIndex?: number;
 
+  /** Controlled active index — when provided, syncs internal state to this value */
+  value?: number;
+
   /** How many cards are visible around the active (odd recommended) */
   maxVisible?: number;
 
@@ -109,6 +112,7 @@ function signedOffset(i: number, active: number, len: number, loop: boolean) {
 export function CardStack<T extends CardStackItem>({
   items,
   initialIndex = 0,
+  value,
   maxVisible = 7,
 
   cardWidth = 520,
@@ -153,6 +157,11 @@ export function CardStack<T extends CardStackItem>({
   React.useEffect(() => {
     setActive((a) => wrapIndex(a, len));
   }, [len]);
+
+  // sync to external controlled value when provided
+  React.useEffect(() => {
+    if (value !== undefined) setActive(wrapIndex(value, len));
+  }, [value, len]);
 
   React.useEffect(() => {
     if (!len) return;
