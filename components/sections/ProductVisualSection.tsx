@@ -83,7 +83,10 @@ export default function ProductVisualSection() {
 
   // isInView fires when 60% of the section is visible — ensures the user is
   // actually watching before the animation begins. once:false so it can retrigger.
-  const isInView = useInView(sectionRef, { once: false, amount: 0.6 })
+  // amount: 0.3 — threshold low enough to fire on tall sections (min-h-screen).
+  // With amount: 0.6, if the section exceeds ~1.67× viewport height the
+  // IntersectionObserver never crosses the threshold and the animation never starts.
+  const isInView = useInView(sectionRef, { once: false, amount: 0.3 })
 
   // hasLeft fires when <1% is visible — used to reset the animation only once
   // the section is fully out of the viewport (avoids visible reverse-flight artifacts).
@@ -222,11 +225,13 @@ export default function ProductVisualSection() {
                       {/* ── PERMANENT BACKGROUND LAYER ──────────────────────
                           Always visible at 50% opacity. Before step 2 it is
                           covered by the flying copy on top. After the flying copy
-                          departs, this remains so the grid never shows a hole —
-                          the viewer can still read which images "came from" Instagram.
+                          departs, this remains — greyed out — so the grid never
+                          shows a blank hole. The viewer can see which images
+                          "came from" Instagram, now desaturated on the grid.
+                          grayscale: removes all colour so the image reads as grey.
                           overflow-hidden clips the Image to the rounded cell. */}
                       <div className="absolute inset-0 overflow-hidden rounded-sm opacity-50">
-                        <Image src={img.src} alt={img.alt} fill className="object-cover" />
+                        <Image src={img.src} alt={img.alt} fill className="object-cover grayscale" />
                       </div>
 
                       {/* ── FLYING COPY ──────────────────────────────────────
