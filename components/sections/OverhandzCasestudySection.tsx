@@ -17,7 +17,7 @@ export default function OverhandzCasestudySection() {
           Label above, h1, description, tech tags.
           Uses grey-axis as the surface (elevated from the black page bg).
           ────────────────────────────────────────────────────────────── */}
-      <div className="py-20 px-6 md:py-36 md:px-12 bg-grey-axis border-b border-white-axis/10">
+      <div className="pt-36 pb-20 px-6 md:pt-52 md:pb-36 md:px-12 bg-grey-axis border-b border-white-axis/10">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -31,8 +31,9 @@ export default function OverhandzCasestudySection() {
               Overhandz Boxing Club · Case Study
             </p>
 
-            {/* h1 — exactly one per the /our-work page */}
-            <h1 className="font-playfair text-white-axis uppercase tracking-tight text-5xl md:text-7xl leading-tight mb-6">
+            {/* h1 — exactly one per the /our-work page.
+                text-4xl on mobile (prevents overflow), text-7xl on desktop. */}
+            <h1 className="font-playfair text-white-axis uppercase tracking-tight text-4xl md:text-7xl leading-tight mb-6">
               From DMs to<br />automated bookings.
             </h1>
 
