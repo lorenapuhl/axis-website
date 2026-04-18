@@ -11,7 +11,7 @@ import Image from "next/image"
 // ─────────────────────────────────────────────────────────────────────────────
 export default function OverhandzTestimonialSection() {
   return (
-    <section className="py-20 px-6 md:py-36 md:px-12 bg-black-axis">
+    <section className="pt-20 pb-40 px-6 md:py-36 md:px-12 bg-black-axis">
       <div className="max-w-6xl mx-auto">
 
         {/* ── Centred container — max-w-720px as spec'd ───────────────────── */}
@@ -31,15 +31,22 @@ export default function OverhandzTestimonialSection() {
             the quote, not a separate element.
           */}
           <div className="text-center">
-            <span
-              aria-hidden
-              className="font-playfair italic text-[96px] md:text-[120px] leading-none text-white-axis/20 block -mb-4 select-none"
-            >
-              &ldquo;
-            </span>
 
             {/* The quote itself — italic to match the quote mark's tone */}
-            <blockquote className="mx-auto max-w-[640px]">
+            {/*
+              relative + text-left on the blockquote so the quote mark can be
+              pinned to the top-left corner of the text block, not the page edge.
+              The span is absolute, positioned just above and to the left of the
+              first line of text.
+            */}
+            <blockquote className="relative mx-auto max-w-[640px] text-left">
+              {/* Opening quote mark — anchored to top-left of the text block */}
+              <span
+                aria-hidden
+                className="absolute -top-10 -left-6 md:-left-10 font-playfair italic text-[80px] md:text-[100px] leading-none text-white-axis/20 select-none"
+              >
+                &ldquo;
+              </span>
               <p className="font-instrument italic text-white-axis text-lg md:text-xl leading-relaxed">
                 We went from managing everything in DMs to having a complete system.
                 Bookings, payments, and communication are now seamless — it changed how we run the gym.
