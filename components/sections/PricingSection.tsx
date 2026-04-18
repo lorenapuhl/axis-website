@@ -42,6 +42,11 @@ type PricingCard = {
   painLine: string
   cta: string
   isHero: boolean      // true only for Growth — drives all the special styling
+  // ── Founding offer fields (Growth card only) ──────────────────────────────
+  foundingRateLabel?: string     // "Founding studio rate (limited)"
+  regularPrice?: string          // "$299/month" shown with strikethrough
+  earlyAccessBenefits?: string[] // bullet points for Early Access Benefits box
+  foundingSpots?: string         // scarcity copy — stored in data so it can be updated without touching JSX
 }
 
 type ProcessStep = {
@@ -66,12 +71,12 @@ const PRICING_CARDS: PricingCard[] = [
     features: [
       "Professional website",
       "Instagram auto-sync",
-      "Class schedule",
+      "Clear schedule clients can book instantly",
       "Contact & location",
     ],
     missing: [
-      "Online booking",
-      "Online payments",
+      "Accept bookings 24/7",
+      "Get paid online",
     ],
     roi: "→ Just 2 extra bookings / month",
     painLine: "For studios that just need an online presence",
@@ -93,8 +98,17 @@ const PRICING_CARDS: PricingCard[] = [
     ],
     roi: "→ Just 3 extra bookings / month",
     painLine: "Stop answering the same messages every day.",
-    cta: "Start accepting bookings",
+    cta: "Claim founding spot",
     isHero: true,
+    // Founding offer fields
+    foundingRateLabel: "Founding studio rate (limited)",
+    regularPrice: "$299/month",
+    earlyAccessBenefits: [
+      "Priority setup (faster launch)",
+      "Direct input on new features",
+      "Lifetime discounted rate",
+    ],
+    foundingSpots: "Only 5 studios — 2 spots remaining",
   },
   {
     id: "pro",
@@ -146,6 +160,23 @@ const PROCESS_STEPS: ProcessStep[] = [
       "No more DMs",
     ],
     microLine: "You focus on teaching",
+  },
+]
+
+// WHY_FIVE_COLUMNS: data for the "Why only 5 studios?" section below the pricing grid.
+// Each column has an icon character, title, and body text.
+const WHY_FIVE_COLUMNS = [
+  {
+    title: "Built with real studios",
+    text: "We're working closely with a small group to refine the system based on real workflows.",
+  },
+  {
+    title: "High-quality setup",
+    text: "Each studio gets a fully customized setup, not a template.",
+  },
+  {
+    title: "Direct support",
+    text: "You'll have direct access during setup and launch.",
   },
 ]
 
@@ -482,9 +513,23 @@ export default function PricingSection() {
           {/* Subheadline — body text, Instrument Sans */}
           <motion.p
             variants={item}
-            className="font-instrument text-soft-grey text-sm md:text-base leading-relaxed max-w-xl mx-auto mb-12"
+            className="font-instrument text-soft-grey text-sm md:text-base leading-relaxed max-w-xl mx-auto mb-6"
           >
             Get more clients, accept payments, and stop managing your studio in DMs
+          </motion.p>
+
+          {/* ── FOUNDING ANNOUNCEMENT BAR ─────────────────────────────────
+              Minimal one-liner signalling limited early access.
+              Appears between subheadline and trust indicators.
+              No background box — stays part of the text flow.
+              A small blue dot acts as a subtle accent before the text. */}
+          <motion.p
+            variants={item}
+            className="font-instrument text-soft-grey/70 text-xs text-center mb-10 flex items-center justify-center gap-2"
+          >
+            {/* Blue dot — decorative, signals "active / live" status */}
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-axis flex-shrink-0" aria-hidden="true" />
+            Launching with 5 founding studios — limited early access
           </motion.p>
 
           {/* ── MICRO TRUST BAR ────────────────────────────────────────────
@@ -585,11 +630,16 @@ export default function PricingSection() {
                 />
               )}
 
-              {/* ── HERO BADGE (Growth card only) ────────────────────────────
-                  "Most studios choose this" — single highlight moment.
+              {/* ── HERO BADGES (Growth card only) ───────────────────────────
+                  Two stacked badges: FOUNDING OFFER (new) above MOST POPULAR (existing).
                   Uses blue-axis only — no second accent colour. */}
               {card.isHero && (
-                <div className="text-center mb-6">
+                <div className="text-center mb-6 flex flex-col items-center gap-2">
+                  {/* Founding offer badge — filled blue pill, slightly larger on mobile for visibility */}
+                  <span className="font-instrument text-[10px] md:text-[10px] uppercase tracking-[0.25em] text-black-axis bg-blue-axis px-4 py-1.5 rounded-full shadow-[0_0_12px_rgba(0,51,255,0.45)]">
+                    Founding Offer
+                  </span>
+                  {/* Most popular — keeps its existing outline style */}
                   <span className="font-instrument text-[10px] uppercase tracking-[0.25em] text-blue-axis border border-blue-axis/40 px-4 py-1.5 rounded-full">
                     ★ Most popular
                   </span>
@@ -620,7 +670,45 @@ export default function PricingSection() {
                   {card.price}
                 </span>
                 <span className="font-instrument text-soft-grey text-sm ml-2">/ month</span>
+
+                {/* ── FOUNDING PRICE CONTEXT (Growth card only) ───────────
+                    "Founding studio rate (limited)" labels this as the special rate.
+                    The regular price is shown with line-through to signal savings.
+                    mt-3: breathing room below the main price. */}
+                {card.isHero && card.foundingRateLabel && (
+                  <div className="mt-3 flex flex-col gap-1">
+                    <p className="font-instrument text-blue-axis text-xs uppercase tracking-widest">
+                      {card.foundingRateLabel}
+                    </p>
+                    {card.regularPrice && (
+                      <p className="font-instrument text-soft-grey/60 text-xs">
+                        Regular price:{" "}
+                        <span className="line-through">{card.regularPrice}</span>
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
+
+              {/* ── EARLY ACCESS BENEFITS BOX (Growth card only) ─────────────
+                  Visually matches the ROI box below (same bg-blue-axis/[0.08] style).
+                  Placed above the features list per the founding-offer spec.
+                  earlyAccessBenefits is stored in the card data for easy future edits. */}
+              {card.isHero && card.earlyAccessBenefits && (
+                <div className="bg-blue-axis/[0.08] border border-blue-axis/[0.20] rounded-xl p-4 md:p-4 mb-4">
+                  <p className="font-instrument text-white-axis text-xs font-semibold uppercase tracking-widest mb-3 text-center">
+                    Early Access Benefits
+                  </p>
+                  <ul className="flex flex-col gap-2">
+                    {card.earlyAccessBenefits.map((benefit) => (
+                      <li key={benefit} className="flex items-start gap-2 font-instrument text-xs text-soft-grey">
+                        <span className="text-blue-axis flex-shrink-0 mt-0.5" aria-hidden="true">✓</span>
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* ── VALUE BLOCK — shown on every card ────────────────────────
                   card.roi holds the plan-specific ROI line (e.g. "Just 2 extra
@@ -670,14 +758,26 @@ export default function PricingSection() {
                 {card.painLine}
               </p>
 
+              {/* ── SCARCITY LINE (Growth card only) ─────────────────────────
+                  Dynamic-ready: the copy lives in card.foundingSpots in the data array,
+                  so it can be updated (e.g. "1 spot remaining") without editing JSX.
+                  my-4 md:my-3: extra vertical space on mobile so it doesn't feel cramped. */}
+              {card.isHero && card.foundingSpots && (
+                <p className="font-instrument text-white-axis/80 text-xs text-center my-4 md:my-3 uppercase tracking-widest">
+                  {card.foundingSpots}
+                </p>
+              )}
+
               {/* ── CTA BUTTON ──────────────────────────────────────────────
                   mt-auto: pushes the button to the bottom of the flex column
                            so all three card CTAs align at the same vertical position.
-                  component.md: always use <button> — never <a> styled as a button. */}
+                  component.md: always use <button> — never <a> styled as a button.
+                  py-5 md:py-4 on the hero card: slightly taller tap target on mobile. */}
               <motion.button
                 onClick={openModal}
                 className={[
-                  "mt-auto w-full font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-6 py-4",
+                  "mt-auto w-full font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-6",
+                  card.isHero ? "py-5 md:py-4" : "py-4",
                   card.isHero
                     ? "bg-white-axis text-black-axis"
                     : "border border-white-axis/40 text-white-axis",
@@ -734,6 +834,64 @@ export default function PricingSection() {
           ))}
         </div>
         {/* END BLOCK 2 */}
+
+
+        {/* ══════════════════════════════════════════════════════════════════
+            BLOCK 2.5 — WHY ONLY 5 STUDIOS?
+            Explains the intentional scarcity of the founding offer.
+            3-column layout on desktop, stacked on mobile.
+            Ends with a high-contrast trust/guarantee line.
+        ══════════════════════════════════════════════════════════════════ */}
+
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="mb-24 md:mb-36"
+        >
+
+          {/* h2: section headline — one per section per SEO rules */}
+          <motion.h2
+            variants={item}
+            className="font-playfair uppercase tracking-tight text-white-axis text-2xl md:text-3xl text-center mb-16"
+          >
+            Why only 5 studios?
+          </motion.h2>
+
+          {/* 3-column grid on desktop, single column stacked on mobile.
+              Each column: decorative icon ✦ + h3 + body text. */}
+          <motion.div
+            variants={item}
+            className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 mb-14"
+          >
+            {WHY_FIVE_COLUMNS.map((col) => (
+              <div key={col.title} className="flex flex-col gap-4">
+                {/* ✦ — decorative brand mark in blue-axis.
+                    Purposeful: signals a curated, intentional process point. */}
+                <span className="font-instrument text-blue-axis text-base" aria-hidden="true">✦</span>
+                {/* h3: sub-item within the "Why only 5 studios?" h2 section */}
+                <h3 className="font-playfair uppercase tracking-tight text-white-axis text-lg leading-snug">
+                  {col.title}
+                </h3>
+                <p className="font-instrument text-soft-grey text-sm leading-relaxed">
+                  {col.text}
+                </p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Trust guarantee line — high contrast, centered, slightly larger.
+              "Go live first. Pay after." removes the last financial objection. */}
+          <motion.p
+            variants={item}
+            className="font-instrument text-white-axis text-sm md:text-base text-center font-semibold tracking-wide"
+          >
+            Go live first. Pay after your system is ready.
+          </motion.p>
+
+        </motion.div>
+        {/* END BLOCK 2.5 */}
 
 
         {/* ══════════════════════════════════════════════════════════════════
@@ -1339,13 +1497,18 @@ export default function PricingSection() {
 
           {/* ── REPEAT CTA ────────────────────────────────────────────────── */}
           <motion.div variants={item}>
+            {/* Founding urgency line — appears directly above the CTA button.
+                Connects limited availability to the price-increase consequence. */}
+            <p className="font-instrument text-soft-grey text-xs uppercase tracking-widest text-center mb-6">
+              Founding spots are limited — once filled, pricing increases
+            </p>
             <motion.button
               onClick={openModal}
               className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.35, ease: "easeOut" as const }}
             >
-              get your axis
+              Apply for early access
             </motion.button>
             <motion.p
             className="font-instrument tracking-tight text-soft-grey text-sm md:text-sm mt-3"
