@@ -830,7 +830,7 @@ export default function PricingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="mb-24 md:mb-36 rounded-2xl px-6 py-5 md:px-8 md:py-6 relative overflow-hidden border border-blue-axis/[0.25] bg-grey-axis"
+          className="mb-24 md:mb-36 rounded-2xl px-6 py-5 md:px-8 md:py-6 relative overflow-hidden border border-blue-axis/[0.25] bg-grey-axis md:w-fit md:mx-auto"
         >
 
           {/* Subtle blue tint overlay — creates the "dark blue / accent tint" gradient feel
@@ -855,7 +855,7 @@ export default function PricingSection() {
 
             {/* ── Title pill — identical design to the "Founding Offer" badge on the
                 Growth pricing card above: filled blue, dark text, rounded-full, glow. */}
-            <span className="font-instrument text-[10px] uppercase tracking-[0.25em] text-black-axis bg-blue-axis px-4 py-1.5 rounded-full shadow-[0_0_12px_rgba(0,51,255,0.45)]">
+            <span className="font-instrument text-[10px] md:text-xs uppercase tracking-[0.25em] text-black-axis bg-blue-axis px-4 py-1.5 rounded-full shadow-[0_0_12px_rgba(0,51,255,0.45)]">
               Founding Offer
             </span>
 
