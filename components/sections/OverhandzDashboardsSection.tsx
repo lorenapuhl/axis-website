@@ -186,7 +186,7 @@ export default function OverhandzDashboardsSection() {
             Everything that runs the gym.
           </motion.h2>
           <motion.p variants={item} className="font-instrument text-soft-grey text-base mt-4 max-w-xl">
-            Bookings, revenue, members, content — all connected in one internal system built specifically for boxing studios.
+            Bookings, revenue, members, content — all connected in one minimalist, aesthetic, and user-friendly system.
           </motion.p>
         </motion.div>
 
@@ -252,18 +252,16 @@ export default function OverhandzDashboardsSection() {
         </motion.div>
 
         {/* ── CONTENT AREA ── */}
-        {/* Desktop: 2-column grid. Mobile: stacked (text above, dashboard below) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-8 items-start">
+        {/* Desktop: text above dashboard, full width. Mobile: same stacked layout. */}
+        <div className="flex flex-col gap-6">
 
-          {/* ── LEFT: TEXT CONTENT ── */}
+          {/* ── TEXT CONTENT ── */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeId + "-text"}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: "easeOut" } }}
               exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeOut" } }}
-              // max-w-[420px] as specified — constrains text column width
-              className="md:max-w-[420px] md:pt-4"
             >
               {/* Small uppercase label */}
               <p className="font-instrument text-soft-grey text-xs uppercase tracking-widest mb-3">
@@ -274,14 +272,13 @@ export default function OverhandzDashboardsSection() {
                 {activeTab.headline}
               </h3>
               {/* Body paragraph */}
-              <p className="font-instrument text-soft-grey text-base leading-relaxed">
+              <p className="font-instrument text-soft-grey text-base leading-relaxed max-w-xl">
                 {activeTab.text}
               </p>
             </motion.div>
           </AnimatePresence>
 
-          {/* ── RIGHT: DASHBOARD ── */}
-          {/* Dashboard container with bg, border, and radius as specified */}
+          {/* ── DASHBOARD — full width ── */}
           <div className="w-full">
             <AnimatePresence mode="wait">
               <motion.div
