@@ -33,15 +33,15 @@ export default function OverhandzCasestudySection() {
             </p>
 
             {/* Overhandz logo — sits between the label and the h1, centred.
-                invert turns the dark outline white so it reads on the dark bg
-                without any visible background square. */}
+                mix-blend-screen makes black pixels invisible and keeps white
+                pixels visible — the black background disappears into the dark section. */}
             <div className="flex justify-center mb-6">
               <Image
-                src="/overhandz/ui/logo-transparent.png"
+                src="/overhandz/ui/logo.png"
                 alt="Overhandz Boxing Club logo"
-                width={200}
-                height={100}
-                className="object-contain invert"
+                width={220}
+                height={110}
+                className="object-contain mix-blend-screen"
               />
             </div>
 
