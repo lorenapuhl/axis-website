@@ -34,6 +34,7 @@ import OutcomeSection from "@/components/sections/OutcomeSection"
 import BenefitsSection from "@/components/sections/BenefitsSection"
 import AboutmeSection from "@/components/sections/AboutmeSection"
 import FAQSection from "@/components/sections/FAQSection"
+import TestimonialSection from "@/components/sections/TestimonialSection"
 import FinalCTA from "@/components/sections/FinalCTA"
 import FooterSection from "@/components/sections/FooterSection"
 
@@ -97,6 +98,7 @@ export default function Home() {
         <OutcomeSection />
         { /*<AboutmeSection /> */}
         <FAQSection />
+        <TestimonialSection />
         <FinalCTA />
         <FooterSection />
       </CTAProvider>
