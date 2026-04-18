@@ -44,46 +44,47 @@ export default function PortfolioFinalCTASection() {
           </p>
 
           {/* ── CTA buttons ─────────────────────────────────────────────── */}
-          <div className="flex flex-col items-center gap-4">
+          {/*
+            Layout:
+            - Mobile:  buttons stacked, auto width (content + padding only)
+            - Desktop: buttons side by side; sub-comments sit below "Get your AXIS" only
+          */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
 
-            {/* Both buttons on the same row, vertically centred */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+            {/* CTA 1 — See the live site (external link, so <a> is correct here) */}
+            <a
+              href="https://overhandz-website.vercel.app/en"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                font-instrument text-xs font-semibold uppercase tracking-[0.2em]
+                px-9 py-4 border border-white/20 text-white-axis text-center
+                hover:border-white/40 transition-colors duration-300
+                whitespace-nowrap
+              "
+            >
+              See the live site
+            </a>
 
-              {/* CTA 1 — See the live site (external link, so <a> is correct here) */}
-              <a
-                href="https://overhandz-website.vercel.app/en"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  w-full sm:w-56
-                  font-instrument text-xs font-semibold uppercase tracking-[0.2em]
-                  px-9 py-4 border border-white/20 text-white-axis text-center
-                  hover:border-white/40 transition-colors duration-300
-                  whitespace-nowrap
-                "
-              >
-                See the live site
-              </a>
-
-              {/* CTA 2 — Get your AXIS (opens modal, so <button> is correct) */}
+            {/* CTA 2 — Get your AXIS + sub-comments as a unit below it */}
+            <div className="flex flex-col items-center gap-3">
               <motion.button
                 onClick={openModal}
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="w-full sm:w-56 bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4"
+                className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4 whitespace-nowrap"
               >
                 Get your AXIS
               </motion.button>
 
+              {/* Sub-comments anchored below "Get your AXIS" — small, muted */}
+              <p className="font-instrument text-[11px] text-soft-grey/60 tracking-wide">
+                Get started in less than 2 minutes
+              </p>
+              <p className="font-instrument text-[11px] text-soft-grey/60 tracking-wide -mt-1">
+                No setup fees
+              </p>
             </div>
-
-            {/* Sub-comments below both buttons — stacked, small, grey */}
-            <p className="font-instrument text-[11px] text-soft-grey/60 tracking-wide">
-              Get started in less than 2 minutes
-            </p>
-            <p className="font-instrument text-[11px] text-soft-grey/60 tracking-wide -mt-1">
-              No setup fees
-            </p>
 
           </div>
 
