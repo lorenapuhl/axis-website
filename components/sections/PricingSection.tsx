@@ -103,11 +103,6 @@ const PRICING_CARDS: PricingCard[] = [
     // Founding offer fields
     foundingRateLabel: "Founding studio rate (limited)",
     regularPrice: "$299/month",
-    earlyAccessBenefits: [
-      "Priority setup (faster launch)",
-      "Direct input on new features",
-      "Lifetime discounted rate",
-    ],
     foundingSpots: "Only 5 studios — 2 spots remaining",
   },
   {
@@ -690,25 +685,6 @@ export default function PricingSection() {
                 )}
               </div>
 
-              {/* ── EARLY ACCESS BENEFITS BOX (Growth card only) ─────────────
-                  Visually matches the ROI box below (same bg-blue-axis/[0.08] style).
-                  Placed above the features list per the founding-offer spec.
-                  earlyAccessBenefits is stored in the card data for easy future edits. */}
-              {card.isHero && card.earlyAccessBenefits && (
-                <div className="bg-blue-axis/[0.08] border border-blue-axis/[0.20] rounded-xl p-4 md:p-4 mb-4">
-                  <p className="font-instrument text-white-axis text-xs font-semibold uppercase tracking-widest mb-3 text-center">
-                    Early Access Benefits
-                  </p>
-                  <ul className="flex flex-col gap-2">
-                    {card.earlyAccessBenefits.map((benefit) => (
-                      <li key={benefit} className="flex items-start gap-2 font-instrument text-xs text-soft-grey">
-                        <span className="text-blue-axis flex-shrink-0 mt-0.5" aria-hidden="true">✓</span>
-                        {benefit}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
 
               {/* ── VALUE BLOCK — shown on every card ────────────────────────
                   card.roi holds the plan-specific ROI line (e.g. "Just 2 extra
@@ -837,58 +813,113 @@ export default function PricingSection() {
 
 
         {/* ══════════════════════════════════════════════════════════════════
-            BLOCK 2.5 — WHY ONLY 5 STUDIOS?
-            Explains the intentional scarcity of the founding offer.
-            3-column layout on desktop, stacked on mobile.
-            Ends with a high-contrast trust/guarantee line.
+            BLOCK 2.5 — FOUNDING OFFER STRIP
+            Compact promotional banner placed directly below the pricing cards.
+            Desktop: 3 horizontal zones (heading | paragraph | chips).
+            Mobile: stacked vertically (heading → paragraph → chips → spots left).
+            Feels like a promotion banner, not a text section.
         ══════════════════════════════════════════════════════════════════ */}
 
+        {/* motion.div with whileInView: fades + slides up when scrolled into view.
+            rounded-2xl: same border-radius as the pricing cards above.
+            bg-grey-axis + border-blue-axis: stands out from the black background
+            without overpowering the cards. relative overflow-hidden: needed so the
+            absolutely-positioned glow cannot bleed outside the rounded corners. */}
         <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="mb-24 md:mb-36"
+          className="mb-24 md:mb-36 rounded-2xl px-6 py-5 md:px-8 md:py-6 relative overflow-hidden border border-blue-axis/[0.25] bg-grey-axis"
         >
 
-          {/* h2: section headline — one per section per SEO rules */}
-          <motion.h2
-            variants={item}
-            className="font-playfair uppercase tracking-tight text-white-axis text-2xl md:text-3xl text-center mb-16"
-          >
-            Why only 5 studios?
-          </motion.h2>
+          {/* Subtle blue tint overlay — creates the "dark blue / accent tint" gradient feel
+              without using any hardcoded hex values. pointer-events-none so it never
+              blocks interaction with text or buttons below it. */}
+          <div
+            className="absolute inset-0 bg-blue-axis/[0.04] rounded-2xl pointer-events-none"
+            aria-hidden="true"
+          />
 
-          {/* 3-column grid on desktop, single column stacked on mobile.
-              Each column: decorative icon ✦ + h3 + body text. */}
-          <motion.div
-            variants={item}
-            className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 mb-14"
-          >
-            {WHY_FIVE_COLUMNS.map((col) => (
-              <div key={col.title} className="flex flex-col gap-4">
-                {/* ✦ — decorative brand mark in blue-axis.
-                    Purposeful: signals a curated, intentional process point. */}
-                <span className="font-instrument text-blue-axis text-base" aria-hidden="true">✦</span>
-                {/* h3: sub-item within the "Why only 5 studios?" h2 section */}
-                <h3 className="font-playfair uppercase tracking-tight text-white-axis text-lg leading-snug">
-                  {col.title}
-                </h3>
-                <p className="font-instrument text-soft-grey text-sm leading-relaxed">
-                  {col.text}
-                </p>
+          {/* Soft ambient glow — same technique as the Growth card's glow above.
+              Positioned top-right to create directionality without overpowering. */}
+          <div
+            className="absolute top-0 right-0 h-40 w-64 rounded-full bg-blue-axis/[0.10] blur-3xl pointer-events-none"
+            aria-hidden="true"
+          />
+
+          {/* Desktop: flex-row (3 horizontal zones side by side).
+              Mobile: flex-col (stacked with tight gaps).
+              relative: keeps content above the absolutely-positioned glow layers. */}
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0 relative">
+
+            {/* ── ZONE 1: Heading ──────────────────────────────────────────────
+                flex-shrink-0: heading never shrinks — it always shows at full size.
+                md:pr-8: horizontal padding before the divider on desktop. */}
+            <div className="flex-shrink-0 md:pr-8">
+              <p className="font-playfair uppercase tracking-tight text-white-axis text-xl md:text-2xl leading-none">
+                Founding<br className="hidden md:block" /> Offer
+              </p>
+            </div>
+
+            {/* Vertical divider — decorative separator between zones, desktop only.
+                self-stretch: grows to match the flex container height automatically. */}
+            <div
+              className="hidden md:block w-px self-stretch bg-white-axis/[0.08] flex-shrink-0 mr-8"
+              aria-hidden="true"
+            />
+
+            {/* ── ZONE 2: Paragraph ────────────────────────────────────────────
+                flex-1 min-w-0: takes all available space, min-w-0 prevents text
+                overflow from expanding the flex item beyond its container.
+                md:pr-8: horizontal padding before the second divider on desktop. */}
+            <div className="flex-1 min-w-0 md:pr-8">
+              <p className="font-instrument text-soft-grey text-xs leading-relaxed">
+                We&apos;re onboarding a small group of studios as we launch this
+                system. You&apos;ll get priority setup for a faster go-live,
+                features tailored to your exact needs, and a locked-in discounted
+                rate as an early partner.
+              </p>
+            </div>
+
+            {/* Vertical divider 2 — same as above */}
+            <div
+              className="hidden md:block w-px self-stretch bg-white-axis/[0.08] flex-shrink-0 mr-8"
+              aria-hidden="true"
+            />
+
+            {/* ── ZONE 3: Chips + mobile scarcity line ─────────────────────────
+                flex-shrink-0: zone 3 never shrinks to preserve chip readability.
+                flex-col gap-2: chips wrap in their own row; scarcity below on mobile. */}
+            <div className="flex-shrink-0 flex flex-col gap-2">
+
+              {/* Chips row — pill-shaped labels, even spacing, wraps if needed.
+                  whitespace-nowrap: prevents each chip from line-breaking mid-word. */}
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Priority setup",
+                  "Features tailored to your studio",
+                  "Discounted lifetime rate",
+                ].map((chip) => (
+                  <span
+                    key={chip}
+                    className="font-instrument text-[10px] uppercase tracking-widest text-soft-grey border border-white-axis/[0.15] rounded-full px-3 py-1.5 whitespace-nowrap"
+                  >
+                    {chip}
+                  </span>
+                ))}
               </div>
-            ))}
-          </motion.div>
 
-          {/* Trust guarantee line — high contrast, centered, slightly larger.
-              "Go live first. Pay after." removes the last financial objection. */}
-          <motion.p
-            variants={item}
-            className="font-instrument text-white-axis text-sm md:text-base text-center font-semibold tracking-wide"
-          >
-            Go live first. Pay after your system is ready.
-          </motion.p>
+              {/* "2 spots left" — mobile only (item 4 in the stacked layout).
+                  md:hidden: hidden on desktop where scarcity is shown on the Growth card.
+                  Adds urgency without clutter, per spec. */}
+              <p className="md:hidden font-instrument text-[10px] uppercase tracking-[0.2em] text-white-axis/60 mt-1">
+                2 spots left
+              </p>
+
+            </div>
+
+          </div>
 
         </motion.div>
         {/* END BLOCK 2.5 */}
@@ -1487,14 +1518,14 @@ export default function PricingSection() {
           {/* ── HUMAN CONNECTION ──────────────────────────────────────────── */}
           <motion.div
             variants={item}
-            className="flex flex-col md:flex-row gap-6 md:gap-12 mb-12"
+            className="flex flex-col md:flex-row md:justify-center gap-6 md:gap-12 mb-12"
           >
             {[
               "Free setup",
               "Direct contact with us",
               "Launch in 7 days",
             ].map((point) => (
-              <div key={point} className="flex items-center ml-5 gap-2">
+              <div key={point} className="flex items-center gap-2">
                 <span className="text-blue-axis text-xs" aria-hidden="true">✓</span>
                 <span className="font-instrument text-soft-grey text-xs uppercase tracking-widest">
                   {point}
