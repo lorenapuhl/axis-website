@@ -59,7 +59,7 @@ export default function OverhandzCasestudySection() {
 
             {/* Tech stack tags */}
             <div className="flex flex-wrap gap-2 mt-8 md:justify-center">
-              {["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript", "Stripe (planned)"].map((tag) => (
+              {["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript", "Visa"].map((tag) => (
                 <span
                   key={tag}
                   className="font-instrument text-xs bg-white-axis/10 text-soft-grey px-3 py-1.5 rounded-full"
