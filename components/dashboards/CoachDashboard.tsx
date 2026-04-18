@@ -1,6 +1,7 @@
 "use client"
 // CoachDashboard — grid of coach cards showing name, assigned classes, and weekly hours.
 // Clicking a card opens an "Assign Classes" modal.
+// "+ Add Coach" button opens a form to add a new coach.
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -56,7 +57,7 @@ const COACHES: Coach[] = [
   },
 ]
 
-// All available class types that can be assigned
+// All available class types that can be assigned to a coach
 const ALL_CLASSES = [
   "Boxing Fundamentals",
   "Cardio Boxing",
@@ -66,11 +67,17 @@ const ALL_CLASSES = [
   "Open Gym",
 ]
 
-// AssignModal — lets the user assign classes to a coach
+const ROLES = ["Head Coach", "Cardio Coach", "Coach", "Junior Coach"]
+
+// ── AssignModal ─────────────────────────────────────────────────────────────
+// Opens when a coach card is clicked.
+// Shows a checklist of all class types — the user can assign or unassign each one.
 function AssignModal({ coach, onClose }: { coach: Coach; onClose: () => void }) {
-  // Local state for which classes are assigned in this session
+  // Set — a JavaScript data structure that automatically prevents duplicates.
+  // We use it here to track which classes are checked.
   const [assigned, setAssigned] = useState<Set<string>>(new Set(coach.classes))
 
+  // Toggle a class on or off in the assigned set
   const toggle = (cls: string) => {
     setAssigned((prev) => {
       const next = new Set(prev)
@@ -100,7 +107,7 @@ function AssignModal({ coach, onClose }: { coach: Coach; onClose: () => void }) 
           <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors text-lg leading-none">×</button>
         </div>
 
-        {/* Checklist of all classes */}
+        {/* Checklist — each class is a toggleable button */}
         <div className="space-y-1 mb-5">
           {ALL_CLASSES.map((cls) => (
             <button
@@ -109,7 +116,7 @@ function AssignModal({ coach, onClose }: { coach: Coach; onClose: () => void }) 
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors
                 ${assigned.has(cls) ? "bg-zinc-800 text-white" : "text-zinc-500 hover:bg-zinc-800/50 hover:text-zinc-300"}`}
             >
-              {/* Checkbox indicator */}
+              {/* Visual checkbox indicator */}
               <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors
                 ${assigned.has(cls) ? "bg-white border-white" : "border-zinc-600"}`}
               >
@@ -135,9 +142,93 @@ function AssignModal({ coach, onClose }: { coach: Coach; onClose: () => void }) 
   )
 }
 
+// ── AddCoachModal ────────────────────────────────────────────────────────────
+// Opens when "+ Add Coach" is clicked.
+// Collects the name and role for a new coach.
+function AddCoachModal({ onClose }: { onClose: () => void }) {
+  // useState — stores each form field value independently
+  const [name, setName] = useState("")
+  const [role, setRole] = useState(ROLES[2]) // default: "Coach"
+
+  // Derive initials from the name — e.g. "Jordan Lee" → "JL"
+  const initials = name
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w[0].toUpperCase())
+    .slice(0, 2)
+    .join("")
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.97 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 w-full max-w-sm mx-4"
+      >
+        <div className="flex justify-between items-center mb-5">
+          <h3 className="text-white text-sm font-semibold font-instrument">Add Coach</h3>
+          <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors text-lg leading-none">×</button>
+        </div>
+
+        <div className="space-y-3">
+          {/* Avatar preview — updates live as the user types their name */}
+          {initials && (
+            <div className="flex justify-center mb-1">
+              <div className="w-12 h-12 rounded-full bg-zinc-700 flex items-center justify-center text-sm text-zinc-300 font-semibold font-instrument">
+                {initials}
+              </div>
+            </div>
+          )}
+
+          {/* Full name */}
+          <div>
+            <label className="text-zinc-600 text-xs uppercase tracking-wider font-instrument block mb-1">Full Name</label>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. Jordan Lee"
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-300 text-sm font-instrument focus:outline-none placeholder:text-zinc-700"
+            />
+          </div>
+
+          {/* Role */}
+          <div>
+            <label className="text-zinc-600 text-xs uppercase tracking-wider font-instrument block mb-1">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-300 text-sm font-instrument focus:outline-none"
+            >
+              {ROLES.map((r) => <option key={r}>{r}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div className="flex gap-2 mt-5">
+          <button onClick={onClose} className="flex-1 py-2 rounded-lg border border-zinc-800 text-zinc-400 text-xs font-instrument hover:border-zinc-700 transition-colors">
+            Cancel
+          </button>
+          <button
+            onClick={onClose}
+            disabled={!name.trim()}
+            className="flex-1 py-2 rounded-lg bg-white text-black text-xs font-instrument font-semibold hover:bg-zinc-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Add Coach
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
 export default function CoachDashboard() {
-  // activeCoach — which coach card was clicked (null = modal closed)
+  // activeCoach — which coach card was clicked (null = assign modal closed)
   const [activeCoach, setActiveCoach] = useState<Coach | null>(null)
+  // addOpen — whether the "Add Coach" modal is showing
+  const [addOpen, setAddOpen] = useState(false)
 
   return (
     <div className="bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex flex-col overflow-hidden">
@@ -145,7 +236,11 @@ export default function CoachDashboard() {
       {/* ── TOP BAR ── */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-900 shrink-0">
         <p className="text-zinc-500 text-xs font-instrument uppercase tracking-wider">Coaches</p>
-        <button className="bg-white text-black text-xs font-instrument font-semibold px-3 py-1.5 rounded-lg hover:bg-zinc-100 transition-colors">
+        {/* Add Coach — opens the add modal */}
+        <button
+          onClick={() => setAddOpen(true)}
+          className="bg-white text-black text-xs font-instrument font-semibold px-3 py-1.5 rounded-lg hover:bg-zinc-100 transition-colors"
+        >
           + Add Coach
         </button>
       </div>
@@ -153,6 +248,7 @@ export default function CoachDashboard() {
       {/* ── COACH CARD GRID ── */}
       <div className="flex-1 overflow-y-auto p-3 grid grid-cols-2 gap-2 content-start">
         {COACHES.map((coach, idx) => (
+          // motion.button — a Framer Motion-enhanced button that animates on mount
           <motion.button
             key={coach.id}
             onClick={() => setActiveCoach(coach)}
@@ -184,7 +280,7 @@ export default function CoachDashboard() {
               </div>
             </div>
 
-            {/* Assigned class tags */}
+            {/* Assigned class tags — shows up to 2, then "+N more" */}
             {coach.classes.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {coach.classes.slice(0, 2).map((cls) => (
@@ -201,9 +297,11 @@ export default function CoachDashboard() {
         ))}
       </div>
 
-      {/* ── ASSIGN CLASSES MODAL ── */}
+      {/* ── MODALS ──
+          AnimatePresence keeps both modals from clashing — only one shows at a time. */}
       <AnimatePresence>
         {activeCoach && <AssignModal coach={activeCoach} onClose={() => setActiveCoach(null)} />}
+        {addOpen      && <AddCoachModal onClose={() => setAddOpen(false)} />}
       </AnimatePresence>
     </div>
   )
