@@ -47,7 +47,7 @@ export default function OverhandzCasestudySection() {
 
             {/* h1 — exactly one per the /our-work page.
                 text-4xl on mobile (prevents overflow), text-7xl on desktop. */}
-            <h1 className="font-playfair text-white-axis uppercase tracking-tight text-4xl md:text-7xl leading-tight mb-6">
+            <h1 className="font-playfair text-white-axis uppercase tracking-tight text-4xl md:text-5xl leading-tight mb-6">
               From DMs to<br />automated bookings.
             </h1>
 
