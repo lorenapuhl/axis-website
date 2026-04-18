@@ -8,7 +8,7 @@
 // The browser frame box is intentionally removed — only a floating rounded search bar
 // sits above the panel. The panel itself renders full-width with no constraining box.
 
-import { useState, type ComponentType } from "react"
+import { useState, useRef, type ComponentType } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   MobileExperiencePanel,
@@ -101,6 +101,20 @@ export default function OverhandzFeaturesSection() {
   const activePill = PILLS.find((p) => p.id === activeId)!
   const ActivePanel = activePill.Panel
 
+  // Ref for the pill scroll container — used to scroll the active pill into view
+  // when a dot is clicked without the user needing to manually scroll.
+  const pillNavRef = useRef<HTMLDivElement>(null)
+
+  // Select a pill by id: update state + scroll the pill button into view.
+  const handleSelect = (id: string) => {
+    setActiveId(id)
+    const nav = pillNavRef.current
+    if (!nav) return
+    const idx = PILLS.findIndex((p) => p.id === id)
+    const btn = nav.children[idx] as HTMLElement | undefined
+    btn?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" })
+  }
+
   return (
     // bg-grey-axis (#121212) provides a visible contrast against the pure-black panels
     <section className="py-20 px-6 md:py-36 md:px-12 bg-grey-axis">
@@ -128,24 +142,47 @@ export default function OverhandzFeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-          className="flex gap-2 overflow-x-auto pb-4 mb-12 snap-x snap-mandatory scrollbar-none"
+          className="mb-4"
         >
-          {PILLS.map((pill) => (
-            <button
-              key={pill.id}
-              onClick={() => setActiveId(pill.id)}
-              className={`
-                shrink-0 snap-start px-4 py-2 rounded-full text-xs font-instrument font-medium
-                uppercase tracking-widest transition-colors duration-200
-                ${activeId === pill.id
-                  ? "bg-white-axis/10 text-white-axis border border-white-axis/30"
-                  : "text-soft-grey hover:text-white-axis border border-transparent"
-                }
-              `}
-            >
-              {pill.label}
-            </button>
-          ))}
+          {/* Scrollable pill row — scrollbar-none hides the native scrollbar */}
+          <div
+            ref={pillNavRef}
+            className="flex gap-2 overflow-x-auto scrollbar-none snap-x snap-mandatory"
+          >
+            {PILLS.map((pill) => (
+              <button
+                key={pill.id}
+                onClick={() => handleSelect(pill.id)}
+                className={`
+                  shrink-0 snap-start px-4 py-2 rounded-full text-xs font-instrument font-medium
+                  uppercase tracking-widest transition-colors duration-200
+                  ${activeId === pill.id
+                    ? "bg-white-axis/10 text-white-axis border border-white-axis/30"
+                    : "text-soft-grey hover:text-white-axis border border-transparent"
+                  }
+                `}
+              >
+                {pill.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Dots — one per pill, active dot widens into a pill shape.
+              Clicking a dot also scrolls the matching pill button into view. */}
+          <div className="flex justify-center gap-1.5 mt-4 mb-8">
+            {PILLS.map((pill) => (
+              <button
+                key={pill.id}
+                onClick={() => handleSelect(pill.id)}
+                aria-label={`Show ${pill.label}`}
+                className={`rounded-full transition-all duration-300 ${
+                  activeId === pill.id
+                    ? "w-4 h-1.5 bg-white-axis"
+                    : "w-1.5 h-1.5 bg-white-axis/25 hover:bg-white-axis/50"
+                }`}
+              />
+            ))}
+          </div>
         </motion.div>
 
         {/* ── CONTENT AREA ── */}

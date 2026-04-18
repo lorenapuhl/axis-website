@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Hide scrollbars everywhere they're not wanted.
+   Tailwind v4 doesn't include scrollbar-none by default, so we define it here. */
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE / Edge */
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;                /* Chrome / Safari / Opera */
+  }
+}
+
 @theme {
   /* Fonts */
   --font-playfair: var(--font-playfair);

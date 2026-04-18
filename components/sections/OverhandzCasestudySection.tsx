@@ -7,6 +7,7 @@
 // page headline for /our-work, per SEO rules.
 
 import { motion } from "framer-motion"
+import Image from "next/image"
 
 export default function OverhandzCasestudySection() {
   return (
@@ -30,6 +31,17 @@ export default function OverhandzCasestudySection() {
             <p className="font-instrument text-soft-grey text-sm font-medium tracking-widest uppercase mb-4">
               Overhandz Boxing Club · Case Study
             </p>
+
+            {/* Overhandz logo — sits between the label and the h1 */}
+            <div className="mb-6">
+              <Image
+                src="/overhandz/ui/logo-transparent.png"
+                alt="Overhandz Boxing Club logo"
+                width={160}
+                height={80}
+                className="object-contain invert opacity-70"
+              />
+            </div>
 
             {/* h1 — exactly one per the /our-work page.
                 text-4xl on mobile (prevents overflow), text-7xl on desktop. */}
