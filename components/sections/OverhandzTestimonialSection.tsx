@@ -23,69 +23,35 @@ export default function OverhandzTestimonialSection() {
           className="mx-auto max-w-[720px]"
         >
 
-          {/* ── SaaS-style card ──────────────────────────────────────────── */}
+          {/* ── Quote ──────────────────────────────────────────────────── */}
           {/*
-            Background:  #0c0c0c — slightly lighter than pure black, creates depth
-            Border:      1px solid #1f1f1f — barely visible edge, defines the card
-            rounded-2xl  — softer than sharp corners; feels modern
-            p-16 md:p-24 — generous padding; whitespace does the visual work
-            shadow-[…]   — very soft white shadow at 2% opacity — almost invisible
-                           but adds that last 1% of premium feel
-            hover:border-white/10 — border brightens slightly on hover (spec'd micro-detail)
-            transition-colors     — smooth border transition
+            No card — the quote sits directly on the black background.
+            Opening quote mark in Playfair italic at low opacity frames the text
+            without adding bulk. -mb-4 pulls it tight so it reads as part of
+            the quote, not a separate element.
           */}
-          <div
-            className="
-              rounded-2xl border p-16 md:p-24 text-center
-              transition-colors duration-500
-              shadow-[0_0_0_1px_rgba(255,255,255,0.02)]
-              hover:border-white/10
-            "
-            style={{
-              background: "#0c0c0c",
-              borderColor: "#1f1f1f",
-            }}
-          >
-            {/* ── Quote ──────────────────────────────────────────────────── */}
-            {/*
-              Large opening quote mark — visible typographic element that frames
-              the testimonial. font-playfair gives it a classical feel.
-              text-white-axis/20 = 20% white opacity, visible but not dominant.
-              leading-none + -mb-2 pulls it tight against the quote text below.
-            */}
-            <div className="relative">
-              <span
-                aria-hidden
-                className="font-playfair text-[96px] md:text-[120px] leading-none text-white-axis/20 block text-left -mb-4 select-none"
-              >
-                &ldquo;
-              </span>
+          <div className="text-center">
+            <span
+              aria-hidden
+              className="font-playfair italic text-[96px] md:text-[120px] leading-none text-white-axis/20 block -mb-4 select-none"
+            >
+              &ldquo;
+            </span>
 
-              {/* The quote itself */}
-              <blockquote className="mx-auto max-w-[640px]">
-                <p className="font-instrument text-white-axis text-lg md:text-xl leading-relaxed">
-                  We went from managing everything in DMs to having a complete system.
-                  Bookings, payments, and communication are now seamless — it changed how we run the gym.
-                </p>
-              </blockquote>
-
-              {/* Large closing quote mark — mirrors the opening, right-aligned */}
-              <span
-                aria-hidden
-                className="font-playfair text-[96px] md:text-[120px] leading-none text-white-axis/20 block text-right -mt-4 select-none"
-              >
-                &rdquo;
-              </span>
-            </div>
+            {/* The quote itself — italic to match the quote mark's tone */}
+            <blockquote className="mx-auto max-w-[640px]">
+              <p className="font-instrument italic text-white-axis text-lg md:text-xl leading-relaxed">
+                We went from managing everything in DMs to having a complete system.
+                Bookings, payments, and communication are now seamless — it changed how we run the gym.
+              </p>
+            </blockquote>
 
             {/* ── Signature ──────────────────────────────────────────────── */}
             {/*
-              Logo sits just above the name — visually anchors the attribution.
-              mt-16 separates the quote block from the signature area.
-              Logo at opacity-80 = subtle, not competing with the quote.
-              Name in small uppercase tracking-widest = feels like a proper stamp.
+              mt-8 — tighter gap between quote and attribution than before.
+              Logo above the name visually anchors who said it.
             */}
-            <div className="mt-16 flex flex-col items-center gap-4">
+            <div className="mt-8 flex flex-col items-center gap-3">
               <Image
                 src="/portfolio/overhandz/logo-transparent.png"
                 alt="Overhandz Club logo"
@@ -97,7 +63,6 @@ export default function OverhandzTestimonialSection() {
                 Overhandz Club
               </p>
             </div>
-
           </div>
 
         </motion.div>
