@@ -43,7 +43,7 @@ export default function OverhandzTestimonialSection() {
               {/* Opening quote mark — anchored to top-left of the text block */}
               <span
                 aria-hidden
-                className="absolute -top-10 -left-1 md:-left-10 font-playfair italic text-[80px] md:text-[100px] leading-none text-white-axis/20 select-none"
+                className="absolute -top-10 -left-1 md:-left-10 font-playfair italic text-[80px] md:text-[100px] leading-none text-blue-axis select-none"
               >
                 &ldquo;
               </span>

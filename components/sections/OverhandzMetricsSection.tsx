@@ -93,7 +93,7 @@ export default function OverhandzMetricsSection() {
           className="mb-16"
         >
           {/* Eyebrow label — same uppercase tracking style as other AXIS sections */}
-          <p className="font-instrument text-soft-grey text-xs uppercase tracking-widest mb-4">
+          <p className="font-instrument text-blue-axis text-xs uppercase tracking-widest mb-4">
             Projected outcomes
           </p>
           {/* Section headline — Playfair, uppercase, tight tracking */}

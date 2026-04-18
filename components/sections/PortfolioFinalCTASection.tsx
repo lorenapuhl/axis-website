@@ -28,7 +28,7 @@ export default function PortfolioFinalCTASection() {
         >
 
           {/* Eyebrow label */}
-          <p className="font-instrument text-soft-grey text-xs uppercase tracking-widest mb-6">
+          <p className="font-instrument text-blue-axis text-xs uppercase tracking-widest mb-6">
             Your studio is next
           </p>
 
