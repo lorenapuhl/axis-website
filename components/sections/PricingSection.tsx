@@ -1436,6 +1436,14 @@ export default function PricingSection() {
             className="font-instrument text-soft-grey text-sm leading-relaxed max-w-lg mx-auto mb-12"
           >
             We adapt everything to your specific needs.
+
+          </motion.p>
+          
+	  <motion.p
+            variants={item}
+            className="font-instrument text-soft-grey text-sm leading-relaxed max-w-lg mx-auto mb-3"
+          >
+	    You'll have direct support during setup and launch.
           </motion.p>
 
           {/* ── SCARCITY BLOCK ────────────────────────────────────────────── */}
