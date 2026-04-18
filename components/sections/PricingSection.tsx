@@ -848,75 +848,40 @@ export default function PricingSection() {
             aria-hidden="true"
           />
 
-          {/* Desktop: flex-row (3 horizontal zones side by side).
-              Mobile: flex-col (stacked with tight gaps).
-              relative: keeps content above the absolutely-positioned glow layers. */}
-          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-0 relative">
+          {/* Centered stacked layout: pill title → paragraph → chips.
+              items-center + text-center: everything centered on both mobile and desktop.
+              gap-5: consistent breathing room between each zone. */}
+          <div className="flex flex-col items-center gap-5 relative text-center">
 
-            {/* ── ZONE 1: Heading ──────────────────────────────────────────────
-                flex-shrink-0: heading never shrinks — it always shows at full size.
-                md:pr-8: horizontal padding before the divider on desktop. */}
-            <div className="flex-shrink-0 md:pr-8">
-              <p className="font-playfair uppercase tracking-tight text-white-axis text-xl md:text-2xl leading-none">
-                Founding<br className="hidden md:block" /> Offer
-              </p>
-            </div>
+            {/* ── Title pill — identical design to the "Founding Offer" badge on the
+                Growth pricing card above: filled blue, dark text, rounded-full, glow. */}
+            <span className="font-instrument text-[10px] uppercase tracking-[0.25em] text-black-axis bg-blue-axis px-4 py-1.5 rounded-full shadow-[0_0_12px_rgba(0,51,255,0.45)]">
+              Founding Offer
+            </span>
 
-            {/* Vertical divider — decorative separator between zones, desktop only.
-                self-stretch: grows to match the flex container height automatically. */}
-            <div
-              className="hidden md:block w-px self-stretch bg-white-axis/[0.08] flex-shrink-0 mr-8"
-              aria-hidden="true"
-            />
+            {/* ── Paragraph — max-w-xl keeps line length comfortable on wide screens */}
+            <p className="font-instrument text-soft-grey text-xs leading-relaxed max-w-xl">
+              We&apos;re onboarding a small group of studios as we launch this system.
+              You&apos;ll get priority setup for a faster go-live, features tailored to
+              your exact needs, and a locked-in discounted rate as an early partner.
+            </p>
 
-            {/* ── ZONE 2: Paragraph ────────────────────────────────────────────
-                flex-1 min-w-0: takes all available space, min-w-0 prevents text
-                overflow from expanding the flex item beyond its container.
-                md:pr-8: horizontal padding before the second divider on desktop. */}
-            <div className="flex-1 min-w-0 md:pr-8">
-              <p className="font-instrument text-soft-grey text-xs leading-relaxed">
-                We&apos;re onboarding a small group of studios as we launch this
-                system. You&apos;ll get priority setup for a faster go-live,
-                features tailored to your exact needs, and a locked-in discounted
-                rate as an early partner.
-              </p>
-            </div>
-
-            {/* Vertical divider 2 — same as above */}
-            <div
-              className="hidden md:block w-px self-stretch bg-white-axis/[0.08] flex-shrink-0 mr-8"
-              aria-hidden="true"
-            />
-
-            {/* ── ZONE 3: Chips + mobile scarcity line ─────────────────────────
-                flex-shrink-0: zone 3 never shrinks to preserve chip readability.
-                flex-col gap-2: chips wrap in their own row; scarcity below on mobile. */}
-            <div className="flex-shrink-0 flex flex-col gap-2">
-
-              {/* Chips row — pill-shaped labels, even spacing, wraps if needed.
-                  whitespace-nowrap: prevents each chip from line-breaking mid-word. */}
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "Priority setup",
-                  "Features tailored to your studio",
-                  "Discounted lifetime rate",
-                ].map((chip) => (
-                  <span
-                    key={chip}
-                    className="font-instrument text-[10px] uppercase tracking-widest text-soft-grey border border-white-axis/[0.15] rounded-full px-3 py-1.5 whitespace-nowrap"
-                  >
-                    {chip}
-                  </span>
-                ))}
-              </div>
-
-              {/* "2 spots left" — mobile only (item 4 in the stacked layout).
-                  md:hidden: hidden on desktop where scarcity is shown on the Growth card.
-                  Adds urgency without clutter, per spec. */}
-              <p className="md:hidden font-instrument text-[10px] uppercase tracking-[0.2em] text-white-axis/60 mt-1">
-                2 spots left
-              </p>
-
+            {/* ── Chips row — justify-center centers the row; flex-wrap lets chips
+                flow onto a second line on narrow screens.
+                whitespace-nowrap: each chip label stays on one line. */}
+            <div className="flex flex-wrap justify-center gap-2">
+              {[
+                "Priority setup",
+                "Features tailored to your studio",
+                "Discounted lifetime rate",
+              ].map((chip) => (
+                <span
+                  key={chip}
+                  className="font-instrument text-[10px] uppercase tracking-widest text-soft-grey border border-white-axis/[0.15] rounded-full px-3 py-1.5 whitespace-nowrap"
+                >
+                  {chip}
+                </span>
+              ))}
             </div>
 
           </div>
@@ -1456,6 +1421,9 @@ export default function PricingSection() {
             We&apos;re not a mass product
           </motion.h2>
 
+          {/* Three sentences grouped together with even mb-3 spacing between them.
+              The last sentence has mb-10 to create clear breathing room before the
+              scarcity card below — separating the narrative from the social proof. */}
           <motion.p
             variants={item}
             className="font-instrument text-soft-grey text-sm leading-relaxed max-w-lg mx-auto mb-3"
@@ -1464,17 +1432,15 @@ export default function PricingSection() {
           </motion.p>
           <motion.p
             variants={item}
-            className="font-instrument text-soft-grey text-sm leading-relaxed max-w-lg mx-auto mb-12"
-          >
-            We adapt everything to your specific needs.
-
-          </motion.p>
-          
-	  <motion.p
-            variants={item}
             className="font-instrument text-soft-grey text-sm leading-relaxed max-w-lg mx-auto mb-3"
           >
-	    You'll have direct support during setup and launch.
+            We adapt everything to your specific needs.
+          </motion.p>
+          <motion.p
+            variants={item}
+            className="font-instrument text-soft-grey text-sm leading-relaxed max-w-lg mx-auto mb-10"
+          >
+            You&apos;ll have direct support during setup and launch.
           </motion.p>
 
           {/* ── SCARCITY BLOCK ────────────────────────────────────────────── */}
