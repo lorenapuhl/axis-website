@@ -11,6 +11,10 @@ import HeaderSection from "@/components/sections/HeaderSection"
 import FooterSection from "@/components/sections/FooterSection"
 import OverhandzCasestudySection from "@/components/sections/OverhandzCasestudySection"
 import OverhandzFeaturesSection from "@/components/sections/OverhandzFeaturesSection"
+import OverhandzDashboardsSection from "@/components/sections/OverhandzDashboardsSection"
+import OverhandzMetricsSection from "@/components/sections/OverhandzMetricsSection"
+import OverhandzTestimonialSection from "@/components/sections/OverhandzTestimonialSection"
+import PortfolioFinalCTASection from "@/components/sections/PortfolioFinalCTASection"
 import CTAProvider from "@/components/cta/CTAContext"
 
 // Metadata is read by Next.js at build time to populate <head> tags.
@@ -37,6 +41,14 @@ export default function OurWorkPage() {
       <OverhandzCasestudySection />
       {/* Interactive pill feature showcase — "the solution" */}
       <OverhandzFeaturesSection />
+      {/* Internal operating system dashboards — "the backend" */}
+      <OverhandzDashboardsSection />
+      {/* Projected impact metrics with click-to-reveal calculation footnotes */}
+      <OverhandzMetricsSection />
+      {/* Client testimonial — premium, minimal, no stars or avatar */}
+      <OverhandzTestimonialSection />
+      {/* Final CTA — live site link + AXIS booking funnel */}
+      <PortfolioFinalCTASection />
       <FooterSection />
     </CTAProvider>
   )
