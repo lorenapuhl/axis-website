@@ -138,7 +138,7 @@ export default function OverhandzMetricsSection() {
                   transition-colors — smooth border colour transition on hover
                 */
                 className={`
-                  relative w-full text-left rounded-3xl border p-6 md:p-8
+                  relative w-full text-left rounded-3xl border px-6 py-7 md:px-8 md:py-9
                   bg-white/5 backdrop-blur-xl shadow-2xl
                   transition-colors duration-300 cursor-pointer
                   ${isActive
@@ -152,15 +152,6 @@ export default function OverhandzMetricsSection() {
                   aria-hidden
                   className="absolute top-0 right-0 -mr-8 -mt-8 h-32 w-32 rounded-full bg-white/5 blur-2xl pointer-events-none"
                 />
-
-                {/* ── Footnote number (superscript) ─────────────────────────── */}
-                {/*
-                  Shown above the value — a tiny numbered reference that signals
-                  the metric has a source. Styled like an academic footnote marker.
-                */}
-                <span className="block font-instrument text-[10px] text-white-axis/30 uppercase tracking-widest mb-3">
-                  [{metric.footnote}]
-                </span>
 
                 {/* ── Big metric value ─────────────────────────────────────── */}
                 <span className="block font-playfair text-white-axis text-3xl md:text-4xl font-bold tracking-tight mb-2">
