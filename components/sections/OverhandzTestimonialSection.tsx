@@ -47,7 +47,7 @@ export default function OverhandzTestimonialSection() {
               >
                 &ldquo;
               </span>
-              <p className="font-instrument italic text-white-axis text-lg md:text-xl leading-relaxed">
+              <p className="font-instrument italic text-white-axis text-lg md:text-xl leading-relaxed text-center md:text-left pt-8 md:pt-10">
                 We went from managing everything in DMs to having a complete system.
                 Bookings, payments, and communication are now seamless — it changed how we run the gym.
               </p>
