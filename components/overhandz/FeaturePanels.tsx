@@ -369,56 +369,57 @@ function CheckoutModal({ plan, onClose }: { plan: PricingPlan; onClose: () => vo
 }
 
 // ─── 1. MOBILE EXPERIENCE PANEL ───────────────────────────────────────────────
-// Overhandz hero: full-width image → copy → two CTA buttons.
-// Shows what a mobile visitor sees when they first land on the website.
+// Mobile: stacked (image top, copy below). Desktop: 2-column like the real hero.
 export function MobileExperiencePanel() {
   return (
-    <div className="bg-black">
-      {/* Hero image — full width, 4:5 ratio like the real mobile hero */}
-      <div className="relative aspect-[4/5] w-full overflow-hidden">
-        <Image
-          src="/overhandz/ui/hero-cropped.png"
-          alt="Boxers sparring during training session at Overhandz Boxing Club in Paris"
-          fill
-          sizes="(max-width: 768px) 100vw, 60vw"
-          className="object-cover"
-          priority
-        />
-        {/* Gradient fades the image into the dark copy section below */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-      </div>
+    <div className="bg-black py-10 px-6 md:py-20 md:px-12 min-h-[480px] md:min-h-screen flex items-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center w-full">
 
-      {/* Copy section — matches Overhandz mobile hero layout exactly */}
-      <div className="px-6 pt-4 pb-8">
-        <p className="text-zinc-400 text-sm font-medium tracking-widest uppercase mb-4">
-          Ivry-sur-Seine · Est. 2021
-        </p>
-        <h2 className="text-white font-bold text-5xl leading-tight tracking-tight mb-6">
-          Train.<br />Fight.<br />Belong.
-        </h2>
-        <p className="text-zinc-400 text-base leading-relaxed mb-8">
-          Boxing &amp; Muay Thai for all levels in the heart of Ivry-sur-Seine.
-        </p>
-        {/* Two CTAs — primary (solid white) + secondary (outline) */}
-        <div className="flex flex-col gap-3">
-          <a
-            href={SITE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full py-3.5 rounded-xl text-sm font-semibold bg-white text-black text-center"
-          >
-            Book a free session
-          </a>
-          <a
-            href={`${SITE_URL}/schedule`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full py-3.5 rounded-xl text-sm font-semibold text-white text-center border border-white/20"
-          >
-            View schedule
-          </a>
+        {/* LEFT — copy + CTAs (on desktop) / shown below image on mobile */}
+        <div className="order-2 md:order-1">
+          <p className="text-zinc-400 text-sm font-medium tracking-widest uppercase mb-4">
+            Ivry-sur-Seine · Paris
+          </p>
+          <h2 className="text-white font-bold text-5xl md:text-7xl leading-tight tracking-tight mb-6">
+            Train.<br />Fight.<br />Belong.
+          </h2>
+          <p className="text-zinc-400 text-base md:text-lg leading-relaxed max-w-md mb-8">
+            Parisian boxing club. Real fighters, real training.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href={SITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black text-center"
+            >
+              Book a Class
+            </a>
+            <a
+              href={`${SITE_URL}/schedule`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-6 py-3 rounded-xl text-sm font-semibold text-white text-center border border-white/30"
+            >
+              View Schedule
+            </a>
+          </div>
+          <p className="text-zinc-500 text-xs mt-6">1,600+ fighters trained · Ivry-sur-Seine, Paris</p>
         </div>
-        <p className="text-zinc-500 text-xs mt-6 text-center">150+ members · No commitment</p>
+
+        {/* RIGHT — hero image */}
+        <div className="order-1 md:order-2 relative aspect-[4/5] md:h-[600px] md:aspect-auto rounded-2xl overflow-hidden">
+          <Image
+            src="/overhandz/ui/hero-cropped.png"
+            alt="Boxers sparring during training session at Overhandz Boxing Club in Paris"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        </div>
+
       </div>
     </div>
   )
@@ -816,8 +817,8 @@ export function OnlinePaymentsPanel() {
         Purchase in one flow
       </h2>
 
-      {/* Featured plan card — pre-selected / highlighted state */}
-      <div className="rounded-xl p-5 mb-4 bg-zinc-950 border border-white/20">
+      {/* Featured plan card — constrained width on desktop so it doesn't stretch */}
+      <div className="rounded-xl p-5 mb-4 bg-zinc-950 border border-white/20 md:max-w-sm">
         <p className="text-white font-semibold text-lg mb-1">{featured.name}</p>
         <p className="text-zinc-400 text-sm mb-4">{featured.description}</p>
 
@@ -1108,55 +1109,70 @@ export function OffersMerchPanel() {
 
 // ─── 9. TRUST & BRANDING PANEL ────────────────────────────────────────────────
 // Stats strip + coach portraits + about image — shows the brand identity.
+// Desktop: 4-col stats row + 3-col coach cards (matches original about page).
 export function TrustBrandingPanel() {
   return (
     <div className="bg-black pb-6">
-      {/* Stats grid */}
-      <div className="mx-6 mt-10 rounded-xl overflow-hidden border border-white/[0.06]">
-        <div className="grid grid-cols-2">
+      {/* Stats strip — 2 cols mobile, 4 cols desktop with dividers between */}
+      <div className="px-6 md:px-12 pt-10 pb-6 border-b border-white/[0.06]">
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/[0.06]">
           {[
-            { value: "150+", label: "Active members" },
-            { value: "3",    label: "Expert coaches" },
-            { value: "5×",   label: "Classes per week" },
-            { value: "4+",   label: "Disciplines" },
-          ].map((stat, i) => (
-            <div
-              key={stat.label}
-              className={`text-center py-6 px-4 bg-zinc-950 ${
-                i % 2 === 0 ? "border-r border-white/[0.06]" : ""
-              } ${i < 2 ? "border-b border-white/[0.06]" : ""}`}
-            >
-              <p className="text-white font-bold text-3xl tracking-tight">{stat.value}</p>
+            { value: "1,600+", label: "Fighters trained" },
+            { value: "Weekly", label: "Sparring sessions" },
+            { value: "All levels", label: "Beginner friendly" },
+            { value: "Active", label: "Fight team" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center py-6 px-4">
+              <p className="text-white font-bold text-2xl md:text-3xl tracking-tight">{stat.value}</p>
               <p className="text-zinc-400 text-sm mt-1">{stat.label}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Coach portraits */}
-      <div className="px-6 pt-5 pb-4">
-        <p className="text-zinc-500 text-xs font-medium tracking-widest uppercase mb-3">
-          Your coaches
-        </p>
-        <div className="grid grid-cols-3 gap-3 md:gap-6">
+      {/* Coach cards — 1 col mobile, 3 col desktop. Matches AboutPageClient.tsx layout. */}
+      <div className="px-6 md:px-12 pt-10 pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { src: "/overhandz/coaches/fabrice.png", name: "Fabrice", discipline: "Muay-Thaï" },
-            { src: "/overhandz/coaches/rudy.png",    name: "Rudy",    discipline: "Boxe Anglaise" },
-            { src: "/overhandz/coaches/morad.png",   name: "Morad",   discipline: "Muay-Thaï" },
-          ].map((coach) => (
-            <div key={coach.name} className="text-center">
-              <div className="relative aspect-[3/4] rounded-xl overflow-hidden mb-3">
+            {
+              src: "/overhandz/coaches/rudy.png",
+              name: "Coach Rudy",
+              role: "Boxing Coach",
+              bio: "Specialist in English boxing, Rudy leads Tuesday and Thursday classes. Rigorous technique, accessible teaching — whether you are a beginner or preparing for a fight.",
+            },
+            {
+              src: "/overhandz/coaches/fabrice.png",
+              name: "Coach Fabrice",
+              role: "Muay Thai Coach",
+              bio: "Passionate about Muay Thai, Fabrice leads Monday classes. His approach combines striking technique, pad work, and physical conditioning for all levels.",
+            },
+            {
+              src: "/overhandz/coaches/morad.png",
+              name: "Coach Morad",
+              role: "Muay Thai & Women's Muay Thai Coach",
+              bio: "Morad leads Muay Thai and women's classes on Wednesdays and Fridays. A demanding and supportive environment, with particular attention to technique and individual progress.",
+            },
+          ].map((coach, index) => (
+            <motion.div
+              key={coach.name}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.1 }}
+            >
+              {/* aspect-[4/5] matches the original about page coach images */}
+              <div className="relative aspect-[4/5] rounded-xl overflow-hidden mb-5">
                 <Image
                   src={coach.src}
-                  alt={`Coach ${coach.name} at Overhandz Boxing Club`}
+                  alt={`${coach.name} — ${coach.role} at Overhandz Boxing Club`}
                   fill
-                  sizes="(max-width: 768px) 120px, 200px"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover"
                 />
               </div>
-              <p className="text-white text-sm font-semibold">{coach.name}</p>
-              <p className="text-zinc-500 text-xs mt-0.5">{coach.discipline}</p>
-            </div>
+              <p className="text-white font-semibold text-lg">{coach.name}</p>
+              <p className="text-zinc-400 text-sm mb-3">{coach.role}</p>
+              <p className="text-zinc-400 text-sm leading-relaxed">{coach.bio}</p>
+            </motion.div>
           ))}
         </div>
       </div>
