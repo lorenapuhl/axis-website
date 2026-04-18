@@ -101,7 +101,7 @@ const PRICING_CARDS: PricingCard[] = [
     cta: "Claim founding spot",
     isHero: true,
     // Founding offer fields
-    foundingRateLabel: "Founding studio rate (limited)",
+    foundingRateLabel: "Launch rate (limited)",
     regularPrice: "$299/month",
     foundingSpots: "Only 5 studios — 2 spots remaining",
   },
@@ -524,7 +524,7 @@ export default function PricingSection() {
           >
             {/* Blue dot — decorative, signals "active / live" status */}
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-axis flex-shrink-0" aria-hidden="true" />
-            Launching with 5 founding studios — limited early access
+            Launching with 5 studios — limited early access
           </motion.p>
 
           {/* ── MICRO TRUST BAR ────────────────────────────────────────────
