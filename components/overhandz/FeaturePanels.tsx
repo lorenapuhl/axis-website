@@ -218,7 +218,7 @@ function BookingModal({ cls, onClose }: { cls: DemoClass; onClose: () => void })
               </p>
             </div>
             <button onClick={() => setStep(2)} className="w-full py-3 rounded-lg text-sm font-semibold bg-white text-black">
-              Reserve my spot →
+              Reserve my spot
             </button>
           </>
         ) : (
@@ -308,7 +308,7 @@ function CheckoutModal({ plan, onClose }: { plan: PricingPlan; onClose: () => vo
                 <input type="email" placeholder="Email address"  className={inputClass} />
               </div>
               <button onClick={() => setStep(2)} className="w-full py-3 rounded-lg text-sm font-semibold bg-white text-black">
-                Continue to payment →
+                Continue to payment
               </button>
             </motion.div>
           )}
@@ -334,7 +334,7 @@ function CheckoutModal({ plan, onClose }: { plan: PricingPlan; onClose: () => vo
                   Back
                 </button>
                 <button onClick={() => setStep(3)} className="flex-1 py-3 rounded-lg text-sm font-semibold bg-white text-black">
-                  Pay €{plan.price} →
+                  Pay €{plan.price}
                 </button>
               </div>
             </motion.div>
@@ -461,8 +461,8 @@ export function SchedulePanel() {
         </a>
       </div>
 
-      {/* DAY FILTER — horizontal scroll on mobile */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
+      {/* DAY FILTER — horizontal scroll on mobile, scrollbar-none hides the scrollbar */}
+      <div className="flex gap-2 overflow-x-auto scrollbar-none pb-2 mb-6">
         {WEEK_DAYS.map((day) => (
           <button
             key={day}
@@ -574,8 +574,8 @@ export function ClassSchedulePanel() {
         {/* FILTER ROWS */}
         <div className="flex flex-wrap gap-3 mb-8">
 
-          {/* Day filter — scrollable row */}
-          <div className="flex gap-2 overflow-x-auto pb-1 w-full">
+          {/* Day filter — scrollable row, scrollbar-none hides the scrollbar */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1 w-full">
             <FilterPill label="All days"  active={selectedDay === "All"} onClick={() => setSelectedDay("All")} />
             {WEEK_DAYS.map((day) => (
               <FilterPill
@@ -854,7 +854,7 @@ export function OnlinePaymentsPanel() {
           onClick={() => setModalOpen(true)}
           className="w-full py-3 rounded-lg text-sm font-semibold bg-white text-black"
         >
-          Sign up — pay securely →
+          Pay securely
         </button>
       </div>
 
@@ -874,26 +874,6 @@ export function OnlinePaymentsPanel() {
 // 3×2 post grid with hover overlay (desktop) or tap-to-reveal (mobile).
 // Spacing matches InstagramFeed.tsx: px-6 py-10, mb-10 header, gap-2 grid.
 export function LiveInstagramPanel() {
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
-  const [activeId,  setActiveId]  = useState<string | null>(null)
-
-  const handlePostClick = (post: typeof INSTAGRAM_POSTS[0]) => {
-    // On touch devices: first tap reveals overlay, second tap opens Instagram.
-    // On pointer devices: click directly opens Instagram.
-    const isTouchDevice =
-      typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches
-    if (isTouchDevice) {
-      if (activeId === post.id) {
-        window.open(IG_URL, "_blank", "noopener,noreferrer")
-        setActiveId(null)
-      } else {
-        setActiveId(post.id)
-      }
-    } else {
-      window.open(IG_URL, "_blank", "noopener,noreferrer")
-    }
-  }
-
   return (
     <div className="px-6 py-10 bg-black">
       {/* Header — mb-10 matches InstagramFeed.tsx */}
@@ -906,53 +886,39 @@ export function LiveInstagramPanel() {
         </h2>
       </div>
 
-      {/* 3×2 post grid — gap-2 matches the live InstagramFeed layout */}
-      <div className="grid grid-cols-3 gap-2">
-        {INSTAGRAM_POSTS.map((post) => {
-          const overlayVisible = hoveredId === post.id || activeId === post.id
-          return (
-            <button
-              key={post.id}
-              className="relative aspect-square overflow-hidden cursor-pointer text-left w-full"
-              onMouseEnter={() => setHoveredId(post.id)}
-              onMouseLeave={() => setHoveredId(null)}
-              onClick={() => handlePostClick(post)}
-            >
-              {/* Post image — scales on hover */}
-              <motion.div
-                className="absolute inset-0"
-                animate={{ scale: overlayVisible ? 1.08 : 1 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              >
-                <Image
-                  src={post.src}
-                  alt={`Instagram post from Overhandz Boxing Club: ${post.caption}`}
-                  fill
-                  sizes="33vw"
-                  className="object-cover"
-                />
-              </motion.div>
+      {/* Single-column post feed — each post is full-width so captions are readable */}
+      <div className="flex flex-col gap-4">
+        {INSTAGRAM_POSTS.map((post) => (
+          <a
+            key={post.id}
+            href={IG_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block rounded-xl overflow-hidden bg-zinc-950 border border-white/[0.06]"
+          >
+            {/* Post image — square aspect, full width */}
+            <div className="relative aspect-square w-full overflow-hidden">
+              <Image
+                src={post.src}
+                alt={`Instagram post from Overhandz Boxing Club: ${post.caption}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 60vw"
+                className="object-cover"
+              />
+            </div>
 
-              {/* Overlay — shows likes + caption on hover/tap */}
-              <motion.div
-                className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-2"
-                animate={{ opacity: overlayVisible ? 1 : 0 }}
-                initial={{ opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
-                <div className="flex items-center gap-1 text-white text-xs font-semibold mb-1">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                  {post.likes}
-                </div>
-                <p className="text-white/80 text-[10px] text-center line-clamp-2 leading-snug">
-                  {post.caption}
-                </p>
-              </motion.div>
-            </button>
-          )
-        })}
+            {/* Caption row — likes icon + caption text */}
+            <div className="px-4 py-3 flex items-start gap-3">
+              <div className="flex items-center gap-1 text-zinc-400 text-xs shrink-0 pt-0.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                {post.likes}
+              </div>
+              <p className="text-zinc-300 text-sm leading-snug">{post.caption}</p>
+            </div>
+          </a>
+        ))}
       </div>
 
       {/* CTA — mt-8 matches InstagramFeed.tsx */}
@@ -1010,7 +976,9 @@ export function EventsAutoPanel() {
             <div className="p-3">
               <p className="text-zinc-400 text-xs mb-1">{ev.date}</p>
               <p className="text-white font-semibold text-sm leading-snug mb-3">{ev.title}</p>
-              <span className="text-xs font-semibold text-white">Join event →</span>
+              <div className="self-start">
+                <span className="inline-block px-3 py-1.5 rounded-md text-xs font-semibold text-white border border-white/20">Join event</span>
+              </div>
             </div>
           </a>
         ))}
@@ -1169,7 +1137,7 @@ export function TrustBrandingPanel() {
           rel="noopener noreferrer"
           className="block w-full py-3 text-center rounded-xl text-sm font-semibold text-white border border-white/20"
         >
-          About the club →
+          About the club
         </a>
       </div>
     </div>
