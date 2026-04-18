@@ -250,7 +250,7 @@ export default function ScheduleDashboard() {
     : CLASSES.filter((c) => c.coach === filterCoach)
 
   return (
-    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex flex-col overflow-hidden">
+    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 flex flex-col md:h-96 md:overflow-hidden">
 
       {/* ── TOP BAR ── */}
       <div className="flex items-center gap-2 p-3 border-b border-zinc-900 shrink-0 flex-wrap">
@@ -296,7 +296,7 @@ export default function ScheduleDashboard() {
       </div>
 
       {/* ── CALENDAR GRID ── */}
-      <div className="flex-1 overflow-auto">
+      <div className="md:flex-1 overflow-auto">
         {/* Sticky header row with day names */}
         <div className="grid grid-cols-6 border-b border-zinc-900 sticky top-0 bg-zinc-950 z-10">
           <div className="py-2 px-2" />

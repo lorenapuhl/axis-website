@@ -130,7 +130,7 @@ export default function AttendanceDashboard() {
   const allPresent = presentCount === selectedClass.attendees.length
 
   return (
-    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex flex-col overflow-hidden">
+    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 flex flex-col md:h-96 md:overflow-hidden">
 
       {/* ── CLASS SELECTOR ── */}
       <div className="p-3 border-b border-zinc-900 shrink-0">
@@ -167,7 +167,7 @@ export default function AttendanceDashboard() {
       </div>
 
       {/* ── ATTENDEE LIST ── */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="md:flex-1 overflow-y-auto">
         {selectedClass.attendees.map((attendee) => {
           const isPresent = presentIds.has(attendee.id)
           return (

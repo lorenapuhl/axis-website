@@ -95,7 +95,7 @@ export default function PaymentsDashboard() {
   const [activePayment, setActivePayment] = useState<Payment | null>(null)
 
   return (
-    <div className="relative bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex flex-col overflow-hidden">
+    <div className="relative bg-zinc-950 rounded-2xl border border-zinc-900 flex flex-col md:h-96 md:overflow-hidden">
 
       {/* ── TABLE HEADER ── */}
       <div className="grid grid-cols-5 px-3 py-2 border-b border-zinc-900 shrink-0 sticky top-0 bg-zinc-950 z-10">
@@ -107,7 +107,7 @@ export default function PaymentsDashboard() {
       </div>
 
       {/* ── PAYMENT ROWS ── */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="md:flex-1 overflow-y-auto">
         {PAYMENTS.map((payment) => (
           <button
             key={payment.id}

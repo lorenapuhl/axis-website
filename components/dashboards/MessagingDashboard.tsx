@@ -213,14 +213,14 @@ export default function MessagingDashboard() {
   }
 
   return (
-    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex overflow-hidden">
+    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 flex md:h-96 md:overflow-hidden">
 
       {/* ── LEFT: CONVERSATION LIST ── */}
       <div className="w-36 shrink-0 border-r border-zinc-900 flex flex-col">
         <div className="px-3 py-2.5 border-b border-zinc-900 shrink-0">
           <p className="text-zinc-600 text-xs font-instrument uppercase tracking-wider">Messages</p>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="md:flex-1 overflow-y-auto">
           {CONVERSATIONS.map((conv) => (
             <button
               key={conv.id}
@@ -292,7 +292,7 @@ export default function MessagingDashboard() {
         </div>
 
         {/* Message thread */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+        <div className="md:flex-1 overflow-y-auto p-3 space-y-2">
           <AnimatePresence>
             {allMessages.map((msg) => (
               <motion.div

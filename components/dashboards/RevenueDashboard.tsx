@@ -80,7 +80,7 @@ export default function RevenueDashboard() {
   ]
 
   return (
-    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex flex-col overflow-hidden">
+    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 flex flex-col md:h-96 md:overflow-hidden">
 
       {/* ── TOP BAR ── */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-900 shrink-0">
@@ -100,7 +100,7 @@ export default function RevenueDashboard() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      <div className="md:flex-1 overflow-y-auto p-3 space-y-3">
         {/* ── TOP METRIC CARDS ── */}
         <AnimatePresence mode="wait">
           <motion.div

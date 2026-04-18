@@ -249,7 +249,7 @@ export default function ClientDashboard() {
 
   return (
     // relative so the desktop side panel can be positioned absolutely
-    <div className="relative overflow-hidden bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex flex-col">
+    <div className="relative bg-zinc-950 rounded-2xl border border-zinc-900 flex flex-col md:h-96 md:overflow-hidden">
 
       {/* ── TOP BAR ── */}
       <div className="flex items-center gap-2 p-3 border-b border-zinc-900 shrink-0">
@@ -281,7 +281,7 @@ export default function ClientDashboard() {
       </div>
 
       {/* ── TABLE ── */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="md:flex-1 overflow-y-auto">
         {/* Table header */}
         <div className="grid grid-cols-4 px-3 py-2 border-b border-zinc-900 sticky top-0 bg-zinc-950 z-10">
           {["Name", "Plan", "Status", "Last Visit"].map((col) => (

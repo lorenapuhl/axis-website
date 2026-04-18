@@ -163,7 +163,7 @@ export default function MembershipDashboard() {
   const [showNewPlan, setShowNewPlan] = useState(false)
 
   return (
-    <div className="relative bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex flex-col overflow-hidden">
+    <div className="relative bg-zinc-950 rounded-2xl border border-zinc-900 flex flex-col md:h-96 md:overflow-hidden">
 
       {/* ── TOP BAR ── */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-900 shrink-0">
@@ -177,7 +177,7 @@ export default function MembershipDashboard() {
       </div>
 
       {/* ── PLAN CARDS ── */}
-      <div className="flex-1 overflow-y-auto p-3 grid grid-cols-2 gap-2 content-start">
+      <div className="md:flex-1 overflow-y-auto p-3 grid grid-cols-2 gap-2 content-start">
         {PLANS.map((plan) => (
           <button
             key={plan.id}

@@ -212,7 +212,7 @@ export default function InstagramAutomationDashboard() {
   }
 
   return (
-    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 h-96 flex flex-col overflow-hidden">
+    <div className="bg-zinc-950 rounded-2xl border border-zinc-900 flex flex-col md:h-96 md:overflow-hidden">
 
       {/* ── TOP BAR ── */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-900 shrink-0">
@@ -248,7 +248,7 @@ export default function InstagramAutomationDashboard() {
       <motion.div
         animate={{ opacity: syncing ? 0.12 : 1 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="flex-1 overflow-y-auto p-3"
+        className="md:flex-1 overflow-y-auto p-3"
       >
         <div key={syncKey} className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {POSTS.map((post, idx) => (

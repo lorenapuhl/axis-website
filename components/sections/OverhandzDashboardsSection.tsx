@@ -224,7 +224,7 @@ export default function OverhandzDashboardsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-          className="relative md:hidden mb-8"
+          className="relative md:hidden mb-6"
         >
           {/* Fade mask on right edge — signals to the user that there's more content to scroll */}
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black-axis to-transparent pointer-events-none z-10" />
@@ -247,6 +247,24 @@ export default function OverhandzDashboardsSection() {
               >
                 {tab.label}
               </button>
+            ))}
+          </div>
+
+          {/* Pagination dots — one dot per tab, active dot stretches into a pill.
+              Lets the user see which tab is active and how many tabs exist in total.
+              Each dot is also tappable to navigate directly to that tab. */}
+          <div className="flex justify-center gap-1.5 mt-3 pb-1">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => handleSelect(tab.id)}
+                aria-label={`Go to ${tab.label}`}
+                className={`rounded-full transition-all duration-300 ${
+                  activeId === tab.id
+                    ? "w-4 h-1.5 bg-white"
+                    : "w-1.5 h-1.5 bg-zinc-700 hover:bg-zinc-500"
+                }`}
+              />
             ))}
           </div>
         </motion.div>
