@@ -32,14 +32,16 @@ export default function OverhandzCasestudySection() {
               Overhandz Boxing Club · Case Study
             </p>
 
-            {/* Overhandz logo — sits between the label and the h1, centred */}
+            {/* Overhandz logo — sits between the label and the h1, centred.
+                invert turns the dark outline white so it reads on the dark bg
+                without any visible background square. */}
             <div className="flex justify-center mb-6">
               <Image
-                src="/overhandz/ui/logo.png"
+                src="/overhandz/ui/logo-transparent.png"
                 alt="Overhandz Boxing Club logo"
                 width={200}
                 height={100}
-                className="object-contain rounded-xl"
+                className="object-contain invert"
               />
             </div>
 
