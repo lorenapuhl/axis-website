@@ -149,12 +149,20 @@ export default function OverhandzDashboardsSection() {
   const [activeId, setActiveId] = useState(TABS[0].id)
   // chipNavRef — ref to the mobile chip scroll container so we can auto-scroll the active chip into view
   const chipNavRef = useRef<HTMLDivElement>(null)
+  // isFirstRender — prevents scrollIntoView from firing on mount, which would
+  // hijack the page scroll position as soon as the section loads
+  const isFirstRender = useRef(true)
 
   const activeTab = TABS.find((t) => t.id === activeId)!
   const ActiveDashboard = activeTab.Dashboard
 
-  // When the active tab changes, scroll the active chip into view on mobile
+  // When the active tab changes, scroll the active chip into view on mobile.
+  // Skip the first render — we only want this to fire after a user interaction.
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
     const nav = chipNavRef.current
     if (!nav) return
     const idx = TABS.findIndex((t) => t.id === activeId)
