@@ -1,0 +1,43 @@
+/* Import Tailwind CSS v4 — this replaces the old @tailwind directives */
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   STATIC DESIGN TOKENS
+   These become Tailwind utility classes automatically.
+   e.g. --color-canvas → bg-canvas, text-canvas, border-canvas
+   --------------------------------------------------------------------------- */
+@theme {
+  /* Brand colors — Overhandz dark palette */
+  --color-canvas:  #0B0B0B; /* main page background */
+  --color-surface: #111111; /* card / elevated surface */
+  --color-edge:    #1F1F1F; /* borders, dividers */
+  --color-dim:     #A1A1A1; /* secondary / muted text */
+  --color-lift:    #E5E5E5; /* hover text, subtle accents */
+}
+
+/* ---------------------------------------------------------------------------
+   DYNAMIC TOKENS (reference runtime CSS variables injected by next/font)
+   "inline" tells Tailwind to use var(--font-inter) at runtime rather than
+   baking in a static string.
+   --------------------------------------------------------------------------- */
+@theme inline {
+  --font-sans: var(--font-inter);
+}
+
+/* ---------------------------------------------------------------------------
+   BASE STYLES
+   Force dark background on the whole page. We do NOT use prefers-color-scheme
+   because Overhandz is always dark — it is a core brand decision.
+   --------------------------------------------------------------------------- */
+html,
+body {
+  background-color: var(--color-canvas);
+  color: #ffffff;
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}

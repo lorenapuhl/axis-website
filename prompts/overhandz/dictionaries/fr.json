@@ -1,0 +1,271 @@
+{
+  "navbar": {
+    "schedule": "Planning",
+    "pricing": "Tarifs",
+    "about": "À propos",
+    "contact": "Contact",
+    "cta": "Réserver un cours"
+  },
+  "footer": {
+    "tagline": "Club de boxe parisien basé à Ivry-sur-Seine. De vrais combattants, un vrai entraînement. Réservez votre cours en ligne en quelques secondes.",
+    "location": "Ivry-sur-Seine, Paris — Île-de-France",
+    "copyright": "Tous droits réservés.",
+    "train": "S'entraîner",
+    "info": "Infos"
+  },
+  "hero": {
+    "eyebrow": "Ivry-sur-Seine · Paris",
+    "h1_line1": "Train.",
+    "h1_line2": "Fight.",
+    "h1_line3": "Belong.",
+    "subtext": "Club de boxe parisien. De vrais combattants, un vrai entraînement.",
+    "cta_primary": "Réserver un cours",
+    "cta_secondary": "Voir le planning",
+    "social_proof": "1 600+ combattants formés · Ivry-sur-Seine, Paris"
+  },
+  "social_proof": {
+    "stats": [
+      {
+        "value": "1 600+",
+        "label": "Combattants formés"
+      },
+      {
+        "value": "Hebdo",
+        "label": "Sessions de sparring"
+      },
+      {
+        "value": "Tous niveaux",
+        "label": "Débutants bienvenus"
+      },
+      {
+        "value": "Actif",
+        "label": "Équipe de combat"
+      }
+    ]
+  },
+  "instagram": {
+    "eyebrow": "Suivez l'aventure",
+    "heading": "@overhandzclub",
+    "cta": "Voir plus sur Instagram →"
+  },
+  "schedule_preview": {
+    "eyebrow": "Cette semaine",
+    "heading": "Planning",
+    "full_schedule": "Planning complet →",
+    "no_classes": "Pas de cours le",
+    "spots": "places",
+    "only_left": "Plus que {n}",
+    "book": "Réserver",
+    "days": {
+      "Monday": "Lundi",
+      "Tuesday": "Mardi",
+      "Wednesday": "Mercredi",
+      "Thursday": "Jeudi",
+      "Friday": "Vendredi",
+      "Saturday": "Samedi",
+      "Sunday": "Dimanche"
+    }
+  },
+  "pricing_section": {
+    "eyebrow": "Abonnements",
+    "heading": "Choisissez votre discipline",
+    "subtext": "Abonnements annuels sans engagement caché. Commencez quand vous voulez."
+  },
+  "events": {
+    "eyebrow": "À l'affiche",
+    "heading": "Événements",
+    "types": {
+      "fight-night": "Fight Night",
+      "seminar": "Séminaire",
+      "open-gym": "Portes Ouvertes",
+      "competition": "Compétition"
+    },
+    "spots_left": "places restantes"
+  },
+  "promotions": {
+    "eyebrow": "Commencez aujourd'hui",
+    "heading": "Offres"
+  },
+  "news": {
+    "eyebrow": "Actualités",
+    "heading": "News",
+    "categories": {
+      "fight-result": "Résultat",
+      "update": "Mise à jour",
+      "announcement": "Annonce"
+    }
+  },
+  "about_section": {
+    "eyebrow": "Notre histoire",
+    "h2_line1": "Né à Ivry.",
+    "h2_line2": "Fait pour les combattants.",
+    "p1": "Overhandz a débuté dans une seule salle, quelques sacs et un coach qui croyait que la vraie boxe n'est pas réservée aux élites.",
+    "p2": "Aujourd'hui, plus de 1 600 membres se sont entraînés chez nous — de vrais débutants aux combattants représentant Paris en circuit régional.",
+    "p3": "Nous sommes à Ivry-sur-Seine, à quelques minutes du centre de Paris. Entrez débutant. Repartez combattant.",
+    "cta_primary": "Rencontrer l'équipe",
+    "cta_secondary": "Nous trouver"
+  },
+  "final_cta": {
+    "heading": "Entraînez-vous avec nous.",
+    "subtext": "Venez découvrir ce qu'est Overhandz.",
+    "cta_primary": "Réservez votre premier cours",
+    "cta_secondary": "Voir les tarifs",
+    "location": "Ivry-sur-Seine · Paris · Ouvert 5 jours par semaine"
+  },
+  "booking_modal": {
+    "title": "Réserver un cours",
+    "you_are_booking": "Vous réservez :",
+    "your_details": "Vos coordonnées",
+    "full_name": "Nom complet",
+    "email": "Email",
+    "phone": "Téléphone (facultatif)",
+    "payment": "Paiement",
+    "card_number": "Numéro de carte",
+    "expiry": "Expiration",
+    "cvc": "CVC",
+    "demo_notice": "Ceci est une démonstration. Aucun paiement réel n'est effectué.",
+    "back": "Retour",
+    "continue": "Continuer",
+    "pay": "Payer 25€",
+    "processing": "Traitement...",
+    "success_heading": "Réservation confirmée.",
+    "confirmation_sent": "Un email de confirmation a été envoyé à",
+    "done": "Terminé",
+    "spot_singular": "place restante",
+    "spot_plural": "places restantes"
+  },
+  "subscription_modal": {
+    "title": "S'inscrire",
+    "you_are_subscribing": "Vous souscrivez à :",
+    "your_details": "Vos coordonnées",
+    "full_name": "Nom complet",
+    "email": "Email",
+    "phone": "Téléphone (facultatif)",
+    "payment_heading": "Paiement de l'abonnement",
+    "card_number": "Numéro de carte",
+    "expiry": "Expiration",
+    "per_year": "/ an",
+    "cvc": "CVC",
+    "demo_notice": "Ceci est une démonstration. Aucun paiement réel n'est effectué.",
+    "back": "Retour",
+    "continue": "Continuer",
+    "processing": "Traitement...",
+    "success_heading": "Inscription confirmée.",
+    "confirmation_sent": "Un email de confirmation a été envoyé à",
+    "done": "Terminé"
+  },
+  "schedule_page": {
+    "eyebrow": "Ivry-sur-Seine · Paris",
+    "heading": "Planning",
+    "subtext": "Parcourez les cours de la semaine et réservez votre place en quelques secondes.",
+    "all_days": "Tous les jours",
+    "all_types": "Tous les types",
+    "classes_found_singular": "cours trouvé",
+    "classes_found_plural": "cours trouvés",
+    "no_match": "Aucun cours ne correspond à vos filtres. Essayez de les modifier.",
+    "select_class": "Sélectionnez un cours ci-dessus pour réserver",
+    "only_left": "Plus que {n}",
+    "spots": "places",
+    "book": "Réserver"
+  },
+  "pricing_page": {
+    "eyebrow": "Abonnements · Ivry-sur-Seine",
+    "heading": "Tarifs",
+    "subtext": "Des abonnements adaptés à votre discipline et votre rythme.",
+    "faq_heading": "Questions fréquentes",
+    "faqs": [
+      {
+        "q": "Comment s'inscrire ?",
+        "a": "Venez directement à la salle ou contactez-nous pour choisir votre formule. Aucun engagement à long terme requis."
+      },
+      {
+        "q": "Puis-je essayer avant de m'abonner ?",
+        "a": "Oui. Venez à un cours à l'unité (15€) pour voir si la discipline vous convient avant de prendre un abonnement annuel."
+      },
+      {
+        "q": "Y a-t-il une réduction étudiant ?",
+        "a": "Oui. L'abonnement Boxe Anglaise Full est proposé à un tarif réduit pour les étudiants et les élèves. Renseignez-vous à l'accueil."
+      },
+      {
+        "q": "Qu'est-ce que l'abonnement Full inclut en plus ?",
+        "a": "Les formules Full (Boxe Anglaise Full et Muay-Thaï Full) incluent un accès libre à la salle en dehors des cours et un tee-shirt offert."
+      },
+      {
+        "q": "Le matériel est-il fourni ?",
+        "a": "Des gants et bandes peuvent être empruntés à la salle. Nous recommandons d'acquérir votre propre équipement après quelques séances."
+      },
+      {
+        "q": "Comment fonctionnent les cours particuliers ?",
+        "a": "Les cours particuliers sont disponibles sur rendez-vous avec nos coachs. Contactez-nous pour les disponibilités et les tarifs."
+      }
+    ]
+  },
+  "about_page": {
+    "eyebrow": "Notre histoire",
+    "heading": "À propos",
+    "cta_primary": "Réserver un cours",
+    "cta_secondary": "Nous rendre visite",
+    "coaches_eyebrow": "L'équipe",
+    "coaches_heading": "Coachs",
+    "philosophy_eyebrow": "Comment nous entraînons",
+    "philosophy_heading": "Notre philosophie",
+    "philosophy_p1_bold": "La technique d'abord.",
+    "philosophy_p1_rest": "Nous croyons que les fondamentaux font les combattants. Chaque séance construit sur la posture, le jeu de jambes et la défense avant la puissance.",
+    "philosophy_p2_bold": "Tous niveaux, même salle.",
+    "philosophy_p2_rest": "Les débutants et les membres de l'équipe de combat s'entraînent dans le même espace. C'est intentionnel — cela accélère l'apprentissage et crée une communauté.",
+    "philosophy_p3_bold": "Discipline sans ego.",
+    "philosophy_p3_rest": "Nous prenons le sport au sérieux. Nous ne nous prenons pas trop au sérieux. La salle est exigeante, pas élitiste.",
+    "coaches": [
+      {
+        "id": "rudy",
+        "name": "Coach Rudy",
+        "role": "Coach Boxe Anglaise",
+        "bio": "Spécialiste de la boxe anglaise, Rudy encadre les cours du mardi et du jeudi. Technique rigoureuse, pédagogie accessible — que vous débutiez ou que vous prépariez un combat."
+      },
+      {
+        "id": "fabrice",
+        "name": "Coach Fabrice",
+        "role": "Coach Muay-Thaï",
+        "bio": "Passionné de muay-thaï, Fabrice anime le cours du lundi. Son approche allie technique de frappe, travail aux pads et conditionnement physique pour tous les niveaux."
+      },
+      {
+        "id": "morad",
+        "name": "Coach Morad",
+        "role": "Coach Muay-Thaï & Muay-Thaï Féminin",
+        "bio": "Morad encadre les cours de muay-thaï et les cours féminins du mercredi et vendredi. Ambiance exigeante et bienveillante, avec une attention particulière portée à la technique et à la progression de chacun."
+      }
+    ]
+  },
+  "contact_page": {
+    "eyebrow": "Contactez-nous",
+    "heading": "Contact",
+    "form_heading": "Envoyer un message",
+    "name": "Nom",
+    "email": "Email",
+    "message": "Message",
+    "placeholder_message": "Votre question ou message...",
+    "send": "Envoyer le message",
+    "sending": "Envoi en cours...",
+    "success_heading": "Message envoyé.",
+    "success_subtext": "Nous vous répondrons dans les 24 heures.",
+    "find_us_heading": "Nous trouver",
+    "address_label": "Adresse",
+    "instagram_label": "Instagram",
+    "hours_label": "Horaires",
+    "hours_value": "Lundi – Vendredi : 7h00 – 22h00\nSamedi – Dimanche : 9h00 – 14h00",
+    "whatsapp_heading": "Écrivez-nous sur WhatsApp",
+    "whatsapp_sub": "Réponse habituelle en moins d'une heure"
+  },
+  "metadata": {
+    "home_title": "Salle de Boxe Paris — Overhandz Boxing Club",
+    "home_desc": "Réservez votre cours de boxe anglaise ou de muay-thaï à Overhandz, Ivry-sur-Seine. Réservation en ligne, entraînement réel, tous niveaux bienvenus.",
+    "schedule_title": "Planning des cours — Overhandz Boxing Club",
+    "schedule_desc": "Réservez un cours de boxe ou de muay-thaï à Ivry-sur-Seine, Paris. Consultez le planning hebdomadaire et sécurisez votre place en ligne en quelques secondes.",
+    "pricing_title": "Tarifs — Overhandz Boxing Club",
+    "pricing_desc": "Abonnements de boxe à Paris. Cours à l'unité, mensuel ou annuel. Tarifs simples et transparents.",
+    "about_title": "À propos — Overhandz Boxing Club",
+    "about_desc": "L'histoire d'Overhandz Boxing Club à Ivry-sur-Seine, Paris. Rencontrez les coachs et découvrez notre philosophie d'entraînement.",
+    "contact_title": "Contact — Overhandz Boxing Club",
+    "contact_desc": "Contactez Overhandz Boxing Club à Ivry-sur-Seine, Paris. Envoyez un message, contactez-nous sur WhatsApp ou venez nous rendre visite."
+  }
+}

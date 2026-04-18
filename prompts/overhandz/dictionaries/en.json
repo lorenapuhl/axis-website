@@ -1,0 +1,271 @@
+{
+  "navbar": {
+    "schedule": "Schedule",
+    "pricing": "Pricing",
+    "about": "About",
+    "contact": "Contact",
+    "cta": "Book a Class"
+  },
+  "footer": {
+    "tagline": "Parisian boxing club based in Ivry-sur-Seine. Real fighters, real training. Book your class online in seconds.",
+    "location": "Ivry-sur-Seine, Paris — Île-de-France",
+    "copyright": "All rights reserved.",
+    "train": "Train",
+    "info": "Info"
+  },
+  "hero": {
+    "eyebrow": "Ivry-sur-Seine · Paris",
+    "h1_line1": "Train.",
+    "h1_line2": "Fight.",
+    "h1_line3": "Belong.",
+    "subtext": "Parisian boxing club. Real fighters, real training.",
+    "cta_primary": "Book a Class",
+    "cta_secondary": "View Schedule",
+    "social_proof": "1,600+ fighters trained · Ivry-sur-Seine, Paris"
+  },
+  "social_proof": {
+    "stats": [
+      {
+        "value": "1,600+",
+        "label": "Fighters trained"
+      },
+      {
+        "value": "Weekly",
+        "label": "Sparring sessions"
+      },
+      {
+        "value": "All levels",
+        "label": "Beginner friendly"
+      },
+      {
+        "value": "Active",
+        "label": "Fight team"
+      }
+    ]
+  },
+  "instagram": {
+    "eyebrow": "Follow the journey",
+    "heading": "@overhandzclub",
+    "cta": "View more on Instagram →"
+  },
+  "schedule_preview": {
+    "eyebrow": "This week",
+    "heading": "Schedule",
+    "full_schedule": "Full schedule →",
+    "no_classes": "No classes scheduled on",
+    "spots": "spots",
+    "only_left": "Only {n} left",
+    "book": "Book",
+    "days": {
+      "Monday": "Monday",
+      "Tuesday": "Tuesday",
+      "Wednesday": "Wednesday",
+      "Thursday": "Thursday",
+      "Friday": "Friday",
+      "Saturday": "Saturday",
+      "Sunday": "Sunday"
+    }
+  },
+  "pricing_section": {
+    "eyebrow": "Memberships",
+    "heading": "Choose your discipline",
+    "subtext": "Annual memberships, no hidden fees. Start whenever you want."
+  },
+  "events": {
+    "eyebrow": "What's on",
+    "heading": "Events",
+    "types": {
+      "fight-night": "Fight Night",
+      "seminar": "Seminar",
+      "open-gym": "Open Gym",
+      "competition": "Competition"
+    },
+    "spots_left": "spots left"
+  },
+  "promotions": {
+    "eyebrow": "Start today",
+    "heading": "Offers"
+  },
+  "news": {
+    "eyebrow": "Latest",
+    "heading": "News",
+    "categories": {
+      "fight-result": "Fight Result",
+      "update": "Update",
+      "announcement": "Announcement"
+    }
+  },
+  "about_section": {
+    "eyebrow": "Our story",
+    "h2_line1": "Born in Ivry.",
+    "h2_line2": "Built for fighters.",
+    "p1": "Overhandz started as a single room, a few bags, and a coach who believed that real boxing isn't reserved for elite athletes.",
+    "p2": "Today, over 1,600 members have trained with us — from absolute beginners to competitive fighters representing Paris on the regional circuit.",
+    "p3": "We're based in Ivry-sur-Seine, just minutes from central Paris. Walk in as a beginner. Leave as a fighter.",
+    "cta_primary": "Meet the team",
+    "cta_secondary": "Find us"
+  },
+  "final_cta": {
+    "heading": "Train with us.",
+    "subtext": "Show up and see what Overhandz is about.",
+    "cta_primary": "Book your first class",
+    "cta_secondary": "See pricing",
+    "location": "Ivry-sur-Seine · Paris · Open 5 days a week"
+  },
+  "booking_modal": {
+    "title": "Book a Class",
+    "you_are_booking": "You are booking:",
+    "your_details": "Your details",
+    "full_name": "Full name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "payment": "Payment",
+    "card_number": "Card number",
+    "expiry": "Expiry",
+    "cvc": "CVC",
+    "demo_notice": "This is a demo. No real payment is processed.",
+    "back": "Back",
+    "continue": "Continue",
+    "pay": "Pay €25",
+    "processing": "Processing...",
+    "success_heading": "You're booked in.",
+    "confirmation_sent": "A confirmation has been sent to",
+    "done": "Done",
+    "spot_singular": "spot left",
+    "spot_plural": "spots left"
+  },
+  "subscription_modal": {
+    "title": "Sign Up",
+    "you_are_subscribing": "You are subscribing to:",
+    "your_details": "Your details",
+    "full_name": "Full name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "payment_heading": "Subscription payment",
+    "card_number": "Card number",
+    "expiry": "Expiry",
+    "per_year": "/ year",
+    "cvc": "CVC",
+    "demo_notice": "This is a demo. No real payment is processed.",
+    "back": "Back",
+    "continue": "Continue",
+    "processing": "Processing...",
+    "success_heading": "Subscription confirmed.",
+    "confirmation_sent": "A confirmation email has been sent to",
+    "done": "Done"
+  },
+  "schedule_page": {
+    "eyebrow": "Ivry-sur-Seine · Paris",
+    "heading": "Schedule",
+    "subtext": "Browse the week's classes and book your spot in seconds.",
+    "all_days": "All days",
+    "all_types": "All types",
+    "classes_found_singular": "class found",
+    "classes_found_plural": "classes found",
+    "no_match": "No classes match your filters. Try adjusting them.",
+    "select_class": "Select a class above to book",
+    "only_left": "Only {n} left",
+    "spots": "spots",
+    "book": "Book"
+  },
+  "pricing_page": {
+    "eyebrow": "Memberships · Ivry-sur-Seine",
+    "heading": "Pricing",
+    "subtext": "Memberships tailored to your discipline and schedule.",
+    "faq_heading": "Frequently asked questions",
+    "faqs": [
+      {
+        "q": "How do I sign up?",
+        "a": "Come directly to the gym or contact us to choose your plan. No long-term commitment required."
+      },
+      {
+        "q": "Can I try before subscribing?",
+        "a": "Yes. Come for a drop-in class (€15) to see if the discipline suits you before committing to an annual subscription."
+      },
+      {
+        "q": "Is there a student discount?",
+        "a": "Yes. The Boxe Anglaise Full subscription is available at a reduced rate for students and pupils. Ask at the front desk."
+      },
+      {
+        "q": "What does the Full membership include?",
+        "a": "Full plans (Boxe Anglaise Full and Muay-Thaï Full) include open gym access outside of classes and a free T-shirt."
+      },
+      {
+        "q": "Is equipment provided?",
+        "a": "Gloves and wraps can be borrowed from the gym. We recommend getting your own equipment after a few sessions."
+      },
+      {
+        "q": "How do private lessons work?",
+        "a": "Private lessons are available by appointment with our coaches. Contact us for availability and pricing."
+      }
+    ]
+  },
+  "about_page": {
+    "eyebrow": "Our story",
+    "heading": "About",
+    "cta_primary": "Book a class",
+    "cta_secondary": "Visit us",
+    "coaches_eyebrow": "The team",
+    "coaches_heading": "Coaches",
+    "philosophy_eyebrow": "How we train",
+    "philosophy_heading": "Our philosophy",
+    "philosophy_p1_bold": "Technical first.",
+    "philosophy_p1_rest": "We believe foundations make fighters. Every session builds on proper stance, footwork, and defense before power.",
+    "philosophy_p2_bold": "All levels, same gym.",
+    "philosophy_p2_rest": "Beginners and fight team members train in the same space. That's intentional — it accelerates learning and builds community.",
+    "philosophy_p3_bold": "Discipline without ego.",
+    "philosophy_p3_rest": "We take the sport seriously. We don't take ourselves too seriously. The gym is demanding, not exclusive.",
+    "coaches": [
+      {
+        "id": "rudy",
+        "name": "Coach Rudy",
+        "role": "Boxing Coach",
+        "bio": "Specialist in English boxing, Rudy leads Tuesday and Thursday classes. Rigorous technique, accessible teaching — whether you are a beginner or preparing for a fight."
+      },
+      {
+        "id": "fabrice",
+        "name": "Coach Fabrice",
+        "role": "Muay Thai Coach",
+        "bio": "Passionate about Muay Thai, Fabrice leads Monday classes. His approach combines striking technique, pad work, and physical conditioning for all levels."
+      },
+      {
+        "id": "morad",
+        "name": "Coach Morad",
+        "role": "Muay Thai & Women's Muay Thai Coach",
+        "bio": "Morad leads Muay Thai and women's classes on Wednesdays and Fridays. A demanding and supportive environment, with particular attention to technique and individual progress."
+      }
+    ]
+  },
+  "contact_page": {
+    "eyebrow": "Get in touch",
+    "heading": "Contact",
+    "form_heading": "Send a message",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "placeholder_message": "Your question or message...",
+    "send": "Send message",
+    "sending": "Sending...",
+    "success_heading": "Message sent.",
+    "success_subtext": "We'll get back to you within 24 hours.",
+    "find_us_heading": "Find us",
+    "address_label": "Address",
+    "instagram_label": "Instagram",
+    "hours_label": "Hours",
+    "hours_value": "Monday – Friday: 7:00 – 22:00\nSaturday – Sunday: 9:00 – 14:00",
+    "whatsapp_heading": "Message us on WhatsApp",
+    "whatsapp_sub": "Usually replies within 1 hour"
+  },
+  "metadata": {
+    "home_title": "Boxing Gym Paris — Overhandz Boxing Club",
+    "home_desc": "Book your boxing or Muay Thai class at Overhandz in Ivry-sur-Seine, Paris. Online booking, real training, all levels welcome.",
+    "schedule_title": "Class Schedule — Overhandz Boxing Club",
+    "schedule_desc": "Book a boxing or Muay Thai class in Ivry-sur-Seine, Paris. View the weekly schedule and secure your spot online in seconds.",
+    "pricing_title": "Memberships — Overhandz Boxing Club",
+    "pricing_desc": "Boxing memberships and class packs in Paris. Drop-in, monthly, or annual membership. Simple, transparent pricing.",
+    "about_title": "About — Overhandz Boxing Club",
+    "about_desc": "The story behind Overhandz Boxing Club in Ivry-sur-Seine, Paris. Meet the coaches and discover our training philosophy.",
+    "contact_title": "Contact — Overhandz Boxing Club",
+    "contact_desc": "Get in touch with Overhandz Boxing Club in Ivry-sur-Seine, Paris. Send a message, WhatsApp us, or come visit us."
+  }
+}
