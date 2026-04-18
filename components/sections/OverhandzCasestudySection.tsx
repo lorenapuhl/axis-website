@@ -25,7 +25,7 @@ export default function OverhandzCasestudySection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="max-w-3xl md:mx-auto md:text-center"
+            className="max-w-3xl mx-auto text-center"
           >
             {/* Label above — changed from "Portfolio case study · SaaS" */}
             <p className="font-instrument text-soft-grey text-sm font-medium tracking-widest uppercase mb-4">
@@ -58,7 +58,7 @@ export default function OverhandzCasestudySection() {
             </p>
 
             {/* Tech stack tags */}
-            <div className="flex flex-wrap gap-2 mt-8 md:justify-center">
+            <div className="flex flex-wrap gap-2 mt-8 justify-center">
               {["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript", "Visa"].map((tag) => (
                 <span
                   key={tag}
