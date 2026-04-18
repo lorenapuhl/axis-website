@@ -46,10 +46,13 @@ export default function PortfolioFinalCTASection() {
           {/* ── CTA buttons ─────────────────────────────────────────────── */}
           {/*
             Layout:
-            - Mobile:  buttons stacked, auto width (content + padding only)
-            - Desktop: buttons side by side; sub-comments sit below "Get your AXIS" only
+            - Mobile:  buttons stacked. w-fit on the outer container makes it shrink to the
+                       widest child ("See the live site" + px-9). w-full on both buttons then
+                       stretches them to that same width — no guessing, always in sync.
+            - Desktop: sm:w-auto releases the w-fit constraint; buttons sit side by side.
+                       Sub-comments are anchored below "Get your AXIS" only.
           */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="w-fit mx-auto sm:w-auto flex flex-col sm:flex-row items-center justify-center gap-4">
 
             {/* CTA 1 — See the live site (external link, so <a> is correct here) */}
             <a
@@ -57,6 +60,7 @@ export default function PortfolioFinalCTASection() {
               target="_blank"
               rel="noopener noreferrer"
               className="
+                w-full sm:w-auto
                 font-instrument text-xs font-semibold uppercase tracking-[0.2em]
                 px-9 py-4 border border-white/20 text-white-axis text-center
                 hover:border-white/40 transition-colors duration-300
@@ -67,12 +71,12 @@ export default function PortfolioFinalCTASection() {
             </a>
 
             {/* CTA 2 — Get your AXIS + sub-comments as a unit below it */}
-            <div className="flex flex-col items-center gap-3">
+            <div className="w-full sm:w-auto flex flex-col items-center gap-3">
               <motion.button
                 onClick={openModal}
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4 whitespace-nowrap"
+                className="w-full sm:w-auto bg-white-axis text-black-axis font-instrument text-xs font-semibold uppercase tracking-[0.2em] px-9 py-4 whitespace-nowrap"
               >
                 Get your AXIS
               </motion.button>
