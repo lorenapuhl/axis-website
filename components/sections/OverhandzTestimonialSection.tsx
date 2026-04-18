@@ -16,10 +16,10 @@ export default function OverhandzTestimonialSection() {
 
         {/* ── Centred container — max-w-720px as spec'd ───────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           className="mx-auto max-w-[720px]"
         >
 
@@ -43,7 +43,7 @@ export default function OverhandzTestimonialSection() {
               {/* Opening quote mark — anchored to top-left of the text block */}
               <span
                 aria-hidden
-                className="absolute -top-10 -left-6 md:-left-10 font-playfair italic text-[80px] md:text-[100px] leading-none text-white-axis/20 select-none"
+                className="absolute -top-10 -left-1 md:-left-10 font-playfair italic text-[80px] md:text-[100px] leading-none text-white-axis/20 select-none"
               >
                 &ldquo;
               </span>
