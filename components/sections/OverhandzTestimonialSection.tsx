@@ -46,13 +46,46 @@ export default function OverhandzTestimonialSection() {
               borderColor: "#1f1f1f",
             }}
           >
-            {/* ── Logo ───────────────────────────────────────────────────── */}
+            {/* ── Quote ──────────────────────────────────────────────────── */}
             {/*
-              Small, desaturated — the logo identifies the client without
-              drawing attention away from the quote. opacity-80 = subtle.
-              mb-20 gives generous breathing room before the quote.
+              Large opening quote mark — visible typographic element that frames
+              the testimonial. font-playfair gives it a classical feel.
+              text-white-axis/20 = 20% white opacity, visible but not dominant.
+              leading-none + -mb-2 pulls it tight against the quote text below.
             */}
-            <div className="flex justify-center mb-20">
+            <div className="relative">
+              <span
+                aria-hidden
+                className="font-playfair text-[96px] md:text-[120px] leading-none text-white-axis/20 block text-left -mb-4 select-none"
+              >
+                &ldquo;
+              </span>
+
+              {/* The quote itself */}
+              <blockquote className="mx-auto max-w-[640px]">
+                <p className="font-instrument text-white-axis text-lg md:text-xl leading-relaxed">
+                  We went from managing everything in DMs to having a complete system.
+                  Bookings, payments, and communication are now seamless — it changed how we run the gym.
+                </p>
+              </blockquote>
+
+              {/* Large closing quote mark — mirrors the opening, right-aligned */}
+              <span
+                aria-hidden
+                className="font-playfair text-[96px] md:text-[120px] leading-none text-white-axis/20 block text-right -mt-4 select-none"
+              >
+                &rdquo;
+              </span>
+            </div>
+
+            {/* ── Signature ──────────────────────────────────────────────── */}
+            {/*
+              Logo sits just above the name — visually anchors the attribution.
+              mt-16 separates the quote block from the signature area.
+              Logo at opacity-80 = subtle, not competing with the quote.
+              Name in small uppercase tracking-widest = feels like a proper stamp.
+            */}
+            <div className="mt-16 flex flex-col items-center gap-4">
               <Image
                 src="/portfolio/overhandz/logo-transparent.png"
                 alt="Overhandz Club logo"
@@ -60,46 +93,10 @@ export default function OverhandzTestimonialSection() {
                 height={32}
                 className="h-8 w-auto opacity-80 object-contain"
               />
+              <p className="font-instrument text-sm uppercase tracking-widest text-gray-400">
+                Overhandz Club
+              </p>
             </div>
-
-            {/* ── Quote ──────────────────────────────────────────────────── */}
-            {/*
-              Faint oversized quotation mark in the background — low opacity
-              so it reads as texture, not decoration.
-              The actual quote sits above it (relative z-10).
-            */}
-            <div className="relative">
-
-              {/* Oversized decorative quotation mark — background texture */}
-              <span
-                aria-hidden
-                className="
-                  absolute -top-6 left-1/2 -translate-x-1/2
-                  font-playfair text-[120px] leading-none text-white-axis/[0.04]
-                  pointer-events-none select-none
-                "
-              >
-                &ldquo;
-              </span>
-
-              {/* The quote itself */}
-              <blockquote className="relative z-10 mx-auto max-w-[640px]">
-                <p className="font-instrument text-white-axis text-lg md:text-xl leading-relaxed">
-                  We went from managing everything in DMs to having a complete system.
-                  Bookings, payments, and communication are now seamless — it changed how we run the gym.
-                </p>
-              </blockquote>
-            </div>
-
-            {/* ── Signature ──────────────────────────────────────────────── */}
-            {/*
-              mt-16 — space between quote and attribution
-              Uppercase + widest tracking — gives it the feeling of a proper stamp
-              text-gray-400 text-sm — subtle, not competing with the quote
-            */}
-            <p className="mt-16 font-instrument text-sm uppercase tracking-widest text-gray-400">
-              Overhandz Club
-            </p>
 
           </div>
 
