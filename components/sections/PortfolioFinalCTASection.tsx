@@ -52,7 +52,7 @@ export default function PortfolioFinalCTASection() {
             - Desktop: sm:w-auto releases the w-fit constraint; buttons sit side by side.
                        Sub-comments are anchored below "Get your AXIS" only.
           */}
-          <div className="w-fit mx-auto sm:w-auto flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="w-fit mx-auto sm:w-auto flex flex-col sm:flex-row items-center sm:items-start justify-center gap-4">
 
             {/* CTA 1 — See the live site (external link, so <a> is correct here) */}
             <a
