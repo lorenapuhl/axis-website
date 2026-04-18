@@ -269,7 +269,7 @@ function CheckoutModal({ plan, onClose }: { plan: PricingPlan; onClose: () => vo
       style={{ background: "rgba(0,0,0,0.75)" }}
     >
       <motion.div
-        className="w-full rounded-t-2xl p-5 bg-zinc-900 border-t border-white/10"
+        className="w-full md:max-w-sm md:mx-auto rounded-t-2xl md:rounded-2xl p-5 bg-zinc-900 border-t md:border border-white/10"
         initial={{ y: "100%" }}
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
@@ -817,8 +817,8 @@ export function OnlinePaymentsPanel() {
         Purchase in one flow
       </h2>
 
-      {/* Featured plan card — constrained width on desktop so it doesn't stretch */}
-      <div className="rounded-xl p-5 mb-4 bg-zinc-950 border border-white/20 md:max-w-sm">
+      {/* Featured plan card — constrained + centered on desktop */}
+      <div className="rounded-xl p-5 mb-4 bg-zinc-950 border border-white/20 md:max-w-sm md:mx-auto">
         <p className="text-white font-semibold text-lg mb-1">{featured.name}</p>
         <p className="text-zinc-400 text-sm mb-4">{featured.description}</p>
 
