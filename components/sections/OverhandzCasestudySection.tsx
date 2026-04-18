@@ -51,7 +51,7 @@ export default function OverhandzCasestudySection() {
               From DMs to<br />automated bookings.
             </h1>
 
-            <p className="font-instrument text-soft-grey text-lg leading-relaxed max-w-xl md:justify-center">
+            <p className="font-instrument text-soft-grey text-lg leading-relaxed max-w-xl md:mx-auto">
               Overhandz Boxing Club was running its entire booking operation through
               Instagram DMs. We replaced it with a conversion-focused website that
               books and charges clients automatically — 24 hours a day.
@@ -59,7 +59,7 @@ export default function OverhandzCasestudySection() {
 
             {/* Tech stack tags */}
             <div className="flex flex-wrap gap-2 mt-8 md:justify-center">
-              {["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript", "Visa"].map((tag) => (
+              {["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript", "Stripe (planned)"].map((tag) => (
                 <span
                   key={tag}
                   className="font-instrument text-xs bg-white-axis/10 text-soft-grey px-3 py-1.5 rounded-full"
