@@ -51,7 +51,7 @@ export default function OverhandzCasestudySection() {
               From DMs to<br />automated bookings.
             </h1>
 
-            <p className="font-instrument text-soft-grey text-lg leading-relaxed max-w-xl">
+            <p className="font-instrument text-soft-grey text-lg leading-relaxed max-w-xl md:justify-center">
               Overhandz Boxing Club was running its entire booking operation through
               Instagram DMs. We replaced it with a conversion-focused website that
               books and charges clients automatically — 24 hours a day.
