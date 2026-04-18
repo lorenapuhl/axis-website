@@ -874,6 +874,24 @@ export function OnlinePaymentsPanel() {
 // 3×2 post grid with hover overlay (desktop) or tap-to-reveal (mobile).
 // Spacing matches InstagramFeed.tsx: px-6 py-10, mb-10 header, gap-2 grid.
 export function LiveInstagramPanel() {
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [activeId,  setActiveId]  = useState<string | null>(null)
+
+  const handlePostClick = (post: typeof INSTAGRAM_POSTS[0]) => {
+    const isTouchDevice =
+      typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches
+    if (isTouchDevice) {
+      if (activeId === post.id) {
+        window.open(IG_URL, "_blank", "noopener,noreferrer")
+        setActiveId(null)
+      } else {
+        setActiveId(post.id)
+      }
+    } else {
+      window.open(IG_URL, "_blank", "noopener,noreferrer")
+    }
+  }
+
   return (
     <div className="px-6 py-10 bg-black">
       {/* Header — mb-10 matches InstagramFeed.tsx */}
@@ -886,39 +904,56 @@ export function LiveInstagramPanel() {
         </h2>
       </div>
 
-      {/* Single-column post feed — each post is full-width so captions are readable */}
-      <div className="flex flex-col gap-4">
-        {INSTAGRAM_POSTS.map((post) => (
-          <a
-            key={post.id}
-            href={IG_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block rounded-xl overflow-hidden bg-zinc-950 border border-white/[0.06]"
-          >
-            {/* Post image — square aspect, full width */}
-            <div className="relative aspect-square w-full overflow-hidden">
-              <Image
-                src={post.src}
-                alt={`Instagram post from Overhandz Boxing Club: ${post.caption}`}
-                fill
-                sizes="(max-width: 768px) 100vw, 60vw"
-                className="object-cover"
-              />
-            </div>
+      {/* Grid: 2 cols mobile, 3 cols desktop — 6 posts = 2 rows × 3 cols on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
+        {INSTAGRAM_POSTS.map((post, index) => {
+          const overlayVisible = hoveredId === post.id || activeId === post.id
+          return (
+            <motion.div
+              key={post.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.06 }}
+              className="relative aspect-square overflow-hidden rounded-lg cursor-pointer"
+              onMouseEnter={() => setHoveredId(post.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              onClick={() => handlePostClick(post)}
+            >
+              {/* Post image — scales on hover */}
+              <motion.div
+                className="absolute inset-0"
+                animate={{ scale: overlayVisible ? 1.1 : 1 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <Image
+                  src={post.src}
+                  alt={`Instagram post from Overhandz Boxing Club: ${post.caption}`}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  className="object-cover"
+                />
+              </motion.div>
 
-            {/* Caption row — likes icon + caption text */}
-            <div className="px-4 py-3 flex items-start gap-3">
-              <div className="flex items-center gap-1 text-zinc-400 text-xs shrink-0 pt-0.5">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-                {post.likes}
-              </div>
-              <p className="text-zinc-300 text-sm leading-snug">{post.caption}</p>
-            </div>
-          </a>
-        ))}
+              {/* Overlay — shows likes + caption on hover/tap */}
+              <motion.div
+                className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-3"
+                animate={{ opacity: overlayVisible ? 1 : 0 }}
+                initial={{ opacity: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
+              >
+                <div className="flex items-center gap-1.5 text-white text-sm font-semibold mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="white">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                  {post.likes}
+                </div>
+                <p className="text-white/80 text-xs text-center line-clamp-2 leading-snug">
+                  {post.caption}
+                </p>
+              </motion.div>
+            </motion.div>
+          )
+        })}
       </div>
 
       {/* CTA — mt-8 matches InstagramFeed.tsx */}
@@ -941,31 +976,43 @@ export function LiveInstagramPanel() {
 export function EventsAutoPanel() {
   return (
     <div className="px-6 py-10 bg-black">
-      <p className="text-zinc-400 text-sm font-medium tracking-widest uppercase mb-2">Events</p>
-      <h2 className="text-white font-semibold text-3xl tracking-tight mb-10">
-        What&apos;s happening
-      </h2>
+      <div className="mb-10">
+        <p className="text-zinc-400 text-sm font-medium tracking-widest uppercase mb-2">Events</p>
+        <h2 className="text-white font-semibold text-3xl tracking-tight">
+          What&apos;s happening
+        </h2>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {EVENTS.map((ev) => (
-          <a
+      {/* 1 col mobile, 2 col desktop — matches original EventsSection.tsx */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {EVENTS.map((ev, index) => (
+          <motion.a
             key={ev.id}
             href={IG_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="block rounded-xl overflow-hidden bg-zinc-950"
-            style={{ border: "1px solid rgba(255,255,255,0.06)" }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.08 }}
+            whileHover="hovered"
+            className="block rounded-xl overflow-hidden bg-zinc-950 border border-white/[0.06]"
           >
-            {/* Event image */}
-            <div className="relative aspect-video overflow-hidden">
-              <Image
-                src={ev.img}
-                alt={`${ev.title} — Overhandz Boxing Club event`}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-              <div className="absolute top-2 left-2">
+            {/* Event image — 16/9 matches original */}
+            <div className="relative aspect-[16/9] overflow-hidden">
+              <motion.div
+                className="absolute inset-0"
+                variants={{ hovered: { scale: 1.05 } }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <Image
+                  src={ev.img}
+                  alt={`${ev.title} — Overhandz Boxing Club event`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </motion.div>
+              <div className="absolute top-3 left-3">
                 <span className="text-xs px-2 py-0.5 rounded font-medium text-white bg-black/60">
                   {ev.type}
                 </span>
@@ -973,14 +1020,14 @@ export function EventsAutoPanel() {
             </div>
 
             {/* Event details */}
-            <div className="p-3">
+            <div className="p-5">
               <p className="text-zinc-400 text-xs mb-1">{ev.date}</p>
-              <p className="text-white font-semibold text-sm leading-snug mb-3">{ev.title}</p>
+              <p className="text-white font-semibold text-lg mb-3 leading-snug">{ev.title}</p>
               <div className="self-start">
                 <span className="inline-block px-3 py-1.5 rounded-md text-xs font-semibold text-white border border-white/20">Join event</span>
               </div>
             </div>
-          </a>
+          </motion.a>
         ))}
       </div>
     </div>
@@ -993,62 +1040,66 @@ export function EventsAutoPanel() {
 export function OffersMerchPanel() {
   return (
     <div className="px-6 py-10 bg-black">
-      <p className="text-zinc-400 text-sm font-medium tracking-widest uppercase mb-2">Shop</p>
-      <h2 className="text-white font-semibold text-3xl tracking-tight mb-10">
-        Gear &amp; promotions
-      </h2>
+      <div className="mb-10">
+        <p className="text-zinc-400 text-sm font-medium tracking-widest uppercase mb-2">Shop</p>
+        <h2 className="text-white font-semibold text-3xl tracking-tight">
+          Gear &amp; promotions
+        </h2>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {PROMOS.map((promo, i) => (
-          <div
+      {/* 1 col mobile, 3 col desktop — highlight item spans 2 cols, matches PromotionsSection.tsx */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {PROMOS.map((promo, index) => (
+          <motion.div
             key={promo.id}
-            className={`rounded-xl overflow-hidden bg-zinc-950 flex flex-col cursor-pointer ${
-              i === 1 ? "sm:col-span-2" : ""
-            }`}
-            style={{
-              border: promo.highlight
-                ? "1px solid rgba(255,255,255,0.25)"
-                : "1px solid rgba(255,255,255,0.06)",
-            }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.1 }}
+            whileHover="hovered"
             onClick={() => window.open(SHOP_URL, "_blank", "noopener,noreferrer")}
+            className={`bg-zinc-950 rounded-xl overflow-hidden flex flex-col cursor-pointer ${
+              promo.highlight ? "border border-white/30 md:col-span-2" : "border border-white/[0.06]"
+            }`}
           >
             {/* Product image */}
-            <div className={`relative overflow-hidden ${i === 1 ? "aspect-[16/7]" : "aspect-[4/3]"}`}>
-              <Image
-                src={promo.img}
-                alt={`${promo.title} — Overhandz Boxing Club`}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-              <div className="absolute top-2 left-2">
+            <div className={`relative overflow-hidden ${promo.highlight ? "aspect-[16/7]" : "aspect-[4/3]"}`}>
+              <motion.div
+                className="absolute inset-0"
+                variants={{ hovered: { scale: 1.05 } }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <Image
+                  src={promo.img}
+                  alt={`${promo.title} — Overhandz Boxing Club`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 66vw, 33vw"
+                  className="object-cover"
+                />
+              </motion.div>
+              <div className="absolute top-3 left-3">
                 <span className="text-xs px-2 py-0.5 rounded font-medium text-white bg-black/60">
                   {promo.badge}
                 </span>
               </div>
             </div>
 
-            {/* Details + shop CTA */}
-            <div className="p-4 flex flex-col flex-1">
-              <p className="text-white font-semibold text-base mb-3 flex-1">{promo.title}</p>
-              {/* self-start prevents the button from stretching full-width */}
-              <div className="self-start">
+            {/* Details + CTA */}
+            <div className="p-5 flex flex-col flex-1">
+              <p className="text-white font-semibold text-xl mb-2">{promo.title}</p>
+              <div className="mt-auto self-start" onClick={(e) => e.stopPropagation()}>
                 <a
                   href={SHOP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
                   className={`inline-block px-4 py-2 rounded-lg text-sm font-semibold ${
-                    promo.highlight
-                      ? "bg-white text-black"
-                      : "text-white border border-white/25"
+                    promo.highlight ? "bg-white text-black" : "text-white border border-white/25"
                   }`}
                 >
                   {promo.cta}
                 </a>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
@@ -1087,24 +1138,24 @@ export function TrustBrandingPanel() {
         <p className="text-zinc-500 text-xs font-medium tracking-widest uppercase mb-3">
           Your coaches
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-3 md:gap-6">
           {[
             { src: "/overhandz/coaches/fabrice.png", name: "Fabrice", discipline: "Muay-Thaï" },
             { src: "/overhandz/coaches/rudy.png",    name: "Rudy",    discipline: "Boxe Anglaise" },
             { src: "/overhandz/coaches/morad.png",   name: "Morad",   discipline: "Muay-Thaï" },
           ].map((coach) => (
             <div key={coach.name} className="text-center">
-              <div className="relative aspect-square rounded-xl overflow-hidden mb-2">
+              <div className="relative aspect-[3/4] rounded-xl overflow-hidden mb-3">
                 <Image
                   src={coach.src}
                   alt={`Coach ${coach.name} at Overhandz Boxing Club`}
                   fill
-                  sizes="120px"
+                  sizes="(max-width: 768px) 120px, 200px"
                   className="object-cover"
                 />
               </div>
-              <p className="text-white text-xs font-semibold">{coach.name}</p>
-              <p className="text-zinc-500 text-xs">{coach.discipline}</p>
+              <p className="text-white text-sm font-semibold">{coach.name}</p>
+              <p className="text-zinc-500 text-xs mt-0.5">{coach.discipline}</p>
             </div>
           ))}
         </div>

@@ -185,19 +185,18 @@ export default function OverhandzFeaturesSection() {
           </div>
         </motion.div>
 
-        {/* ── CONTENT AREA ── */}
-        <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-12 items-start">
-
-          {/* LEFT — headline + description (font-instrument, not playfair) */}
+        {/* ── CONTENT AREA — stacked: text below pills, panel full-width below ── */}
+        <div>
+          {/* Headline + description — below the pills/dots, constrained width */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeId + "-text"}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } }}
               exit={{ opacity: 0, transition: { duration: 0.15, ease: "easeOut" } }}
+              className="max-w-xl mb-8"
             >
-              {/* Instrument Sans for the subsection headline, not Playfair */}
-              <h3 className="font-instrument text-white-axis font-semibold text-xl md:text-2xl mb-4 leading-snug">
+              <h3 className="font-instrument text-white-axis font-semibold text-xl md:text-2xl mb-3 leading-snug">
                 {activePill.headline}
               </h3>
               <p className="font-instrument text-soft-grey text-base leading-relaxed">
@@ -206,10 +205,9 @@ export default function OverhandzFeaturesSection() {
             </motion.div>
           </AnimatePresence>
 
-          {/* RIGHT — floating search bar + full-width panel (no outer frame box) */}
+          {/* Browser bar + full-width panel */}
           <div>
-            {/* Floating search bar — pill shaped, sits above the panel like a browser tab.
-                No containing box; the panel renders full-width below it. */}
+            {/* Floating search bar — pill shaped, sits above the panel like a browser tab */}
             <div className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-zinc-900 border border-white/[0.06] mb-4 shadow-2xl">
               {/* macOS window dots — desktop only */}
               <div className="hidden md:flex items-center gap-1.5 shrink-0">
@@ -232,8 +230,7 @@ export default function OverhandzFeaturesSection() {
               </a>
             </div>
 
-            {/* Panel — full width, rounded corners, overflow-hidden contains the booking modal.
-                relative is the positioning parent for any absolute-positioned modal overlays. */}
+            {/* Panel — full width, rounded corners, overflow-hidden contains the booking modal */}
             <div className="relative overflow-hidden rounded-2xl">
               <AnimatePresence mode="wait">
                 <motion.div
