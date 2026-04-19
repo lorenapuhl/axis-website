@@ -100,7 +100,7 @@ export default function TestimonialSection() {
         >
           {/* Small muted eyebrow label — uppercase, wide-tracked, soft grey.
               This is the brand subheading style: font-instrument uppercase tracking-widest. */}
-          <p className="font-instrument uppercase tracking-widest text-xs text-soft-grey mb-4">
+          <p className="font-instrument uppercase text-center tracking-widest text-xs text-blue-axis mb-4">
             Testimonials
           </p>
 
@@ -108,8 +108,8 @@ export default function TestimonialSection() {
               font-playfair uppercase tracking-tight: brand headline style.
               text-white-axis: white headline on dark background — primary brand contrast.
               max-w-xl keeps the line short and punchy. */}
-          <h2 className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-5xl max-w-xl">
-            Studios and companies trust the system
+          <h2 className="font-playfair text-center uppercase tracking-tight text-white-axis text-3xl md:text-5xl max-w-xl">
+            Studios and companies trust the AXIS
           </h2>
         </motion.div>
 

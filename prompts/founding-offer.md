@@ -25,6 +25,7 @@ Rules:
 - If anything is unclear to you, ask me first and let me clarify things for you 
 before building anything.
 - Only apply the changes specified in this file. do not change anything else.
+- commit and push
 
 ## GLOBAL RULES
 
