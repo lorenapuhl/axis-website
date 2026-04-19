@@ -163,21 +163,27 @@ export default function TestimonialSection() {
                   gap-4 = 16px between logo and the name/role block. */}
               <div className="flex items-center gap-4 mb-8">
 
-                {/* Logo image — no wrapper div needed.
-                    width/height = intrinsic PNG dimensions: next/image uses these
-                    for optimisation and to prevent layout shift before load.
-                    h-10: CSS overrides the displayed height to 40px.
-                    w-auto: lets the width scale naturally with the aspect ratio,
-                    so both logos render at the same height regardless of shape.
-                    brightness-0 invert: collapses all pixels to black then flips
-                    to white — makes dark/grey logos visible on the black card. */}
-                <Image
-                  src={t.logo}
-                  alt={`${t.name} logo`}
-                  width={t.logoWidth}
-                  height={t.logoHeight}
-                  className="h-10 w-auto brightness-0 invert flex-shrink-0"
-                />
+                {/* White pill container — standard dark-mode treatment for logos.
+                    Both logos have non-transparent content (white bg / dark content),
+                    so we place them on a white background rather than trying to
+                    invert their colors with CSS filters.
+                    rounded-lg p-2: rounded corners with a little breathing room.
+                    flex-shrink-0: prevents the container from being squished. */}
+                <div className="bg-white-axis rounded-lg p-2 flex-shrink-0 flex items-center justify-center">
+                  {/* !h-8 !w-auto: Tailwind's ! prefix adds CSS !important,
+                      which overrides the inline width/height styles that
+                      next/image injects — without these, the image renders at
+                      its full intrinsic size (290×265px for Soriano).
+                      width/height props still give next/image the correct
+                      aspect ratio for optimization. */}
+                  <Image
+                    src={t.logo}
+                    alt={`${t.name} logo`}
+                    width={t.logoWidth}
+                    height={t.logoHeight}
+                    className="!h-8 !w-auto"
+                  />
+                </div>
 
                 {/* Name and role text block */}
                 <div>
