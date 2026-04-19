@@ -38,7 +38,7 @@ const testimonials: Testimonial[] = [
   },
   {
     id: 2,
-    name: "Overhands Club",
+    name: "Overhandz Club",
     role: "Boxing Studio",
     logo: "/testimonials/logo-overhandz.png",
     text: "The preview already showed how powerful this could be for our gym. The design looks professional, the structure is clear, and it actually feels like something that could bring in more clients. It's a big step up from relying only on Instagram.",
@@ -161,11 +161,15 @@ export default function TestimonialSection() {
                       object-left: aligns the logo to the left edge of the container.
                       Both logos have transparent backgrounds (PNG with alpha) so they
                       sit cleanly on the black card. */}
+                  {/* brightness-0: collapses every pixel to pure black.
+                      invert: flips black to white.
+                      Together they force any dark logo to render white,
+                      making it visible on the black card background. */}
                   <Image
                     src={t.logo}
                     alt={`${t.name} logo`}
                     fill
-                    className="object-contain object-left"
+                    className="object-contain object-left brightness-0 invert"
                   />
                 </div>
 
