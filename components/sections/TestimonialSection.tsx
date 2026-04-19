@@ -24,9 +24,13 @@ interface Testimonial {
   logo: string
   // logoWidth / logoHeight: the intrinsic pixel dimensions of the PNG file.
   // next/image needs these to reserve the correct space before the image loads
-  // (prevents layout shift). CSS will override the displayed size via h-10 w-auto.
+  // (prevents layout shift). CSS will override the displayed size via logoClassName.
   logoWidth: number
   logoHeight: number
+  // logoClassName: per-logo Tailwind size classes.
+  // Each logo has a different aspect ratio, so we tune the display height
+  // individually to achieve equal visual weight in the card header.
+  logoClassName: string
   text: string
 }
 
@@ -41,6 +45,9 @@ const testimonials: Testimonial[] = [
     logo: "/testimonials/logo-soriano.png",
     logoWidth: 290,
     logoHeight: 265,
+    // Soriano is nearly square (290×265) — needs more height to match
+    // the visual weight of the wider Overhandz logo.
+    logoClassName: "!h-16 !w-auto",
     text: "I've worked with many Software companies, but working with this was different. Communication was clear, deadlines were always respected, and the attention to detail really stood out. The final result felt polished, professional, and exactly what I needed. It made the whole process easy.",
   },
   {
@@ -50,6 +57,8 @@ const testimonials: Testimonial[] = [
     logo: "/testimonials/logo-overhandz.png",
     logoWidth: 241,
     logoHeight: 122,
+    // Overhandz is wide (241×122) — h-10 already gives good visual weight.
+    logoClassName: "!h-10 !w-auto",
     text: "The preview already showed how powerful this could be for our gym. The design looks professional, the structure is clear, and it actually feels like something that could bring in more clients. It's a big step up from relying only on Instagram.",
   },
 ]
@@ -175,7 +184,7 @@ export default function TestimonialSection() {
                   alt={`${t.name} logo`}
                   width={t.logoWidth}
                   height={t.logoHeight}
-                  className="!h-10 !w-auto brightness-0 invert flex-shrink-0"
+                  className={`${t.logoClassName} brightness-0 invert flex-shrink-0`}
                 />
 
                 {/* Name and role text block */}
