@@ -106,7 +106,7 @@ export default function FinalCTA() {
           {/* Small print below the button — text-sm is consistently small across all breakpoints */}
           <motion.p
             variants={item}
-            className="font-instrument tracking-tight text-white-axis text-sm md:text-sm"
+            className="font-instrument tracking-tight text-soft-grey text-sm md:text-sm"
           >
             Get one of the first 5 spots ! <br />
             No setup fee. Cancel anytime.
