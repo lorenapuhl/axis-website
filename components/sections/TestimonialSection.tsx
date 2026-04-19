@@ -144,7 +144,10 @@ export default function TestimonialSection() {
               //   Gives the card a subtle glowing edge on the dark background.
               // rounded-2xl: 16px corner radius.
               // p-8: 32px padding on all sides.
-              className="bg-black-axis border border-white-axis/10 rounded-2xl p-8"
+              // max-w-2xl: caps each card at ~42rem on desktop so the text
+              // never stretches too wide. mx-auto centers the card within the
+              // full-width container.
+              className="bg-black-axis border border-white-axis/10 rounded-2xl p-8 max-w-2xl mx-auto w-full"
             >
               {/* ── Top row: logo + identity ─────────────────────────────────── */}
               {/* flex items-center: horizontal row, vertically centered.
