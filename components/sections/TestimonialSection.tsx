@@ -18,6 +18,10 @@ interface Testimonial {
   id: number
   name: string
   role: string
+  // logo: path to the client's logo file, served from the /public folder.
+  // In Next.js, files in /public are available at the root URL — so
+  // "/testimonials/logo-soriano.png" maps to public/testimonials/logo-soriano.png.
+  logo: string
   text: string
 }
 
@@ -29,12 +33,14 @@ const testimonials: Testimonial[] = [
     id: 1,
     name: "Luis Soriano",
     role: "Founder · Grupo Soriano",
+    logo: "/testimonials/logo-soriano.png",
     text: "I've worked with many Software companies, but working with this was different. Communication was clear, deadlines were always respected, and the attention to detail really stood out. The final result felt polished, professional, and exactly what I needed. It made the whole process easy.",
   },
   {
     id: 2,
     name: "Overhands Club",
     role: "Boxing Studio",
+    logo: "/testimonials/logo-overhandz.png",
     text: "The preview already showed how powerful this could be for our gym. The design looks professional, the structure is clear, and it actually feels like something that could bring in more clients. It's a big step up from relying only on Instagram.",
   },
 ]
@@ -100,13 +106,8 @@ export default function TestimonialSection() {
 
         {/* ── Cards container ───────────────────────────────────────────────── */}
         {/*
-          Responsive layout strategy:
-          • Mobile (default): flex-row + overflow-x-auto + snap-x snap-mandatory
-            creates a horizontal swipe carousel. Each card is min-w-[85%] so the
-            edge of the next card peeks in to signal that more content is swipeable.
-            scrollbar-none hides the native scrollbar on all browsers (defined in globals.css).
-          • Desktop (md:): flex-col switches to vertical stacking, overflow-visible
-            removes the scroll clipping, gap-8 = 32px gap between cards.
+          flex-col: cards stack vertically on every screen size — both mobile
+          and desktop. gap-8 = 32px gap between cards.
 
           variants={container}: this element orchestrates the staggered
           entry of its children when it scrolls into view (whileInView="show").
@@ -116,10 +117,7 @@ export default function TestimonialSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="
-            flex flex-row overflow-x-auto snap-x snap-mandatory scrollbar-none gap-6 pb-4
-            md:flex-col md:overflow-visible md:gap-8 md:pb-0
-          "
+          className="flex flex-col gap-8"
         >
           {/*
             Array.map in JSX is like a Python for-loop that returns HTML.
@@ -132,9 +130,8 @@ export default function TestimonialSection() {
             // variants={item}: this card plays the fade-up animation when the
             //   parent container triggers its "show" state (staggered entry).
             // whileHover: lifts the card 2px when the mouse hovers over it.
-            // transition: the element-level transition is the fallback for animations
-            //   that don't define their own (i.e. whileHover). The variant's own
-            //   transition (0.7s) overrides this for the entry animation.
+            // transition: element-level fallback — used by whileHover (0.35s).
+            //   The variant's own transition (0.7s) takes over for the entry animation.
             <motion.article
               key={t.id}
               variants={item}
@@ -142,40 +139,33 @@ export default function TestimonialSection() {
               transition={{ duration: 0.35, ease: "easeOut" as const }}
               // bg-black-axis: pure black card on the dark grey section background —
               //   creates depth and layering consistent with the brand system.
-              // border border-white-axis/10: a white border at 10% opacity.
-              //   The /10 is a Tailwind opacity modifier — no hex value needed.
-              //   This gives the card a subtle glowing edge on the dark background.
+              // border border-white-axis/10: white border at 10% opacity.
+              //   /10 is a Tailwind opacity modifier — no hex value needed.
+              //   Gives the card a subtle glowing edge on the dark background.
               // rounded-2xl: 16px corner radius.
               // p-8: 32px padding on all sides.
-              // min-w-[85%]: on mobile, each card occupies 85% viewport width —
-              //   the remaining 15% lets the next card peek in (tease scrollability).
-              // snap-start: each card snaps to the left edge of the viewport on scroll.
-              // flex-shrink-0: prevents the flex container from squishing the cards.
-              // md:min-w-0 md:w-full: reset to full-width block on desktop.
-              className="
-                bg-black-axis border border-white-axis/10 rounded-2xl p-8
-                min-w-[85%] snap-start flex-shrink-0
-                md:min-w-0 md:w-full
-              "
+              className="bg-black-axis border border-white-axis/10 rounded-2xl p-8"
             >
-              {/* ── Top row: avatar + identity ──────────────────────────────── */}
+              {/* ── Top row: logo + identity ─────────────────────────────────── */}
               {/* flex items-center: horizontal row, vertically centered.
-                  gap-4 = 16px between avatar and the name/role block. */}
+                  gap-4 = 16px between logo and the name/role block. */}
               <div className="flex items-center gap-4 mb-8">
 
-                {/* Circular avatar container.
-                    rounded-full + overflow-hidden clips the image into a circle.
-                    flex-shrink-0: prevents the avatar from being squished. */}
-                <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                  {/* next/image: always use this over <img>.
-                      Width/height must match the intrinsic size (48x48 here).
-                      alt must describe the image content for screen readers. */}
+                {/* Logo container — fixed height so both logos align consistently.
+                    h-10 = 40px height. w-auto lets the width scale with the logo's
+                    natural aspect ratio. overflow-hidden clips any overflow. */}
+                <div className="relative h-10 w-16 flex-shrink-0">
+                  {/* next/image with fill: the image expands to fill its parent.
+                      object-contain: scales the logo down to fit within the container
+                      without cropping, preserving the aspect ratio.
+                      object-left: aligns the logo to the left edge of the container.
+                      Both logos have transparent backgrounds (PNG with alpha) so they
+                      sit cleanly on the black card. */}
                   <Image
-                    src="https://placehold.co/48x48/121212/FFFFFF"
-                    alt={`Avatar placeholder for ${t.name}`}
-                    width={48}
-                    height={48}
-                    className="rounded-full object-cover"
+                    src={t.logo}
+                    alt={`${t.name} logo`}
+                    fill
+                    className="object-contain object-left"
                   />
                 </div>
 
@@ -183,7 +173,7 @@ export default function TestimonialSection() {
                 <div>
                   {/* font-semibold: medium-bold weight, stands out from body.
                       text-white-axis: white text for maximum contrast on black card.
-                      text-sm: keeps the identity row compact next to the avatar. */}
+                      text-sm: keeps the identity row compact next to the logo. */}
                   <p className="font-instrument font-semibold text-white-axis text-sm">
                     {t.name}
                   </p>
