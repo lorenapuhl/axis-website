@@ -22,6 +22,11 @@ interface Testimonial {
   // In Next.js, files in /public are available at the root URL — so
   // "/testimonials/logo-soriano.png" maps to public/testimonials/logo-soriano.png.
   logo: string
+  // logoWidth / logoHeight: the intrinsic pixel dimensions of the PNG file.
+  // next/image needs these to reserve the correct space before the image loads
+  // (prevents layout shift). CSS will override the displayed size via h-10 w-auto.
+  logoWidth: number
+  logoHeight: number
   text: string
 }
 
@@ -34,6 +39,8 @@ const testimonials: Testimonial[] = [
     name: "Luis Soriano",
     role: "Founder · Grupo Soriano",
     logo: "/testimonials/logo-soriano.png",
+    logoWidth: 290,
+    logoHeight: 265,
     text: "I've worked with many Software companies, but working with this was different. Communication was clear, deadlines were always respected, and the attention to detail really stood out. The final result felt polished, professional, and exactly what I needed. It made the whole process easy.",
   },
   {
@@ -41,6 +48,8 @@ const testimonials: Testimonial[] = [
     name: "Overhandz Club",
     role: "Boxing Studio",
     logo: "/testimonials/logo-overhandz.png",
+    logoWidth: 241,
+    logoHeight: 122,
     text: "The preview already showed how powerful this could be for our gym. The design looks professional, the structure is clear, and it actually feels like something that could bring in more clients. It's a big step up from relying only on Instagram.",
   },
 ]
@@ -154,27 +163,21 @@ export default function TestimonialSection() {
                   gap-4 = 16px between logo and the name/role block. */}
               <div className="flex items-center gap-4 mb-8">
 
-                {/* Logo container — fixed height so both logos align consistently.
-                    h-10 = 40px height. w-auto lets the width scale with the logo's
-                    natural aspect ratio. overflow-hidden clips any overflow. */}
-                <div className="relative h-10 w-16 flex-shrink-0">
-                  {/* next/image with fill: the image expands to fill its parent.
-                      object-contain: scales the logo down to fit within the container
-                      without cropping, preserving the aspect ratio.
-                      object-left: aligns the logo to the left edge of the container.
-                      Both logos have transparent backgrounds (PNG with alpha) so they
-                      sit cleanly on the black card. */}
-                  {/* brightness-0: collapses every pixel to pure black.
-                      invert: flips black to white.
-                      Together they force any dark logo to render white,
-                      making it visible on the black card background. */}
-                  <Image
-                    src={t.logo}
-                    alt={`${t.name} logo`}
-                    fill
-                    className="object-contain object-left brightness-0 invert"
-                  />
-                </div>
+                {/* Logo image — no wrapper div needed.
+                    width/height = intrinsic PNG dimensions: next/image uses these
+                    for optimisation and to prevent layout shift before load.
+                    h-10: CSS overrides the displayed height to 40px.
+                    w-auto: lets the width scale naturally with the aspect ratio,
+                    so both logos render at the same height regardless of shape.
+                    brightness-0 invert: collapses all pixels to black then flips
+                    to white — makes dark/grey logos visible on the black card. */}
+                <Image
+                  src={t.logo}
+                  alt={`${t.name} logo`}
+                  width={t.logoWidth}
+                  height={t.logoHeight}
+                  className="h-10 w-auto brightness-0 invert flex-shrink-0"
+                />
 
                 {/* Name and role text block */}
                 <div>
