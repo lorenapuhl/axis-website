@@ -105,7 +105,9 @@ export default function PreviewMock({ data }: PreviewMockProps) {
       </div>
 
       {/* ── Mock website content — scrollable ─────────────────────────── */}
-      <div className={`${theme.bg} overflow-y-auto max-h-[520px]`}>
+      {/* On mobile: no height cap — full content renders, parent container scrolls naturally.
+          On desktop (lg+): fixed height with internal scroll so the two-column layout stays compact. */}
+      <div className={`${theme.bg} lg:overflow-y-auto lg:max-h-[520px]`}>
 
         {/* ═══════════════════════════════════════════════════════════════
             SECTION 1 — NAVBAR
