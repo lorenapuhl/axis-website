@@ -108,7 +108,7 @@ export default function TestimonialSection() {
               font-playfair uppercase tracking-tight: brand headline style.
               text-white-axis: white headline on dark background — primary brand contrast.
               max-w-xl keeps the line short and punchy. */}
-          <h2 className="font-playfair text-center uppercase tracking-tight text-white-axis text-3xl md:text-5xl max-w-xl">
+          <h2 className="font-playfair text-center uppercase tracking-tight text-white-axis text-3xl md:text-5xl">
             Studios and companies trust the AXIS
           </h2>
         </motion.div>
