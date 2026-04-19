@@ -51,8 +51,10 @@ const container = {
 }
 
 // Each card fades up from y=20px to y=0 with a slow, confident 0.7s ease.
-// `hidden` = initial state (invisible, shifted down).
-// `show`   = final state (fully visible, in position).
+// `hidden` = initial state (invisible, shifted down 20px).
+// `show`   = final state (fully visible, at natural position).
+// `as const` narrows the `ease` type from `string` to the literal "easeOut"
+// so it satisfies Framer Motion's strict Easing union type.
 const item = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" as const } },
@@ -61,19 +63,19 @@ const item = {
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function TestimonialSection() {
   return (
-    // bg-gray-50: very light off-white background — creates a subtle contrast
-    // break between the dark FAQ section above and the dark Final CTA below.
-    // py-20 px-6: mobile padding (375px). md:py-36 md:px-12: desktop padding.
-    <section className="bg-gray-50 py-20 px-6 md:py-36 md:px-12">
+    // bg-grey-axis: brand secondary dark background (#121212).
+    // Using a slightly lighter dark than bg-black-axis creates a visual
+    // section break that feels intentional without breaking the dark theme.
+    // py-20 px-6: mobile padding. md:py-36 md:px-12: desktop padding.
+    <section className="bg-grey-axis py-20 px-6 md:py-36 md:px-12">
 
       {/* max-w-6xl mx-auto: constrains content to ~1152px and centers it.
           This prevents lines from stretching too wide on ultra-wide screens. */}
       <div className="max-w-6xl mx-auto">
 
         {/* ── Section header ────────────────────────────────────────────────── */}
-        {/* motion.div with whileInView: this block fades up when it scrolls
-            into the viewport. viewport={{ once: true }} means it animates
-            only the first time — not every time the user scrolls past it. */}
+        {/* motion.div with whileInView: this block fades up when it enters the
+            viewport. viewport={{ once: true }} means it plays only once. */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -81,34 +83,33 @@ export default function TestimonialSection() {
           viewport={{ once: true }}
           className="mb-16 md:mb-20"
         >
-          {/* Small muted label above the headline — purely decorative context.
-              tracking-widest: very wide letter-spacing, typical of SaaS eyebrow labels. */}
+          {/* Small muted eyebrow label — uppercase, wide-tracked, soft grey.
+              This is the brand subheading style: font-instrument uppercase tracking-widest. */}
           <p className="font-instrument uppercase tracking-widest text-xs text-soft-grey mb-4">
             Testimonials
           </p>
 
-          {/* h2 because the page already has exactly one h1 in the Hero section.
-              Every section headline must be h2 — see skills/seo.md.
+          {/* h2 because the page has exactly one h1 in the Hero (SEO rule).
               font-playfair uppercase tracking-tight: brand headline style.
-              text-black-axis: dark text on light background.
-              max-w-xl: keeps the headline from stretching too wide. */}
-          <h2 className="font-playfair uppercase tracking-tight text-black-axis text-3xl md:text-5xl max-w-xl">
+              text-white-axis: white headline on dark background — primary brand contrast.
+              max-w-xl keeps the line short and punchy. */}
+          <h2 className="font-playfair uppercase tracking-tight text-white-axis text-3xl md:text-5xl max-w-xl">
             Studios and companies trust the system
           </h2>
         </motion.div>
 
         {/* ── Cards container ───────────────────────────────────────────────── */}
         {/*
-          Responsive layout:
+          Responsive layout strategy:
           • Mobile (default): flex-row + overflow-x-auto + snap-x snap-mandatory
             creates a horizontal swipe carousel. Each card is min-w-[85%] so the
             edge of the next card peeks in to signal that more content is swipeable.
-            scrollbar-none hides the native scrollbar on all browsers.
-          • Desktop (md:): flex-col resets to vertical stacking, overflow-visible
-            removes the scroll constraint, gap-8 adds 32px between cards.
+            scrollbar-none hides the native scrollbar on all browsers (defined in globals.css).
+          • Desktop (md:): flex-col switches to vertical stacking, overflow-visible
+            removes the scroll clipping, gap-8 = 32px gap between cards.
 
-          variants={container}: triggers the staggered entry animation when
-          this element enters the viewport (whileInView="show").
+          variants={container}: this element orchestrates the staggered
+          entry of its children when it scrolls into view (whileInView="show").
         */}
         <motion.div
           variants={container}
@@ -121,48 +122,54 @@ export default function TestimonialSection() {
           "
         >
           {/*
-            Array.map in JSX is like a for-loop that returns HTML.
-            For each testimonial object `t`, we render a card.
-            `key={t.id}` is required by React to efficiently track list items —
-            think of it as a unique primary key for the virtual DOM.
+            Array.map in JSX is like a Python for-loop that returns HTML.
+            For each testimonial object `t`, we render one card.
+            `key={t.id}` is required by React to track list items efficiently —
+            like a primary key in a database.
           */}
           {testimonials.map((t) => (
+            // motion.article: semantic HTML for a self-contained piece of content.
+            // variants={item}: this card plays the fade-up animation when the
+            //   parent container triggers its "show" state (staggered entry).
+            // whileHover: lifts the card 2px when the mouse hovers over it.
+            // transition: the element-level transition is the fallback for animations
+            //   that don't define their own (i.e. whileHover). The variant's own
+            //   transition (0.7s) overrides this for the entry animation.
             <motion.article
               key={t.id}
               variants={item}
-              // whileHover: lifts the card 2px when the mouse hovers over it.
-              // The transition here overrides the default spring for a smoother feel.
               whileHover={{ y: -2 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              // Tailwind classes explained:
-              // bg-white: white card surface.
-              // border border-gray-200: subtle 1px light-gray border.
-              // rounded-2xl: 16px corner radius for a modern SaaS card look.
+              transition={{ duration: 0.35, ease: "easeOut" as const }}
+              // bg-black-axis: pure black card on the dark grey section background —
+              //   creates depth and layering consistent with the brand system.
+              // border border-white-axis/10: a white border at 10% opacity.
+              //   The /10 is a Tailwind opacity modifier — no hex value needed.
+              //   This gives the card a subtle glowing edge on the dark background.
+              // rounded-2xl: 16px corner radius.
               // p-8: 32px padding on all sides.
-              // shadow-sm: very soft drop shadow.
-              // min-w-[85%]: on mobile, each card takes 85% of the viewport width —
-              //   the remaining 15% lets the next card peek in (tease interaction).
-              // snap-start: scroll-snap aligns the left edge of each card to the viewport.
-              // flex-shrink-0: prevents cards from being squished by the flex container.
-              // md:min-w-0 md:w-full: on desktop, reset to full container width.
+              // min-w-[85%]: on mobile, each card occupies 85% viewport width —
+              //   the remaining 15% lets the next card peek in (tease scrollability).
+              // snap-start: each card snaps to the left edge of the viewport on scroll.
+              // flex-shrink-0: prevents the flex container from squishing the cards.
+              // md:min-w-0 md:w-full: reset to full-width block on desktop.
               className="
-                bg-white border border-gray-200 rounded-2xl p-8 shadow-sm
+                bg-black-axis border border-white-axis/10 rounded-2xl p-8
                 min-w-[85%] snap-start flex-shrink-0
                 md:min-w-0 md:w-full
               "
             >
               {/* ── Top row: avatar + identity ──────────────────────────────── */}
-              {/* flex items-center gap-4: horizontal row, vertically centered,
-                  with 16px gap between avatar and text block. */}
-              <div className="flex items-center gap-4 mb-6">
+              {/* flex items-center: horizontal row, vertically centered.
+                  gap-4 = 16px between avatar and the name/role block. */}
+              <div className="flex items-center gap-4 mb-8">
 
                 {/* Circular avatar container.
-                    overflow-hidden clips the square image into a circle.
-                    flex-shrink-0 prevents the avatar from being squeezed. */}
+                    rounded-full + overflow-hidden clips the image into a circle.
+                    flex-shrink-0: prevents the avatar from being squished. */}
                 <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-                  {/* next/image: optimised image. Width/height must match the
-                      intrinsic size so Next.js can calculate the aspect ratio.
-                      alt describes the image content for screen readers and SEO. */}
+                  {/* next/image: always use this over <img>.
+                      Width/height must match the intrinsic size (48x48 here).
+                      alt must describe the image content for screen readers. */}
                   <Image
                     src="https://placehold.co/48x48/121212/FFFFFF"
                     alt={`Avatar placeholder for ${t.name}`}
@@ -174,37 +181,37 @@ export default function TestimonialSection() {
 
                 {/* Name and role text block */}
                 <div>
-                  {/* font-semibold: medium-bold weight for the name.
-                      text-black-axis: dark text for high contrast on white card.
-                      text-sm: slightly smaller than default body to keep the
-                      identity row compact next to the avatar. */}
-                  <p className="font-instrument font-semibold text-black-axis text-sm">
+                  {/* font-semibold: medium-bold weight, stands out from body.
+                      text-white-axis: white text for maximum contrast on black card.
+                      text-sm: keeps the identity row compact next to the avatar. */}
+                  <p className="font-instrument font-semibold text-white-axis text-sm">
                     {t.name}
                   </p>
-                  {/* Role label — muted and smaller. mt-0.5 = 2px top margin. */}
-                  <p className="font-instrument text-soft-grey text-xs mt-0.5">
+                  {/* Role — muted and smaller. mt-1 = 4px gap below the name. */}
+                  <p className="font-instrument text-soft-grey text-xs mt-1">
                     {t.role}
                   </p>
                 </div>
               </div>
 
               {/* ── Testimonial body text ─────────────────────────────────── */}
-              {/* text-base: ~16px, slightly larger than the identity text above.
+              {/* text-soft-grey: muted body text, the standard brand body color.
+                  text-base: ~16px — slightly larger than the identity row above.
                   leading-relaxed: line-height ~1.625 for comfortable reading.
-                  max-w-xl: ~36rem — prevents overly long lines in wide cards. */}
+                  max-w-xl: ~36rem — prevents overly long lines inside wide cards. */}
               <p className="font-instrument text-soft-grey text-base leading-relaxed max-w-xl">
-                {/* &ldquo; and &rdquo; are HTML entities for curly quotation marks
-                    — typographically correct, unlike straight " marks. */}
+                {/* &ldquo; and &rdquo; are HTML entities for typographically
+                    correct curly quotation marks, unlike straight " characters. */}
                 &ldquo;{t.text}&rdquo;
               </p>
 
               {/* ── Footer: verified badge ───────────────────────────────── */}
-              {/* mt-6 = 24px top margin to visually separate from the testimonial text. */}
-              <div className="mt-6">
-                {/* text-blue-axis is the single accent color used in this section.
-                    text-[10px]: custom 10px size, smaller than the standard xs (12px),
-                    keeping this label very subtle and secondary.
-                    tracking-widest: wide letter-spacing matches other label elements. */}
+              {/* mt-8 = 32px top margin separates this visually from the quote. */}
+              <div className="mt-8">
+                {/* text-blue-axis: the single accent color used in this section.
+                    tracking-widest + uppercase: matches the brand label style.
+                    text-[10px]: intentionally tiny — this detail should whisper,
+                    not shout. It adds trust without competing with the quote. */}
                 <span className="font-instrument uppercase tracking-widest text-[10px] text-blue-axis">
                   Verified client
                 </span>
