@@ -163,27 +163,20 @@ export default function TestimonialSection() {
                   gap-4 = 16px between logo and the name/role block. */}
               <div className="flex items-center gap-4 mb-8">
 
-                {/* White pill container — standard dark-mode treatment for logos.
-                    Both logos have non-transparent content (white bg / dark content),
-                    so we place them on a white background rather than trying to
-                    invert their colors with CSS filters.
-                    rounded-lg p-2: rounded corners with a little breathing room.
-                    flex-shrink-0: prevents the container from being squished. */}
-                <div className="bg-white-axis rounded-lg p-2 flex-shrink-0 flex items-center justify-center">
-                  {/* !h-8 !w-auto: Tailwind's ! prefix adds CSS !important,
-                      which overrides the inline width/height styles that
-                      next/image injects — without these, the image renders at
-                      its full intrinsic size (290×265px for Soriano).
-                      width/height props still give next/image the correct
-                      aspect ratio for optimization. */}
-                  <Image
-                    src={t.logo}
-                    alt={`${t.name} logo`}
-                    width={t.logoWidth}
-                    height={t.logoHeight}
-                    className="!h-8 !w-auto"
-                  />
-                </div>
+                {/* brightness-0: collapses every pixel to black.
+                    invert: flips black to white.
+                    Both logos now have transparent backgrounds (alpha channel),
+                    so this makes the star, lettering, and icon appear white
+                    directly on the black card with no background box.
+                    !h-10 !w-auto: Tailwind's ! prefix adds CSS !important to
+                    override the inline width/height styles next/image injects. */}
+                <Image
+                  src={t.logo}
+                  alt={`${t.name} logo`}
+                  width={t.logoWidth}
+                  height={t.logoHeight}
+                  className="!h-10 !w-auto brightness-0 invert flex-shrink-0"
+                />
 
                 {/* Name and role text block */}
                 <div>
