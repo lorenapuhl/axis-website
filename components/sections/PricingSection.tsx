@@ -86,7 +86,7 @@ const PRICING_CARDS: PricingCard[] = [
   {
     id: "growth",
     title: "Growth",
-    price: "$249",
+    price: "$149",
     tagline: "Get booked and paid automatically",
     features: [
       "Everything from Starter",
