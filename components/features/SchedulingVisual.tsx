@@ -1,6 +1,7 @@
 "use client"
 // SchedulingVisual — coded UI mockup for the scheduling-booking feature page.
 //
+// Light-mode SaaS UI: white background, dark text, Instrument Sans throughout.
 // Shows a weekly class calendar grid with:
 //   - Day columns (Mon–Sun)
 //   - Class slots showing time, name, and fill rate
@@ -47,14 +48,15 @@ const SUMMARY = [
 
 export default function SchedulingVisual() {
   return (
-    <div className="bg-grey-axis p-4 md:p-6 w-full">
+    // White background, flat — no shadow, no border-radius
+    <div className="bg-white border border-gray-100 p-4 md:p-6 w-full">
 
       {/* Calendar header bar */}
       <div className="flex items-center justify-between mb-4">
-        <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest">
+        <p className="font-instrument text-gray-900 text-[9px] uppercase tracking-widest font-semibold">
           Weekly Schedule
         </p>
-        <p className="font-instrument text-soft-grey text-[9px]">Apr 28 — May 4</p>
+        <p className="font-instrument text-gray-400 text-[9px]">Apr 28 — May 4</p>
       </div>
 
       {/* Calendar grid — horizontally scrollable on very small screens.
@@ -67,7 +69,7 @@ export default function SchedulingVisual() {
             return (
               <div key={day}>
                 {/* Day label — compact, muted */}
-                <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest text-center mb-2">
+                <p className="font-instrument text-gray-400 text-[9px] uppercase tracking-widest text-center mb-2">
                   {day}
                 </p>
 
@@ -83,21 +85,22 @@ export default function SchedulingVisual() {
                         whileInView={{ opacity: 1 }}
                         transition={{ duration: 0.4, ease: "easeOut" }}
                         viewport={{ once: true }}
-                        // Full classes get a blue accent border; others get a subtle white border
+                        // Full classes get a blue accent border + subtle blue tint
+                        // Others get a light grey border on white
                         className={`p-2 border ${
                           full
-                            ? "border-blue-axis bg-blue-axis/10"
-                            : "border-white/10 bg-black-axis"
+                            ? "border-blue-axis bg-blue-axis/5"
+                            : "border-gray-100 bg-gray-50"
                         }`}
                       >
                         {/* Time */}
-                        <p className="font-instrument text-soft-grey text-[8px]">{cls.time}</p>
-                        {/* Class name */}
-                        <p className="font-playfair text-white-axis text-[10px] mt-0.5 uppercase">
+                        <p className="font-instrument text-gray-400 text-[8px]">{cls.time}</p>
+                        {/* Class name — dark text */}
+                        <p className="font-instrument text-gray-900 text-[10px] mt-0.5 font-medium">
                           {cls.name}
                         </p>
                         {/* Fill ratio — blue if full, grey if not */}
-                        <p className={`font-instrument text-[8px] mt-0.5 ${full ? "text-blue-axis" : "text-soft-grey"}`}>
+                        <p className={`font-instrument text-[8px] mt-0.5 ${full ? "text-blue-axis" : "text-gray-400"}`}>
                           {cls.booked}/{cls.capacity}
                         </p>
                       </motion.div>
@@ -113,9 +116,9 @@ export default function SchedulingVisual() {
       {/* ── Summary tiles ── */}
       <div className="grid grid-cols-3 gap-2 mt-4">
         {SUMMARY.map((s) => (
-          <div key={s.label} className="bg-black-axis p-3">
-            <p className="font-instrument text-soft-grey text-[8px] uppercase tracking-widest">{s.label}</p>
-            <p className="font-playfair text-white-axis text-lg mt-1">{s.value}</p>
+          <div key={s.label} className="bg-gray-50 border border-gray-100 p-3">
+            <p className="font-instrument text-gray-400 text-[8px] uppercase tracking-widest">{s.label}</p>
+            <p className="font-instrument text-gray-900 text-lg font-semibold mt-1">{s.value}</p>
           </div>
         ))}
       </div>

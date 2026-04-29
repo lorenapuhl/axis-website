@@ -1,6 +1,7 @@
 "use client"
 // TeamPayrollVisual — coded UI mockup for the team-payroll feature page.
 //
+// Light-mode SaaS UI: white background, dark text, Instrument Sans throughout.
 // Shows:
 //   - Payroll table with instructor names, roles, class count, rate, and total
 //   - Status badge (confirmed / sub needed)
@@ -39,11 +40,12 @@ const COLUMNS = ["Instructor", "Role", "Classes", "Rate", "Total"]
 
 export default function TeamPayrollVisual() {
   return (
-    <div className="bg-grey-axis p-4 md:p-6 w-full">
+    // White background, flat — no shadow, no border-radius
+    <div className="bg-white border border-gray-100 p-4 md:p-6 w-full">
 
       {/* ── Payroll period header ── */}
       <div className="flex items-center justify-between mb-4">
-        <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest">
+        <p className="font-instrument text-gray-900 text-[9px] uppercase tracking-widest font-semibold">
           Payroll — April 2026
         </p>
         {/* "Processed automatically" badge in blue — reinforces the automation value prop */}
@@ -53,12 +55,12 @@ export default function TeamPayrollVisual() {
       </div>
 
       {/* ── Payroll table ── */}
-      <div className="bg-black-axis px-4 pb-2">
+      <div className="bg-gray-50 px-4 pb-2">
 
         {/* Column headers */}
-        <div className="grid grid-cols-5 gap-2 py-3 border-b border-white/20">
+        <div className="grid grid-cols-5 gap-2 py-3 border-b border-gray-200">
           {COLUMNS.map((col) => (
-            <p key={col} className="font-instrument text-soft-grey text-[8px] uppercase tracking-widest">
+            <p key={col} className="font-instrument text-gray-400 text-[8px] uppercase tracking-widest">
               {col}
             </p>
           ))}
@@ -72,30 +74,30 @@ export default function TeamPayrollVisual() {
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.4, ease: "easeOut", delay: i * 0.07 }}
             viewport={{ once: true }}
-            className="grid grid-cols-5 gap-2 py-3 border-b border-white/10 items-center"
+            className="grid grid-cols-5 gap-2 py-3 border-b border-gray-100 items-center"
           >
             {/* Instructor name + status badge */}
             <div>
-              <p className="font-instrument text-white-axis text-xs">{s.name}</p>
+              <p className="font-instrument text-gray-900 text-xs font-medium">{s.name}</p>
               {/* "confirmed" in blue, "sub needed" in soft grey */}
               <span className={`font-instrument text-[8px] uppercase tracking-widest ${
-                s.status === "confirmed" ? "text-blue-axis" : "text-soft-grey"
+                s.status === "confirmed" ? "text-blue-axis" : "text-gray-400"
               }`}>
                 {s.status}
               </span>
             </div>
 
             {/* Role */}
-            <p className="font-instrument text-soft-grey text-[9px]">{s.role}</p>
+            <p className="font-instrument text-gray-500 text-[9px]">{s.role}</p>
 
             {/* Class count */}
-            <p className="font-instrument text-white-axis text-xs">{s.classes}</p>
+            <p className="font-instrument text-gray-900 text-xs font-medium">{s.classes}</p>
 
             {/* Rate */}
-            <p className="font-instrument text-soft-grey text-[9px]">{s.rate}</p>
+            <p className="font-instrument text-gray-500 text-[9px]">{s.rate}</p>
 
-            {/* Total — playfair number for visual weight */}
-            <p className="font-playfair text-white-axis text-sm">{s.total}</p>
+            {/* Total — instrument semibold number */}
+            <p className="font-instrument text-gray-900 text-sm font-semibold">{s.total}</p>
           </motion.div>
         ))}
       </div>
@@ -103,9 +105,9 @@ export default function TeamPayrollVisual() {
       {/* ── Payout totals ── */}
       <div className="grid grid-cols-3 gap-2 mt-4">
         {TOTALS.map((t) => (
-          <div key={t.label} className="bg-black-axis p-3">
-            <p className="font-instrument text-soft-grey text-[8px] uppercase tracking-widest">{t.label}</p>
-            <p className="font-playfair text-white-axis text-xl mt-1">{t.value}</p>
+          <div key={t.label} className="bg-gray-50 border border-gray-100 p-3">
+            <p className="font-instrument text-gray-400 text-[8px] uppercase tracking-widest">{t.label}</p>
+            <p className="font-instrument text-gray-900 text-xl font-semibold mt-1">{t.value}</p>
           </div>
         ))}
       </div>

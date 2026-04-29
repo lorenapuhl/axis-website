@@ -1,6 +1,7 @@
 "use client"
 // PerformanceDashboardVisual — coded UI mockup for the performance-dashboard feature page.
 //
+// Light-mode SaaS UI: white background, dark text, Instrument Sans throughout.
 // Contains:
 //   1. Four metric stat cards
 //   2. SVG revenue line chart (current vs previous period)
@@ -27,7 +28,7 @@ function cy(v: number): number {
   return H - PAD - (v / MAX) * (H - PAD * 2)
 }
 
-// linePath: builds an SVG "M x y L x y L x y ..." path string from a data array
+// linePath: builds an SVG "M x y L x y ..." path string from a data array
 function linePath(data: number[]): string {
   return data
     .map((v, i) => `${i === 0 ? 'M' : 'L'} ${cx(i).toFixed(1)} ${cy(v).toFixed(1)}`)
@@ -51,50 +52,44 @@ const METRICS = [
 
 // Donut chart — trial conversion breakdown
 // R = 36 → C (circumference) = 2π × 36 ≈ 226.19
-// Each segment is a full circle (r=36) with stroke-dasharray to mask all but its arc,
-// and stroke-dashoffset to rotate it into the correct starting position.
-// We start at 12 o'clock by offsetting by 25% of the circumference (SVG starts at 3 o'clock).
 const DONUT_R = 36
 const DONUT_C = 2 * Math.PI * DONUT_R
 
 // Cumulative pct offsets: segment starts after all previous segments end
-// dashArray = "[this segment length] [rest of circle]"
-// dashOffset = (25% start - accumulated pct) × C  → rotates arc to correct position
 const DONUT_SEGMENTS = [
-  { label: "To Pass",  pct: 38, opacity: 1,    textClass: "text-blue-axis",  dotClass: "bg-blue-axis",
+  { label: "To Pass",  pct: 38, strokeClass: "text-blue-axis",  dotClass: "bg-blue-axis",
     dashArray: `${(0.38 * DONUT_C).toFixed(1)} ${(0.62 * DONUT_C).toFixed(1)}`,
     dashOffset: DONUT_C * 0.25 },
-  { label: "To Sub",   pct: 29, opacity: 1,    textClass: "text-soft-grey",  dotClass: "bg-soft-grey",
+  { label: "To Sub",   pct: 29, strokeClass: "text-gray-400",   dotClass: "bg-gray-400",
     dashArray: `${(0.29 * DONUT_C).toFixed(1)} ${(0.71 * DONUT_C).toFixed(1)}`,
     dashOffset: DONUT_C * (0.25 - 0.38) },
-  { label: "Expired",  pct: 21, opacity: 0.35, textClass: "text-white-axis", dotClass: "bg-white-axis/30",
+  { label: "Expired",  pct: 21, strokeClass: "text-gray-300",   dotClass: "bg-gray-300",
     dashArray: `${(0.21 * DONUT_C).toFixed(1)} ${(0.79 * DONUT_C).toFixed(1)}`,
     dashOffset: DONUT_C * (0.25 - 0.67) },
-  { label: "Active",   pct: 12, opacity: 0.15, textClass: "text-white-axis", dotClass: "bg-white-axis/10",
+  { label: "Active",   pct: 12, strokeClass: "text-gray-200",   dotClass: "bg-gray-200",
     dashArray: `${(0.12 * DONUT_C).toFixed(1)} ${(0.88 * DONUT_C).toFixed(1)}`,
     dashOffset: DONUT_C * (0.25 - 0.88) },
 ]
 
 // Membership distribution — stacked horizontal bar
-// widthClass uses Tailwind arbitrary values ([x%]) instead of inline styles
 const DISTRIBUTION = [
-  { label: "Annual",   pct: "50%", barClass: "bg-blue-axis w-1/2",     textClass: "text-blue-axis" },
-  { label: "Monthly",  pct: "25%", barClass: "bg-soft-grey w-1/4",     textClass: "text-soft-grey" },
-  { label: "10-class", pct: "15%", barClass: "bg-white-axis/20 w-[15%]", textClass: "text-soft-grey" },
-  { label: "Drop-in",  pct: "10%", barClass: "bg-white-axis/10 w-[10%]", textClass: "text-soft-grey" },
+  { label: "Annual",   pct: "50%", barClass: "bg-blue-axis w-1/2",     textClass: "text-blue-axis"  },
+  { label: "Monthly",  pct: "25%", barClass: "bg-gray-300 w-1/4",      textClass: "text-gray-500"   },
+  { label: "10-class", pct: "15%", barClass: "bg-gray-200 w-[15%]",    textClass: "text-gray-400"   },
+  { label: "Drop-in",  pct: "10%", barClass: "bg-gray-100 w-[10%]",    textClass: "text-gray-400"   },
 ]
 
 export default function PerformanceDashboardVisual() {
   return (
-    // overflow-hidden prevents chart edges from clipping outside the container
-    <div className="bg-grey-axis p-4 md:p-6 w-full overflow-hidden">
+    // White background, no shadow, no border-radius — flat SaaS UI
+    <div className="bg-white p-4 md:p-6 w-full overflow-hidden">
 
       {/* ── Dashboard header bar ── */}
       <div className="flex items-center justify-between mb-5">
-        <p className="font-instrument uppercase tracking-widest text-white-axis text-[10px]">
+        <p className="font-instrument uppercase tracking-widest text-gray-900 text-[10px] font-semibold">
           Performance Overview
         </p>
-        <p className="font-instrument text-soft-grey text-[10px]">Last 12 months</p>
+        <p className="font-instrument text-gray-400 text-[10px]">Last 12 months</p>
       </div>
 
       {/* ── Metric cards ── 2 columns on mobile, 4 on desktop */}
@@ -106,15 +101,16 @@ export default function PerformanceDashboardVisual() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.08 }}
             viewport={{ once: true }}
-            className="bg-black-axis p-3"
+            // Light grey card background — flat, no shadow
+            className="bg-gray-50 border border-gray-100 p-3"
           >
-            <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest leading-tight">
+            <p className="font-instrument text-gray-500 text-[9px] uppercase tracking-widest leading-tight">
               {m.label}
             </p>
-            {/* font-playfair gives the number an editorial weight */}
-            <p className="font-playfair text-white-axis text-xl mt-2">{m.value}</p>
-            {/* text-blue-axis for positive change, text-soft-grey for negative */}
-            <p className={`font-instrument text-[9px] mt-1 uppercase tracking-widest ${m.positive ? "text-blue-axis" : "text-soft-grey"}`}>
+            {/* Large number — instrument sans medium weight */}
+            <p className="font-instrument text-gray-900 text-xl font-semibold mt-2">{m.value}</p>
+            {/* text-blue-axis for positive change, text-gray-400 for negative */}
+            <p className={`font-instrument text-[9px] mt-1 uppercase tracking-widest ${m.positive ? "text-blue-axis" : "text-gray-400"}`}>
               {m.change} vs prev
             </p>
           </motion.div>
@@ -127,27 +123,28 @@ export default function PerformanceDashboardVisual() {
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
         viewport={{ once: true }}
-        className="bg-black-axis p-4 mb-4"
+        className="bg-gray-50 border border-gray-100 p-4 mb-4"
       >
         {/* Chart legend */}
         <div className="flex items-center justify-between mb-3">
-          <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest">Revenue Trend</p>
+          <p className="font-instrument text-gray-500 text-[9px] uppercase tracking-widest">Revenue Trend</p>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
+              {/* Small colour swatch — inline block, width set via w-4 */}
               <span className="block w-4 h-px bg-blue-axis" />
-              <span className="font-instrument text-soft-grey text-[9px]">Current</span>
+              <span className="font-instrument text-gray-500 text-[9px]">Current</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="block w-4 h-px bg-soft-grey opacity-40" />
-              <span className="font-instrument text-soft-grey text-[9px]">Previous</span>
+              <span className="block w-4 h-px bg-gray-300" />
+              <span className="font-instrument text-gray-500 text-[9px]">Previous</span>
             </span>
           </div>
         </div>
 
         {/* SVG line chart.
             stroke="currentColor" means the element inherits the CSS `color` property.
-            Tailwind's text-* classes set that color — so we get brand colors with no hex values.
-            viewBox="0 0 480 100" sets the coordinate system; the element scales to fill its container. */}
+            Tailwind's text-* classes set that color — no hardcoded hex values.
+            viewBox="0 0 480 100" sets the coordinate system; scales to fill its container. */}
         <svg
           viewBox={`0 0 ${W} ${H}`}
           className="w-full"
@@ -163,7 +160,7 @@ export default function PerformanceDashboardVisual() {
               y2={cy((pct / 100) * MAX).toFixed(1)}
               stroke="currentColor"
               strokeWidth={0.5}
-              className="text-white-axis opacity-5"
+              className="text-gray-200"
             />
           ))}
 
@@ -171,12 +168,12 @@ export default function PerformanceDashboardVisual() {
           <path
             d={areaPath(CURRENT_DATA)}
             fill="currentColor"
-            fillOpacity={0.06}
+            fillOpacity={0.08}
             stroke="none"
             className="text-blue-axis"
           />
 
-          {/* Previous period line — muted grey, 40% opacity */}
+          {/* Previous period line — light grey */}
           <path
             d={linePath(PREV_DATA)}
             fill="none"
@@ -184,11 +181,10 @@ export default function PerformanceDashboardVisual() {
             strokeWidth={1.5}
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-soft-grey"
-            opacity={0.4}
+            className="text-gray-300"
           />
 
-          {/* Current period line — electric blue, full opacity */}
+          {/* Current period line — electric blue */}
           <path
             d={linePath(CURRENT_DATA)}
             fill="none"
@@ -214,8 +210,8 @@ export default function PerformanceDashboardVisual() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* Trial conversion donut chart */}
-        <div className="bg-black-axis p-4">
-          <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest mb-4">
+        <div className="bg-gray-50 border border-gray-100 p-4">
+          <p className="font-instrument text-gray-500 text-[9px] uppercase tracking-widest mb-4">
             Trial Conversion
           </p>
           <div className="flex items-center gap-5">
@@ -225,9 +221,9 @@ export default function PerformanceDashboardVisual() {
               className="w-20 h-20 shrink-0"
               aria-label="Donut chart showing trial conversion breakdown"
             >
-              {/* Background ring — very faint */}
-              <circle cx="50" cy="50" r={DONUT_R} fill="none" stroke="currentColor" strokeWidth={10} className="text-white-axis opacity-5" />
-              {/* Segment arcs */}
+              {/* Background ring — very light grey */}
+              <circle cx="50" cy="50" r={DONUT_R} fill="none" stroke="currentColor" strokeWidth={10} className="text-gray-100" />
+              {/* Segment arcs — each uses stroke="currentColor" + a text-* class */}
               {DONUT_SEGMENTS.map((seg) => (
                 <circle
                   key={seg.label}
@@ -240,8 +236,7 @@ export default function PerformanceDashboardVisual() {
                   strokeDasharray={seg.dashArray}
                   strokeDashoffset={seg.dashOffset}
                   strokeLinecap="butt"
-                  className={seg.textClass}
-                  opacity={seg.opacity}
+                  className={seg.strokeClass}
                 />
               ))}
             </svg>
@@ -250,12 +245,12 @@ export default function PerformanceDashboardVisual() {
             <div className="flex flex-col gap-2">
               {DONUT_SEGMENTS.map((seg) => (
                 <div key={seg.label} className="flex items-center gap-2">
-                  {/* Coloured dot — dotClass maps each segment to a bg- brand token */}
+                  {/* Coloured dot — dotClass maps each segment to a bg- brand or gray token */}
                   <span className={`w-2 h-2 shrink-0 rounded-full ${seg.dotClass}`} />
-                  <span className="font-instrument text-soft-grey text-[9px] uppercase tracking-wide">
+                  <span className="font-instrument text-gray-500 text-[9px] uppercase tracking-wide">
                     {seg.label}
                   </span>
-                  <span className="font-instrument text-white-axis text-[9px] ml-auto">
+                  <span className="font-instrument text-gray-900 text-[9px] ml-auto font-medium">
                     {seg.pct}%
                   </span>
                 </div>
@@ -265,8 +260,8 @@ export default function PerformanceDashboardVisual() {
         </div>
 
         {/* Membership distribution stacked bar */}
-        <div className="bg-black-axis p-4">
-          <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest mb-4">
+        <div className="bg-gray-50 border border-gray-100 p-4">
+          <p className="font-instrument text-gray-500 text-[9px] uppercase tracking-widest mb-4">
             Membership Mix
           </p>
           {/* Stacked horizontal bar — widths set via Tailwind classes, no inline styles */}
@@ -282,7 +277,7 @@ export default function PerformanceDashboardVisual() {
                 <span className={`font-instrument text-[9px] uppercase tracking-wide ${d.textClass}`}>
                   {d.label}
                 </span>
-                <span className="font-instrument text-white-axis text-[9px]">{d.pct}</span>
+                <span className="font-instrument text-gray-900 text-[9px] font-medium">{d.pct}</span>
               </div>
             ))}
           </div>

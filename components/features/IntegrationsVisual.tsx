@@ -1,6 +1,7 @@
 "use client"
 // IntegrationsVisual — coded UI mockup for the integrations feature page.
 //
+// Light-mode SaaS UI: white background, dark text, Instrument Sans throughout.
 // Shows:
 //   - Category filter tabs (interactive — Framer Motion animated active state)
 //   - Filterable grid of integration cards
@@ -8,7 +9,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
-// Available filter categories — matches the bsport integration taxonomy
+// Available filter categories — matches the integration taxonomy
 const CATEGORIES = ["All", "Payments", "Marketing", "Content", "Access", "Aggregators"] as const
 type Category = typeof CATEGORIES[number]
 
@@ -21,16 +22,16 @@ interface Integration {
 
 // Integration data — realistic names and descriptions
 const INTEGRATIONS: Integration[] = [
-  { name: "ClassPass",       category: "Aggregators", description: "Reach thousands of new members"       },
-  { name: "Urban Sports",    category: "Aggregators", description: "Europe's largest fitness network"     },
-  { name: "Wellhub",         category: "Aggregators", description: "Global corporate wellness"            },
-  { name: "PayPal",          category: "Payments",    description: "Trusted payment processing"           },
-  { name: "Stripe",          category: "Payments",    description: "Smart card infrastructure"            },
-  { name: "ActiveCampaign",  category: "Marketing",   description: "Email & CRM automation"              },
-  { name: "Zoom",            category: "Content",     description: "Live virtual classes"                 },
-  { name: "YouTube",         category: "Content",     description: "On-demand class library"              },
-  { name: "Vimeo",           category: "Content",     description: "Studio-quality video hosting"        },
-  { name: "Kisi",            category: "Access",      description: "Keyless studio entry system"         },
+  { name: "ClassPass",       category: "Aggregators", description: "Reach thousands of new members"    },
+  { name: "Urban Sports",    category: "Aggregators", description: "Europe's largest fitness network"  },
+  { name: "Wellhub",         category: "Aggregators", description: "Global corporate wellness"         },
+  { name: "PayPal",          category: "Payments",    description: "Trusted payment processing"        },
+  { name: "Stripe",          category: "Payments",    description: "Smart card infrastructure"         },
+  { name: "ActiveCampaign",  category: "Marketing",   description: "Email & CRM automation"            },
+  { name: "Zoom",            category: "Content",     description: "Live virtual classes"              },
+  { name: "YouTube",         category: "Content",     description: "On-demand class library"           },
+  { name: "Vimeo",           category: "Content",     description: "Studio-quality video hosting"      },
+  { name: "Kisi",            category: "Access",      description: "Keyless studio entry system"       },
 ]
 
 // Stagger container for the integration card grid
@@ -53,25 +54,25 @@ export default function IntegrationsVisual() {
     : INTEGRATIONS.filter((i) => i.category === activeCategory)
 
   return (
-    <div className="bg-grey-axis p-4 md:p-6 w-full">
+    // White background, flat — no shadow, no border-radius
+    <div className="bg-white border border-gray-100 p-4 md:p-6 w-full">
 
       {/* ── Category filter tabs ──
           Using Framer Motion `animate` for the active state visual change.
-          Never use Tailwind's `transition-*` classes on interactive elements — always Framer Motion. */}
+          Never use Tailwind's `transition-*` classes on interactive elements — always Framer Motion.
+          CSS variables (var(--color-*)) are used because Framer Motion animates raw CSS values
+          numerically — it can't animate between Tailwind class names. */}
       <div className="flex flex-wrap gap-2 mb-6">
         {CATEGORIES.map((cat) => (
           <motion.button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            // animate transitions the border and text color between active/inactive states.
-            // CSS variables (var(--color-*)) are used here because Framer Motion animates
-            // raw CSS values numerically — it can't animate between Tailwind class names.
             animate={{
-              borderColor: activeCategory === cat ? "var(--color-blue-axis)" : "rgba(255,255,255,0.1)",
-              color:        activeCategory === cat ? "var(--color-blue-axis)" : "var(--color-soft-grey)",
+              borderColor: activeCategory === cat ? "var(--color-blue-axis)" : "rgb(229,231,235)",
+              color:        activeCategory === cat ? "var(--color-blue-axis)" : "rgb(107,114,128)",
             }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="font-instrument uppercase tracking-widest text-[9px] px-3 py-1.5 border"
+            className="font-instrument uppercase tracking-widest text-[9px] px-3 py-1.5 border bg-white"
           >
             {cat}
           </motion.button>
@@ -94,18 +95,18 @@ export default function IntegrationsVisual() {
             <motion.div
               key={integration.name}
               variants={gridItem}
-              className="bg-black-axis p-3 border border-white/10"
+              className="bg-gray-50 border border-gray-200 p-3"
             >
-              {/* Integration name */}
-              <p className="font-instrument text-white-axis text-[10px] uppercase tracking-widest">
+              {/* Integration name — dark, semibold */}
+              <p className="font-instrument text-gray-900 text-[10px] uppercase tracking-widest font-medium">
                 {integration.name}
               </p>
-              {/* Description */}
-              <p className="font-instrument text-soft-grey text-[9px] mt-1.5 leading-relaxed">
+              {/* Description — muted grey */}
+              <p className="font-instrument text-gray-500 text-[9px] mt-1.5 leading-relaxed">
                 {integration.description}
               </p>
-              {/* Category tag */}
-              <p className="font-instrument text-soft-grey/50 text-[8px] mt-2 uppercase tracking-widest">
+              {/* Category tag — very faint */}
+              <p className="font-instrument text-gray-300 text-[8px] mt-2 uppercase tracking-widest">
                 {integration.category}
               </p>
             </motion.div>

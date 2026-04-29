@@ -1,6 +1,7 @@
 "use client"
 // MarketingVisual — coded UI mockup for the marketing feature page.
 //
+// Light-mode SaaS UI: white background, dark text, Instrument Sans throughout.
 // Shows two panels side by side:
 //   Left:  Email template preview — illustrates AI-assisted email design
 //   Right: Audience segment cards — illustrates member segmentation
@@ -28,9 +29,9 @@ const EMAIL = {
 
 // Audience segments — illustrates the segmentation UI
 const SEGMENTS = [
-  { label: "Active Members",  count: 284, tag: "active",   borderClass: "border-blue-axis",  textClass: "text-blue-axis"  },
-  { label: "Trial Users",     count:  47, tag: "trial",    borderClass: "border-soft-grey",  textClass: "text-soft-grey"  },
-  { label: "At Risk",         count:  31, tag: "inactive", borderClass: "border-white/20",   textClass: "text-soft-grey"  },
+  { label: "Active Members",  count: 284, tag: "active",   borderClass: "border-blue-axis",  tagClass: "text-blue-axis"  },
+  { label: "Trial Users",     count:  47, tag: "trial",    borderClass: "border-gray-300",   tagClass: "text-gray-500"   },
+  { label: "At Risk",         count:  31, tag: "inactive", borderClass: "border-gray-200",   tagClass: "text-gray-400"   },
 ]
 
 // Email stats bar — open rate, sent, clicks
@@ -47,35 +48,36 @@ export default function MarketingVisual() {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true }}
-      className="bg-grey-axis p-4 md:p-6 w-full"
+      // White background, flat — no shadow, no border-radius
+      className="bg-white border border-gray-100 p-4 md:p-6 w-full"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* ── LEFT: Email template preview ── */}
-        <motion.div variants={item} className="bg-black-axis p-4">
-          <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest mb-4">
+        <motion.div variants={item} className="bg-gray-50 p-4">
+          <p className="font-instrument text-gray-900 text-[9px] uppercase tracking-widest font-semibold mb-4">
             Email Preview
           </p>
 
           {/* Simulated email "frame" */}
-          <div className="border border-white/10 p-4">
+          <div className="border border-gray-200 bg-white p-4">
 
             {/* Email metadata */}
-            <p className="font-instrument text-soft-grey text-[9px]">From: {EMAIL.from}</p>
-            <p className="font-instrument text-white-axis text-xs mt-1">{EMAIL.subject}</p>
-            <p className="font-instrument text-soft-grey text-[9px] mt-0.5">{EMAIL.preview}</p>
+            <p className="font-instrument text-gray-400 text-[9px]">From: {EMAIL.from}</p>
+            <p className="font-instrument text-gray-900 text-xs mt-1 font-medium">{EMAIL.subject}</p>
+            <p className="font-instrument text-gray-400 text-[9px] mt-0.5">{EMAIL.preview}</p>
 
             {/* Divider */}
-            <div className="w-full h-px bg-white/10 my-4" />
+            <div className="w-full h-px bg-gray-100 my-4" />
 
             {/* Email body */}
-            <p className="font-instrument text-soft-grey text-[10px] leading-relaxed mb-5">
+            <p className="font-instrument text-gray-500 text-[10px] leading-relaxed mb-5">
               {EMAIL.body}
             </p>
 
-            {/* CTA button inside the email */}
+            {/* CTA button inside the email — brand blue */}
             <div className="inline-block bg-blue-axis px-4 py-2">
-              <p className="font-instrument uppercase tracking-widest text-white-axis text-[9px]">
+              <p className="font-instrument uppercase tracking-widest text-white text-[9px]">
                 {EMAIL.cta}
               </p>
             </div>
@@ -84,17 +86,17 @@ export default function MarketingVisual() {
           {/* Stats row below the email preview */}
           <div className="grid grid-cols-3 gap-2 mt-3">
             {STATS.map((s) => (
-              <div key={s.label} className="bg-grey-axis p-2">
-                <p className="font-instrument text-soft-grey text-[8px] uppercase tracking-widest">{s.label}</p>
-                <p className="font-playfair text-white-axis text-base mt-1">{s.value}</p>
+              <div key={s.label} className="bg-white border border-gray-100 p-2">
+                <p className="font-instrument text-gray-400 text-[8px] uppercase tracking-widest">{s.label}</p>
+                <p className="font-instrument text-gray-900 text-base font-semibold mt-1">{s.value}</p>
               </div>
             ))}
           </div>
         </motion.div>
 
         {/* ── RIGHT: Audience segments ── */}
-        <motion.div variants={item} className="bg-black-axis p-4">
-          <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest mb-4">
+        <motion.div variants={item} className="bg-gray-50 p-4">
+          <p className="font-instrument text-gray-900 text-[9px] uppercase tracking-widest font-semibold mb-4">
             Audience Segments
           </p>
 
@@ -103,27 +105,27 @@ export default function MarketingVisual() {
             {SEGMENTS.map((seg) => (
               <div
                 key={seg.label}
-                className={`border p-3 ${seg.borderClass}`}
+                className={`border bg-white p-3 ${seg.borderClass}`}
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className={`font-instrument uppercase tracking-widest text-[9px] ${seg.textClass}`}>
+                    <p className={`font-instrument uppercase tracking-widest text-[9px] ${seg.tagClass}`}>
                       {seg.tag}
                     </p>
-                    <p className="font-instrument text-white-axis text-xs mt-0.5">{seg.label}</p>
+                    <p className="font-instrument text-gray-900 text-xs mt-0.5 font-medium">{seg.label}</p>
                   </div>
-                  {/* Member count — large playfair number */}
-                  <p className="font-playfair text-white-axis text-2xl">{seg.count}</p>
+                  {/* Member count — large instrument number */}
+                  <p className="font-instrument text-gray-900 text-2xl font-semibold">{seg.count}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Referral module below segments */}
-          <div className="mt-4 pt-4 border-t border-white/10">
-            <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest">Referral Campaign</p>
-            <p className="font-playfair text-white-axis text-lg mt-1">+23 this month</p>
-            <p className="font-instrument text-soft-grey text-[9px] mt-1">via member invite links</p>
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <p className="font-instrument text-gray-400 text-[9px] uppercase tracking-widest">Referral Campaign</p>
+            <p className="font-instrument text-gray-900 text-lg font-semibold mt-1">+23 this month</p>
+            <p className="font-instrument text-gray-400 text-[9px] mt-1">via member invite links</p>
           </div>
         </motion.div>
 

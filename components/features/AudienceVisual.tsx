@@ -1,6 +1,7 @@
 "use client"
 // AudienceVisual — coded UI mockup for the audience feature page.
 //
+// Light-mode SaaS UI: white background, dark text, Instrument Sans throughout.
 // Shows two panels:
 //   Left:  Automation flow diagram — connected nodes representing a triggered sequence
 //   Right: Performance stats — open rate, conversions, active sequences
@@ -17,9 +18,9 @@ const FLOW_NODES = [
 
 // Performance stats for active automations
 const STATS = [
-  { label: "Active Sequences",     value: "12"  },
-  { label: "Triggered This Week",  value: "847" },
-  { label: "Avg Conversion Rate",  value: "34%" },
+  { label: "Active Sequences",     value: "12"    },
+  { label: "Triggered This Week",  value: "847"   },
+  { label: "Avg Conversion Rate",  value: "34%"   },
   { label: "Revenue Attributed",   value: "$4.2K" },
 ]
 
@@ -33,12 +34,13 @@ const OTHER_AUTOMATIONS = [
 
 export default function AudienceVisual() {
   return (
-    <div className="bg-grey-axis p-4 md:p-6 w-full">
+    // White background, flat — no shadow, no border-radius
+    <div className="bg-white border border-gray-100 p-4 md:p-6 w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
         {/* ── LEFT: Automation flow diagram ── */}
-        <div className="bg-black-axis p-4">
-          <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest mb-6">
+        <div className="bg-gray-50 p-4">
+          <p className="font-instrument text-gray-900 text-[9px] uppercase tracking-widest font-semibold mb-6">
             Automation Flow
           </p>
 
@@ -57,20 +59,20 @@ export default function AudienceVisual() {
                 {/* Node card — action nodes get a blue border to mark the output step */}
                 <div className={`w-full p-3 border ${
                   node.type === "action"
-                    ? "border-blue-axis bg-blue-axis/10"
-                    : "border-white/15 bg-grey-axis"
+                    ? "border-blue-axis bg-blue-axis/5"
+                    : "border-gray-200 bg-white"
                 }`}>
-                  <p className="font-instrument uppercase tracking-widest text-soft-grey text-[8px] mb-1">
+                  <p className="font-instrument uppercase tracking-widest text-gray-400 text-[8px] mb-1">
                     {node.label}
                   </p>
-                  <p className={`font-instrument text-xs ${node.type === "action" ? "text-blue-axis" : "text-white-axis"}`}>
+                  <p className={`font-instrument text-xs font-medium ${node.type === "action" ? "text-blue-axis" : "text-gray-900"}`}>
                     {node.value}
                   </p>
                 </div>
 
                 {/* Connector line between nodes — hidden after the last node */}
                 {i < FLOW_NODES.length - 1 && (
-                  <div className="w-px h-5 bg-white/15" />
+                  <div className="w-px h-5 bg-gray-200" />
                 )}
               </motion.div>
             ))}
@@ -89,19 +91,19 @@ export default function AudienceVisual() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.09 }}
                 viewport={{ once: true }}
-                className="bg-black-axis p-3"
+                className="bg-gray-50 border border-gray-100 p-3"
               >
-                <p className="font-instrument text-soft-grey text-[8px] uppercase tracking-widest leading-tight">
+                <p className="font-instrument text-gray-400 text-[8px] uppercase tracking-widest leading-tight">
                   {s.label}
                 </p>
-                <p className="font-playfair text-white-axis text-xl mt-2">{s.value}</p>
+                <p className="font-instrument text-gray-900 text-xl font-semibold mt-2">{s.value}</p>
               </motion.div>
             ))}
           </div>
 
           {/* Other active automations list */}
-          <div className="bg-black-axis p-4 flex-1">
-            <p className="font-instrument text-soft-grey text-[9px] uppercase tracking-widest mb-3">
+          <div className="bg-gray-50 border border-gray-100 p-4 flex-1">
+            <p className="font-instrument text-gray-400 text-[9px] uppercase tracking-widest mb-3">
               All Automations
             </p>
             <div className="flex flex-col">
@@ -112,20 +114,20 @@ export default function AudienceVisual() {
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 0.4, ease: "easeOut", delay: i * 0.07 }}
                   viewport={{ once: true }}
-                  className="flex items-center justify-between py-2.5 border-b border-white/10"
+                  className="flex items-center justify-between py-2.5 border-b border-gray-100"
                 >
                   <div>
-                    <p className="font-instrument text-white-axis text-[10px]">{auto.name}</p>
+                    <p className="font-instrument text-gray-900 text-[10px] font-medium">{auto.name}</p>
                     {/* Status badge — active is blue-accented, paused is muted */}
                     <span className={`font-instrument text-[8px] uppercase tracking-widest ${
-                      auto.status === "active" ? "text-blue-axis" : "text-soft-grey"
+                      auto.status === "active" ? "text-blue-axis" : "text-gray-400"
                     }`}>
                       {auto.status}
                     </span>
                   </div>
                   <div className="text-right">
-                    <p className="font-playfair text-white-axis text-sm">{auto.triggered}</p>
-                    <p className="font-instrument text-soft-grey text-[8px]">triggered</p>
+                    <p className="font-instrument text-gray-900 text-sm font-semibold">{auto.triggered}</p>
+                    <p className="font-instrument text-gray-400 text-[8px]">triggered</p>
                   </div>
                 </motion.div>
               ))}
