@@ -43,6 +43,7 @@ const BAR_CROSS_OFFSET = 6
 // component updates — constants that never change belong outside.
 const NAV_LINKS = [
   { label: "Home", href: "/" },
+  { label: "Features", href: "/features" },
   { label: "Pricing", href: "/pricing" },
   { label: "Our Work", href: "/our-work" },
   { label: "About", href: "/about" },
